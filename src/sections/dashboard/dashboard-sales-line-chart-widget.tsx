@@ -57,17 +57,15 @@ export function DashboardSalesLineChartWidget({
   const { totalTargetSales, totalRealSales } = useMemo(() => {
     let totalTarget = 0;
     let totalReal = 0;
-    console.log('chart.series', chart.series);
     // chart series에 name에 selectedSeries에 해당하는 데이터만 totalTarget, totalReal에 더해준다.
     const targetSeriesData = chart.series.find((item) => item.name === selectedSeries);
-    console.log('targetSeriesData', targetSeriesData);
     targetSeriesData?.data.forEach((item) => {
       totalTarget += item.data[0];
       totalReal += item.data[1];
     });
 
     return { totalTargetSales: totalTarget, totalRealSales: totalReal };
-  }, []);
+  }, [chart.series, selectedSeries]);
 
   return (
     <Card {...other}>

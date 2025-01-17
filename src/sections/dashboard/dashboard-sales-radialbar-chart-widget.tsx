@@ -77,8 +77,8 @@ export function DashboardSalesRadialChartWidget({
   });
 
   // chartOptions를 useMemo로 생성하여 total 변경 시 업데이트
-  const chartOptions = useMemo(() => {
-    return {
+  const chartOptions = useMemo(
+    () => ({
       ...baseChartOptions,
       plotOptions: {
         ...baseChartOptions?.plotOptions,
@@ -90,8 +90,9 @@ export function DashboardSalesRadialChartWidget({
           },
         },
       },
-    };
-  }, [baseChartOptions, total]);
+    }),
+    [baseChartOptions, total]
+  );
 
   return (
     <Card {...other}>
