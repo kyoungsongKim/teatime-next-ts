@@ -111,3 +111,20 @@ export type IUserAccountBillingHistory = {
   invoiceNumber: string;
   createdAt: IDateValue;
 };
+
+export type CUserItem = {
+  cbankAccount: string;
+  cbankId: string;
+  cellphone: string;
+  dailyReportList: string;
+  email: string;
+  id: string;
+  joinDate: string;
+  password: string;
+  position: string;
+  realName: string;
+  renewalDate: string;
+  teamName: string;
+  userName: string;
+  vacationReportList: string;
+};
