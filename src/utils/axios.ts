@@ -57,4 +57,13 @@ export const endpoints = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
+  statistics: {
+    sales: '/api/statistics/sales',
+  },
+  users: {
+    root: '/api/users',
+  },
+  monthlySales: {
+    current: '/api/monthly-sales/current',
+  },
 };
