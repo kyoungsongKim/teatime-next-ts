@@ -53,19 +53,32 @@ export function DashboardSalesLineChartWidget({
 
   const currentSeries = chart.series.find((i) => i.name === selectedSeries);
 
+  // 비교 및 목표 실적 계산을 위한 날짜 데이터
+  const currentYear = new Date().getFullYear().toString();
+  const currentMonth = new Date().getMonth() + 1;
+
   // 목표 실적 합계, 달성 실적 합계
   const { totalTargetSales, totalRealSales } = useMemo(() => {
     let totalTarget = 0;
     let totalReal = 0;
+
     // chart series에 name에 selectedSeries에 해당하는 데이터만 totalTarget, totalReal에 더해준다.
     const targetSeriesData = chart.series.find((item) => item.name === selectedSeries);
-    targetSeriesData?.data.forEach((item) => {
-      totalTarget += item.data[0];
-      totalReal += item.data[1];
-    });
+    if (!targetSeriesData) return { totalTargetSales: 0, totalRealSales: 0 };
+    if (currentYear === selectedSeries) {
+      // 선택된 년도가 가장 최근(현재 년도)인 경우,
+      // totalTarget은 현재까지의 목표 실적 합계로, 현재 달까지만 계산
+      totalTarget = targetSeriesData.data[0].data
+        .slice(0, currentMonth)
+        .reduce((acc, cur) => acc + cur, 0);
+    } else {
+      totalTarget = targetSeriesData.data[0].data.reduce((acc, cur) => acc + cur, 0);
+    }
+    // totalReal은 0으로 초기화 되어 있기 때문에,
+    totalReal = targetSeriesData.data[1].data.reduce((acc, cur) => acc + cur, 0);
 
     return { totalTargetSales: totalTarget, totalRealSales: totalReal };
-  }, [chart.series, selectedSeries]);
+  }, [chart.series, currentMonth, currentYear, selectedSeries]);
 
   return (
     <Card {...other}>
