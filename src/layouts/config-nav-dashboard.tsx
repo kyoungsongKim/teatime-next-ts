@@ -45,12 +45,19 @@ const ICONS = {
 
 export const navData = [
   /**
+   *
+   */
+  {
+    subheader: '',
+    items: [{ title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard }],
+  },
+  /**
    * Overview
    */
   {
     subheader: 'Overview',
     items: [
-      { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
+      { title: 'App', path: paths.dashboard.app, icon: ICONS.dashboard },
       { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
       { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
       { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
