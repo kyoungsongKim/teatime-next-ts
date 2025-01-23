@@ -66,4 +66,14 @@ export const endpoints = {
   monthlySales: {
     current: '/api/monthly-sales/current',
   },
+  point: {
+    list: '/api/point/list',
+    code: '/api/point/pointCode', // post -> donate, get -> make
+    month: '/api/point/month',
+    summary: '/api/point/summary',
+  },
+  vacation: {
+    root: '/api/vacation',
+    all: '/api/vacation/all',
+  },
 };
