@@ -1,5 +1,8 @@
 'use client';
 
+import type { CUserItem } from 'src/types/user';
+import type { StatisticsSalesItem } from 'src/types/sales';
+
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Select from '@mui/material/Select';
@@ -7,18 +10,17 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
 
-import { useAuthContext } from '../../auth/hooks';
-import { jwtDecode } from '../../auth/context/jwt';
-import { getUserList } from '../../actions/user-ssr';
-import { DashboardContent } from '../../layouts/dashboard';
-import { getStatisticsSales } from '../../actions/statistics-ssr';
-import { getMonthlySales } from '../../actions/monthly-sales-ssr';
+import { getUserList } from 'src/actions/user-ssr';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { getStatisticsSales } from 'src/actions/statistics-ssr';
+import { getMonthlySales } from 'src/actions/monthly-sales-ssr';
+
+import { useAuthContext } from 'src/auth/hooks';
+import { jwtDecode } from 'src/auth/context/jwt';
+
 import { DashboardSummaryWidget } from './dashboard-summary-widget';
 import { DashboardSalesLineChartWidget } from './dashboard-sales-line-chart-widget';
 import { DashboardSalesRadialChartWidget } from './dashboard-sales-radialbar-chart-widget';
-
-import type { CUserItem } from '../../types/user';
-import type { StatisticsSalesItem } from '../../types/sales';
 
 export function DashboardView() {
   const { user } = useAuthContext();
@@ -142,7 +144,7 @@ export function DashboardView() {
       setCurrentSales(parseInt(monthlySalesData, 10));
     };
 
-    fetchData();
+    fetchData().then();
 
     // 관리자일 경우 사용자 리스트 가져오기
     if (auth === 'ADMIN') {
