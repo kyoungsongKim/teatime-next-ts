@@ -12,6 +12,13 @@ const ROOTS = {
   AUTH: '/auth',
   AUTH_DEMO: '/auth-demo',
   DASHBOARD: '/dashboard',
+  CALENDAR: '/calendar',
+  AGREEMENT: '/agreement',
+  ASSISTANT: '/assistant',
+  VACATION: '/vacation',
+  DAILY_REPORT: '/dailyReport',
+  POINT: '/point',
+  FAQ: '/faq',
 };
 
 // ----------------------------------------------------------------------
@@ -52,10 +59,19 @@ export const paths = {
       signUp: `${ROOTS.AUTH}/jwt/sign-up`,
     },
   },
+  root: {
+    dashboard: '/',
+    calendar: ROOTS.CALENDAR,
+    agreement: ROOTS.AGREEMENT,
+    assistant: ROOTS.ASSISTANT,
+    vacation: ROOTS.VACATION,
+    dailyReport: ROOTS.DAILY_REPORT,
+    point: ROOTS.POINT,
+    faq: ROOTS.FAQ,
+  },
   // DASHBOARD
   dashboard: {
-    root: ROOTS.DASHBOARD,
-    app: `${ROOTS.DASHBOARD}/app`,
+    root: `${ROOTS.DASHBOARD}/app`,
     mail: `${ROOTS.DASHBOARD}/mail`,
     chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,
