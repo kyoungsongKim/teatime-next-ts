@@ -1,13 +1,11 @@
-import { HomeView } from 'src/sections/home/view';
+import { CONFIG } from 'src/config-global';
+
+import { DashboardView } from 'src/sections/dashboard/dashboard-view';
 
 // ----------------------------------------------------------------------
 
-export const metadata = {
-  title: 'Teatime WEB UI: The starting point for your next project',
-  description:
-    'The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI ©, ready to be customized to your style',
-};
+export const metadata = { title: `Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
-  return <HomeView />;
+  return <DashboardView />;
 }
