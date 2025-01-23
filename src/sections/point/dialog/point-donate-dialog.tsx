@@ -51,7 +51,7 @@ export function PointDonateDialog({ id, open, onClose, onUpdate }: Props) {
   const onDonate = handleSubmit(async (data) => {
     // post /api/point/pointCode API 호출
     try {
-      await donatePoint(data.code, data.recver)
+      await donatePoint(data.code.toUpperCase(), data.recver)
         .then((r) => {
           console.log('res', r);
 
@@ -86,7 +86,12 @@ export function PointDonateDialog({ id, open, onClose, onUpdate }: Props) {
         <DialogContent>
           <Stack spacing={1}>
             <Typography variant="subtitle2">기부 기회권 코드</Typography>
-            <Field.Text name="code" size="small" sx={{ '.Mui-error': { mx: 0 } }} />
+            <Field.Text
+              name="code"
+              size="small"
+              sx={{ '.Mui-error': { mx: 0 } }}
+              inputProps={{ style: { textTransform: 'uppercase' } }}
+            />
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 2 }}>
               기부 기회권 코드를 입력하세요.
               <br />
