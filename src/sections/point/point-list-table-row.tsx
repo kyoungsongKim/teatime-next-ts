@@ -1,6 +1,9 @@
-import TableCell from '@mui/material/TableCell';
+'use client';
+
+import type { PointItem } from 'src/types/point';
+
 import TableRow from '@mui/material/TableRow';
-import { PointItem } from 'src/types/point';
+import TableCell from '@mui/material/TableCell';
 
 type Props = {
   row: PointItem;

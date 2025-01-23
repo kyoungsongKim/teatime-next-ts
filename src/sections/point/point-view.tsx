@@ -1,5 +1,6 @@
 'use client';
 
+import type { CUserItem } from 'src/types/user';
 import type { PointItem } from 'src/types/point';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
@@ -16,6 +17,9 @@ import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import { getUserList } from 'src/actions/user-ssr';
 import { getPointList } from 'src/actions/point-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -35,12 +39,9 @@ import {
 import { useAuthContext } from 'src/auth/hooks';
 import { jwtDecode } from 'src/auth/context/jwt';
 
-import { useBoolean } from '../../hooks/use-boolean';
 import { PointListTableRow } from './point-list-table-row';
 import { PointDonateDialog } from './dialog/point-donate-dialog';
 import { PointCreateDialog } from './dialog/point-create-dialog';
-import { getUserList } from '../../actions/user-ssr';
-import { CUserItem } from '../../types/user';
 
 const TABLE_HEAD = [
   { id: 'createdDate', label: 'CREATED DATE' },
