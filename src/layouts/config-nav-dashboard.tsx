@@ -49,7 +49,14 @@ export const navData = [
    */
   {
     subheader: '',
-    items: [{ title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard }],
+    items: [
+      { title: 'Dashboard', path: paths.root.dashboard, icon: ICONS.dashboard },
+      { title: 'Calendar', path: paths.root.calendar, icon: ICONS.calendar },
+      { title: 'Agreement', path: paths.root.agreement, icon: ICONS.file },
+      { title: 'Assistant', path: paths.root.assistant, icon: ICONS.job },
+      { title: 'Vacation', path: paths.root.vacation, icon: ICONS.booking },
+      { title: 'My Point', path: paths.root.point, icon: ICONS.invoice },
+    ],
   },
   /**
    * Overview
@@ -57,7 +64,7 @@ export const navData = [
   {
     subheader: 'Overview',
     items: [
-      { title: 'App', path: paths.dashboard.app, icon: ICONS.dashboard },
+      { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
       { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
       { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
       { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
