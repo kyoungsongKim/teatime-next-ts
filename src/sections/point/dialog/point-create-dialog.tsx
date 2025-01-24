@@ -85,6 +85,36 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
     }
   });
 
+  // 복사 기능
+  const handleCopy = async () => {
+    if (!publishCode) return;
+
+    try {
+      // 1. navigator.clipboard API 사용
+      await navigator.clipboard.writeText(publishCode);
+      toast.success('Copied!');
+    } catch (error) {
+      console.warn('Navigator clipboard failed, falling back to textarea method.', error);
+
+      // 2. textarea를 사용한 백업 복사 방법
+      const textarea = document.createElement('textarea');
+      textarea.value = publishCode;
+      textarea.style.position = 'fixed'; // 화면에서 보이지 않게 설정
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy'); // 텍스트 복사
+        toast.success('Copied!');
+      } catch (fallbackError) {
+        console.error('Fallback copy method failed:', fallbackError);
+        toast.error('복사 실패!');
+      } finally {
+        document.body.removeChild(textarea); // textarea 제거
+      }
+    }
+  };
+
   return (
     <>
       <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose}>
@@ -168,14 +198,8 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
                 readOnly: true,
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => {
-                        navigator.clipboard.writeText(publishCode);
-                        toast.success('copied!');
-                      }}
-                      edge="end"
-                    >
-                      <Iconify icon="eva:copy-fill" />
+                    <IconButton onClick={handleCopy} edge="end" aria-label="copy">
+                      <Iconify width={18} icon="solar:copy-bold" />
                     </IconButton>
                   </InputAdornment>
                 ),
