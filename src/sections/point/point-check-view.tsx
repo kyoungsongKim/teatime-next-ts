@@ -1,5 +1,8 @@
 'use client';
 
+import type { CUserItem } from 'src/types/user';
+import type { SummaryPointItem } from 'src/types/point';
+
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -11,15 +14,15 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 
-import { useAuthContext } from 'src/auth/hooks';
-import { getUserInfo } from 'src/utils/user-info';
 import { useBoolean } from 'src/hooks/use-boolean';
+
+import { getUserInfo } from 'src/utils/user-info';
+
 import { getUserList } from 'src/actions/user-ssr';
-import { Scrollbar } from 'src/components/scrollbar';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { PointExpDialog } from './dialog/point-exp-dialog';
 import { getSummaryPointList } from 'src/actions/point-ssr';
-import { PointExpAllDialog } from './dialog/point-exp-all-dialog';
+
+import { Scrollbar } from 'src/components/scrollbar';
 import {
   useTable,
   emptyRows,
@@ -29,8 +32,10 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import type { CUserItem } from 'src/types/user';
-import type { SummaryPointItem } from 'src/types/point';
+import { useAuthContext } from 'src/auth/hooks';
+
+import { PointExpDialog } from './dialog/point-exp-dialog';
+import { PointExpAllDialog } from './dialog/point-exp-all-dialog';
 
 const TABLE_HEAD = [
   { id: 'userId', label: 'USER ID' },

@@ -1,5 +1,7 @@
 'use client';
 
+import type { SummaryPointItem } from 'src/types/point';
+
 import React, { useMemo, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -12,11 +14,12 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 
-import { useAuthContext } from 'src/auth/hooks';
 import { getUserInfo } from 'src/utils/user-info';
-import { Scrollbar } from 'src/components/scrollbar';
+
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getMonthPointList } from 'src/actions/point-ssr';
+
+import { Scrollbar } from 'src/components/scrollbar';
 import {
   useTable,
   emptyRows,
@@ -26,7 +29,7 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import type { SummaryPointItem } from 'src/types/point';
+import { useAuthContext } from 'src/auth/hooks';
 
 const TABLE_HEAD = [
   { id: 'userId', label: 'USER ID' },
@@ -39,7 +42,7 @@ const TABLE_HEAD = [
 export function PointMonthSummaryView() {
   // 사용자 정보 불러오기
   const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { id } = useMemo(() => getUserInfo(user), [user]);
 
   const [selectedYear, setSelectedYear] = React.useState(new Date().getFullYear().toString());
   const yearList = useMemo(() => {

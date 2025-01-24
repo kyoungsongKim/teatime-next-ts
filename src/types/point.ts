@@ -1,4 +1,4 @@
-import { CUserItem } from './user';
+import type { CUserItem } from './user';
 
 export type PointItem = {
   code: string;

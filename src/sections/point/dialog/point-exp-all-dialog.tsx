@@ -50,7 +50,6 @@ export function PointExpAllDialog({ id, open, onClose, onUpdate }: Props) {
 
   const {
     reset,
-    watch,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
