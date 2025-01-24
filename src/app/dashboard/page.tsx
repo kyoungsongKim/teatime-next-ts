@@ -1,7 +1,7 @@
 import { CONFIG } from 'src/config-global';
 
 // import { OverviewAppView } from 'src/sections/overview/app/view';
-import { DashboardView } from '../../sections/dashboard/dashboard-view';
+import { DashboardView } from 'src/sections/dashboard/dashboard-view';
 
 // ----------------------------------------------------------------------
 
