@@ -147,35 +147,39 @@ export function PointView() {
                 Donation Point
               </Button>
               {auth === 'ADMIN' && (
-                <Button
-                  variant="soft"
-                  startIcon={<Iconify icon="mingcute:add-line" />}
-                  onClick={createDialog.onTrue}
-                >
-                  Create Point
-                </Button>
+                <>
+                  <Button
+                    variant="soft"
+                    startIcon={<Iconify icon="mingcute:add-line" />}
+                    onClick={createDialog.onTrue}
+                  >
+                    Create Point
+                  </Button>
+                  <IconButton onClick={popover.onOpen}>
+                    <Iconify icon="eva:more-vertical-fill" />
+                  </IconButton>
+                </>
               )}
-              <IconButton onClick={popover.onOpen}>
-                <Iconify icon="eva:more-vertical-fill" />
-              </IconButton>
             </Stack>
           </Stack>
         </Stack>
-        <CustomPopover
-          open={popover.open}
-          anchorEl={popover.anchorEl}
-          onClose={popover.onClose}
-          slotProps={{ arrow: { placement: 'right-top' } }}
-        >
-          <MenuList>
-            <MenuItem onClick={() => router.push(paths.root.point.pointCheck)}>
-              Point Check
-            </MenuItem>
-            <MenuItem onClick={() => router.push(paths.root.point.monthSummary)}>
-              Month Summary
-            </MenuItem>
-          </MenuList>
-        </CustomPopover>
+        {auth === 'ADMIN' && (
+          <CustomPopover
+            open={popover.open}
+            anchorEl={popover.anchorEl}
+            onClose={popover.onClose}
+            slotProps={{ arrow: { placement: 'right-top' } }}
+          >
+            <MenuList>
+              <MenuItem onClick={() => router.push(paths.root.point.pointCheck)}>
+                Point Check
+              </MenuItem>
+              <MenuItem onClick={() => router.push(paths.root.point.monthSummary)}>
+                Month Summary
+              </MenuItem>
+            </MenuList>
+          </CustomPopover>
+        )}
         <Card>
           <Box sx={{ position: 'relative' }}>
             <Scrollbar sx={{ minHeight: 300 }}>
