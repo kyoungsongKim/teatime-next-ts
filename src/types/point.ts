@@ -32,3 +32,25 @@ export type CreatePointItem = {
   point: number;
   memo: string;
 };
+
+// summary point 타입을 month summary 도 동일하게 사용
+export type SummaryPointItem = {
+  userId: string;
+  realName: string;
+  totalPoint: number;
+  level: number;
+  totalExp: number;
+};
+
+export type ChangePointExpAllItem = {
+  sender: string;
+  memo: string;
+  exp: number;
+};
+
+export type ChangePointExpItem = {
+  receiver: CUserItem | null;
+  sender: string;
+  memo: string;
+  exp: number;
+};
