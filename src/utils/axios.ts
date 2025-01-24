@@ -72,6 +72,10 @@ export const endpoints = {
     month: '/api/point/month',
     summary: '/api/point/summary',
   },
+  exp: {
+    levelup: '/api/exp/levelup',
+    levelupall: '/api/exp/levelupall',
+  },
   vacation: {
     root: '/api/vacation',
     all: '/api/vacation/all',
