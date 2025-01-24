@@ -71,7 +71,6 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
     const receiver = data.receiver ?? { id: '' };
     try {
       await makePoint(data.sender, receiver.id, data.point, data.memo).then((r) => {
-        console.log('make point', r);
         if (r.status !== 200) {
           toast.error(r.data);
         } else {
@@ -88,7 +87,7 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
 
   return (
     <>
-      <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
+      <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose}>
         <DialogTitle>
           <Stack spacing={1} direction="row" alignItems="center" justifyContent="space-between">
             Create Point

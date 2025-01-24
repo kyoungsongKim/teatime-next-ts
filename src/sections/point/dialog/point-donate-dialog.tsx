@@ -53,8 +53,6 @@ export function PointDonateDialog({ id, open, onClose, onUpdate }: Props) {
     try {
       await donatePoint(data.code.toUpperCase(), data.recver)
         .then((r) => {
-          console.log('res', r);
-
           if (r.status !== 200) {
             toast.error(r.data);
           } else {
