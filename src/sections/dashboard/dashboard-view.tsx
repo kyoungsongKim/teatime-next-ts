@@ -10,13 +10,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
 
+import { getUserInfo } from 'src/utils/user-info';
+
 import { getUserList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getStatisticsSales } from 'src/actions/statistics-ssr';
 import { getMonthlySales } from 'src/actions/monthly-sales-ssr';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { jwtDecode } from 'src/auth/context/jwt';
 
 import { DashboardSummaryWidget } from './dashboard-summary-widget';
 import { DashboardSalesLineChartWidget } from './dashboard-sales-line-chart-widget';
@@ -24,12 +25,7 @@ import { DashboardSalesRadialChartWidget } from './dashboard-sales-radialbar-cha
 
 export function DashboardView() {
   const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => {
-    if (!user) {
-      return { id: '', auth: '' };
-    }
-    return jwtDecode(user?.accessToken);
-  }, [user]);
+  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
 
   const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear())); // 현재 연도 상태
   const currentMonth = new Date().getMonth() + 1; // 현재 월 (1월은 1, 12월은 12)
