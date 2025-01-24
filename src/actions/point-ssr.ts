@@ -13,3 +13,17 @@ export async function makePoint(sender: string, receiver: string, point: number,
 
   return res;
 }
+
+export async function getSummaryPointList(receiver: string) {
+  const URL = `${endpoints.point.summary}?receiver=${receiver}`;
+  const res = await axios.get(URL);
+
+  return res;
+}
+
+export async function getMonthPointList(userName: string, year: string, month: string) {
+  const URL = `${endpoints.point.month}?receiver=${userName}&year=${year}&month=${month}`;
+  const res = await axios.get(URL);
+
+  return res;
+}
