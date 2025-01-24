@@ -17,6 +17,8 @@ import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 
+import { useRouter } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { getUserList } from 'src/actions/user-ssr';
@@ -42,6 +44,8 @@ import { jwtDecode } from 'src/auth/context/jwt';
 import { PointListTableRow } from './point-list-table-row';
 import { PointDonateDialog } from './dialog/point-donate-dialog';
 import { PointCreateDialog } from './dialog/point-create-dialog';
+import { paths } from 'src/routes/paths';
+import { getUserInfo } from 'src/utils/user-info';
 
 const TABLE_HEAD = [
   { id: 'createdDate', label: 'CREATED DATE' },
@@ -55,13 +59,11 @@ const TABLE_HEAD = [
 export function PointView() {
   const notFound = false;
 
+  // 사용자 정보 불러오기
   const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => {
-    if (!user) {
-      return { id: '', auth: '' };
-    }
-    return jwtDecode(user?.accessToken);
-  }, [user]);
+  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+
+  const router = useRouter();
 
   const popover = usePopover();
   // donate point dialog open/close
@@ -166,8 +168,12 @@ export function PointView() {
           slotProps={{ arrow: { placement: 'right-top' } }}
         >
           <MenuList>
-            <MenuItem>Point Check</MenuItem>
-            <MenuItem>Month Summary</MenuItem>
+            <MenuItem onClick={() => router.push(paths.root.point.pointCheck)}>
+              Point Check
+            </MenuItem>
+            <MenuItem onClick={() => router.push(paths.root.point.monthSummary)}>
+              Month Summary
+            </MenuItem>
           </MenuList>
         </CustomPopover>
         <Card>
@@ -190,7 +196,9 @@ export function PointView() {
                     .map((row) => (
                       <PointListTableRow key={row.id} row={row} />
                     ))}
-                  <TableEmptyRows emptyRows={emptyRows(table.page, table.rowsPerPage, 100)} />
+                  <TableEmptyRows
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                  />
                   <TableNoData notFound={notFound} />
                 </TableBody>
               </Table>
