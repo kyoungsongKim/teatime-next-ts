@@ -55,7 +55,7 @@ export const navData = [
       { title: 'Agreement', path: paths.root.agreement, icon: ICONS.file },
       { title: 'Assistant', path: paths.root.assistant, icon: ICONS.job },
       { title: 'Vacation', path: paths.root.vacation, icon: ICONS.booking },
-      { title: 'My Point', path: paths.root.point, icon: ICONS.invoice },
+      { title: 'My Point', path: paths.root.point.root, icon: ICONS.invoice },
     ],
   },
   /**

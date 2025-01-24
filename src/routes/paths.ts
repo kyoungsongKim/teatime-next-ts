@@ -66,7 +66,11 @@ export const paths = {
     assistant: ROOTS.ASSISTANT,
     vacation: ROOTS.VACATION,
     dailyReport: ROOTS.DAILY_REPORT,
-    point: ROOTS.POINT,
+    point: {
+      root: ROOTS.POINT,
+      pointCheck: `${ROOTS.POINT}/pointCheck`,
+      monthSummary: `${ROOTS.POINT}/monthSummary`,
+    },
     faq: ROOTS.FAQ,
   },
   // DASHBOARD
