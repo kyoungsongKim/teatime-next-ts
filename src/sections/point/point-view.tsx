@@ -17,9 +17,12 @@ import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 
+import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+
+import { getUserInfo } from 'src/utils/user-info';
 
 import { getUserList } from 'src/actions/user-ssr';
 import { getPointList } from 'src/actions/point-ssr';
@@ -39,13 +42,10 @@ import {
 } from 'src/components/table';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { jwtDecode } from 'src/auth/context/jwt';
 
 import { PointListTableRow } from './point-list-table-row';
 import { PointDonateDialog } from './dialog/point-donate-dialog';
 import { PointCreateDialog } from './dialog/point-create-dialog';
-import { paths } from 'src/routes/paths';
-import { getUserInfo } from 'src/utils/user-info';
 
 const TABLE_HEAD = [
   { id: 'createdDate', label: 'CREATED DATE' },
