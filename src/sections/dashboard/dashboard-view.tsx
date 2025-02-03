@@ -52,7 +52,15 @@ export function DashboardView() {
 
   // 연간 누적 매출 계산
   const yearTotalSales = useMemo(() => {
-    const calcData = salesData.salesList.reduce((acc, cur) => acc + cur.salesAmount, 0);
+    // 중복된 summaryDate를 제거
+    const uniqueSales = salesData.salesList.filter((item, index, self) => {
+      return self.findIndex((i) => i.summaryDate === item.summaryDate) === index;
+    });
+
+    // 총 매출 계산
+    const calcData = uniqueSales.reduce((acc, cur) => acc + cur.salesAmount, 0);
+
+    // 현재 연도에 대해 추가 매출 고려
     if (currentYear === String(new Date().getFullYear())) {
       if (
         salesData.salesList.length === 0 ||
@@ -61,6 +69,7 @@ export function DashboardView() {
         return calcData + currentSales;
       }
     }
+
     return calcData;
   }, [salesData.salesList, currentYear, currentMonth, currentSales]);
 
