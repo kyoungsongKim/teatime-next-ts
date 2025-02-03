@@ -53,9 +53,9 @@ export function DashboardView() {
   // 연간 누적 매출 계산
   const yearTotalSales = useMemo(() => {
     // 중복된 summaryDate를 제거
-    const uniqueSales = salesData.salesList.filter((item, index, self) => {
-      return self.findIndex((i) => i.summaryDate === item.summaryDate) === index;
-    });
+    const uniqueSales = salesData.salesList.filter(
+      (item, index, self) => self.findIndex((i) => i.summaryDate === item.summaryDate) === index
+    );
 
     // 총 매출 계산
     const calcData = uniqueSales.reduce((acc, cur) => acc + cur.salesAmount, 0);
