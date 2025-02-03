@@ -1,10 +1,16 @@
-import Card, { CardProps } from '@mui/material/Card';
-import { useTheme } from '@mui/material/styles';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
+
 import Box from '@mui/material/Box';
-import { Chart, ChartOptions, useChart } from '../../components/chart';
-import { fNumber, fPercent } from '../../utils/format-number';
-import { Iconify } from '../../components/iconify';
-import { stylesMode, varAlpha } from '../../theme/styles';
+import Card from '@mui/material/Card';
+import { useTheme } from '@mui/material/styles';
+
+import { fNumber, fPercent } from 'src/utils/format-number';
+
+import { varAlpha, stylesMode } from 'src/theme/styles';
+
+import { Iconify } from 'src/components/iconify';
+import { Chart, useChart } from 'src/components/chart';
 
 type Props = CardProps & {
   title: string;
