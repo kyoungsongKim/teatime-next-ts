@@ -74,7 +74,7 @@ export async function setSession(accessToken: string | null) {
     if (accessToken) {
       sessionStorage.setItem(STORAGE_KEY, accessToken);
 
-      axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+      axios.defaults.headers.common.Authorization = `${accessToken}`;
 
       const decodedToken = jwtDecode(accessToken); // ~3 days by minimals server
 
