@@ -81,8 +81,12 @@ export const endpoints = {
     all: '/api/vacation/all',
   },
   faqs: {
-    get: '/api/faqs',
-    post: '/api/faqs',
-    delete: '/api/faqs',
+    root: '/api/faqs',
+  },
+  agreement: {
+    list: '/api/agreement',
+    info: '/api/agreement/info',
+    details: '/api/product/details',
+    delete: '/api/product/search',
   },
 };
