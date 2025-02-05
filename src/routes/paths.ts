@@ -18,7 +18,7 @@ const ROOTS = {
   VACATION: '/vacation',
   DAILY_REPORT: '/dailyReport',
   POINT: '/point',
-  FAQ: '/faq',
+  FAQ: '/faqs',
 };
 
 // ----------------------------------------------------------------------

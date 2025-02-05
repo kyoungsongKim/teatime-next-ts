@@ -39,6 +39,7 @@ const ICONS = {
   analytics: icon('ic-analytics'),
   dashboard: icon('ic-dashboard'),
   parameter: icon('ic-parameter'),
+  faq: icon('ic-blog'),
 };
 
 // ----------------------------------------------------------------------
@@ -56,6 +57,7 @@ export const navData = [
       { title: 'Assistant', path: paths.root.assistant, icon: ICONS.job },
       { title: 'Vacation', path: paths.root.vacation, icon: ICONS.booking },
       { title: 'My Point', path: paths.root.point.root, icon: ICONS.invoice },
+      { title: 'FAQ', path: paths.root.faq, icon: ICONS.faq },
     ],
   },
   /**

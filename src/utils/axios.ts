@@ -80,4 +80,9 @@ export const endpoints = {
     root: '/api/vacation',
     all: '/api/vacation/all',
   },
+  faqs: {
+    get: '/api/faqs',
+    post: '/api/faqs',
+    delete: '/api/faqs',
+  },
 };
