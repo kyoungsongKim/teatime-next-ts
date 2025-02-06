@@ -1,3 +1,5 @@
+import type { FaqsItem } from 'src/types/faqs';
+
 import * as zod from 'zod';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
@@ -16,11 +18,11 @@ import DialogActions from '@mui/material/DialogActions';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { postFaq, deleteFaq } from 'src/actions/faq-ssr';
+
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { FaqsItem } from '../../../types/faqs';
-import { deleteFaq, postFaq } from '../../../actions/faq-ssr';
 
 export const EditFaqSchema = zod.object({
   name: zod.string().min(1, { message: '이름을 입력해 주세요' }),
