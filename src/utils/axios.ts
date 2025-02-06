@@ -84,9 +84,10 @@ export const endpoints = {
     root: '/api/faqs',
   },
   agreement: {
-    list: '/api/agreement',
+    root: '/api/agreement',
     info: '/api/agreement/info',
-    details: '/api/product/details',
-    delete: '/api/product/search',
+  },
+  userNavigationHistory: {
+    root: '/api/navigation-history',
   },
 };

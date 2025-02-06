@@ -22,6 +22,7 @@ import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/component
 import { CheckoutProvider } from 'src/sections/checkout/context';
 
 import { AuthProvider as JwtAuthProvider } from 'src/auth/context/jwt';
+import TrackNavigation from './track-navigation';
 
 // ----------------------------------------------------------------------
 
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html lang={lang ?? 'en'} suppressHydrationWarning>
       <body>
+        <TrackNavigation />
         <InitColorSchemeScript
           defaultMode={schemeConfig.defaultMode}
           modeStorageKey={schemeConfig.modeStorageKey}
