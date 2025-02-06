@@ -90,4 +90,13 @@ export const endpoints = {
   userNavigationHistory: {
     root: '/api/navigation-history',
   },
+  assistant: {
+    root: '/api/assistant',
+    apply: {
+      root: '/api/assistant/apply',
+    },
+  },
+  service: {
+    root: '/api/service',
+  },
 };
