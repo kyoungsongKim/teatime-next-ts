@@ -207,12 +207,9 @@ export function VacationFormDialog({
 
     const amount = vacationAmount(watchEventStartDate, watchEventEndDate);
     if (amount === -1) {
-      methods.setError('eventEndDate', {
-        type: 'error',
-        message: '휴가 기간이 잘못 설정되었습니다.',
-      });
+      methods.setValue('eventEndDate', dayjs(watchEventStartDate).hour(18).format());
     }
-    if (amount < 1) {
+    if (amount > 0 && amount < 1) {
       let addDays = 4;
       if (new Date(watchEventStartDate).getHours() < 12) {
         addDays = 5;
