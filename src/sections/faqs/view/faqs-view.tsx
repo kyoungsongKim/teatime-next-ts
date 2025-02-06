@@ -1,23 +1,27 @@
 'use client';
 
+import type { FaqsItem } from 'src/types/faqs';
+
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import { getUserInfo } from 'src/utils/user-info';
+
+import { getFaqs } from 'src/actions/faq-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 
+import { Iconify } from 'src/components/iconify';
+
+import { useAuthContext } from 'src/auth/hooks';
+
 import { FaqsList } from '../faqs-list';
-import { getFaqs } from '../../../actions/faq-ssr';
-import { useAuthContext } from '../../../auth/hooks';
-import { Iconify } from '../../../components/iconify';
-import { getUserInfo } from '../../../utils/user-info';
-import { useBoolean } from '../../../hooks/use-boolean';
 import { FaqsEditDialog } from '../dialog/faqs-edit-dialog';
 import { FaqsCreateDialog } from '../dialog/faqs-create-dialog';
-
-import type { FaqsItem } from '../../../types/faqs';
 
 // ----------------------------------------------------------------------
 
