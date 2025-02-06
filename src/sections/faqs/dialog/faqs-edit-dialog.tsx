@@ -136,17 +136,18 @@ export function FaqsEditDialog({ open, faqs, onClose, onFaqsUpdate }: Props) {
               <Stack spacing={1}>
                 <Typography variant="subtitle2">FAQ ID</Typography>
                 <Field.Autocomplete
+                  autoComplete={false}
                   options={faqs || []}
                   name="receiver"
                   size="small"
-                  value={selectedFaq} // null 허용
-                  isOptionEqualToValue={(option: FaqsItem, value: FaqsItem) =>
-                    option.id === value.id
+                  value={selectedFaq || null} // undefined 방지
+                  isOptionEqualToValue={(option: FaqsItem, value: FaqsItem | null) =>
+                    option.id === value?.id
                   }
                   getOptionLabel={(option: FaqsItem) => option?.name || ''}
                   renderOption={(props, option) => (
-                    <li {...props} key={option.id}>
-                      {option.id} ({option.name})
+                    <li {...props} key={option.id || 'default-key'}>
+                      {option.id || 'N/A'} ({option.name || 'No Name'})
                     </li>
                   )}
                 />
