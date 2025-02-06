@@ -22,6 +22,7 @@ import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/component
 import { CheckoutProvider } from 'src/sections/checkout/context';
 
 import { AuthProvider as JwtAuthProvider } from 'src/auth/context/jwt';
+
 import TrackNavigation from './track-navigation';
 
 // ----------------------------------------------------------------------
