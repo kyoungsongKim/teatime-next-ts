@@ -32,7 +32,7 @@ export function FaqsView() {
 
   // 사용자 정보 불러오기
   const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { auth } = useMemo(() => getUserInfo(user), [user]);
 
   // create faq dialog open/close
   const createDialog = useBoolean();
