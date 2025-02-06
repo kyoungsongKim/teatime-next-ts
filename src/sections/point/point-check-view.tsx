@@ -48,7 +48,7 @@ const TABLE_HEAD = [
 export function PointCheckView() {
   // 사용자 정보 불러오기
   const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { id } = useMemo(() => getUserInfo(user), [user]);
 
   const [userList, setUserList] = useState<CUserItem[]>([]);
 
