@@ -208,7 +208,12 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
             />
           </>
         }
-        action={<></>}
+        action={
+          <Button type={'button'} variant={'soft'} color={'primary'} onClick={confirm.onFalse}>
+            확인
+          </Button>
+        }
+        showCancel={false}
       />
     </>
   );
