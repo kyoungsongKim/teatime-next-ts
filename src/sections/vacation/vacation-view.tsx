@@ -3,6 +3,7 @@
 import type { CUserItem } from 'src/types/user';
 import type { VacationItem, VacationHistoryItem } from 'src/types/vacation';
 
+import { toast } from 'sonner';
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
@@ -14,7 +15,6 @@ import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
 import Grid from '@mui/material/Unstable_Grid2';
 import TableBody from '@mui/material/TableBody';
-import { useTheme } from '@mui/material/styles';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
@@ -25,6 +25,7 @@ import { getUserInfo } from 'src/utils/user-info';
 import { makeDateString } from 'src/utils/format-date';
 
 import { getUserList } from 'src/actions/user-ssr';
+import { deleteVacation } from 'src/actions/vacation';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getVacationAll, getVacationList } from 'src/actions/vacation-ssr';
 
@@ -44,8 +45,6 @@ import { VacationSummaryWidget } from 'src/sections/vacation/vacation-summary-wi
 import { VacationFormDialog } from 'src/sections/vacation/dialog/vacation-form-dialog';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { deleteVacation } from 'src/actions/vacation';
-import { toast } from 'sonner';
 
 const VACATION_TABLE_HEAD = [
   { id: 'eventStartDate', label: '기간' },
@@ -64,7 +63,6 @@ const USER_VACATION_TABLE_HEAD = [
 ];
 
 export function VacationView() {
-  const theme = useTheme();
   const { user } = useAuthContext();
   const { id, auth } = useMemo(() => getUserInfo(user), [user]);
 
@@ -181,7 +179,7 @@ export function VacationView() {
       getUserList().then((r) => setUserList(r.data));
       getVacationListAll();
     }
-  }, [userName, auth, getVacationListByWorkedYear]);
+  }, [userName, auth, getVacationListByWorkedYear, getVacationListAll]);
 
   return (
     <>
