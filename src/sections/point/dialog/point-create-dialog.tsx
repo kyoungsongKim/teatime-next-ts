@@ -209,7 +209,7 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
           </>
         }
         action={
-          <Button type={'button'} variant={'soft'} color={'primary'} onClick={confirm.onFalse}>
+          <Button type="button" variant="soft" color="primary" onClick={confirm.onFalse}>
             확인
           </Button>
         }
