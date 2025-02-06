@@ -8,11 +8,11 @@ import { EmptyContent } from '../empty-content';
 // ----------------------------------------------------------------------
 
 export type TableNoDataProps = {
-  notFound: boolean;
+  notFound?: boolean;
   sx?: SxProps<Theme>;
 };
 
-export function TableNoData({ notFound, sx }: TableNoDataProps) {
+export function TableNoData({ notFound = true, sx }: TableNoDataProps) {
   return (
     <TableRow>
       {notFound ? (
