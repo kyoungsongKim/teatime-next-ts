@@ -8,8 +8,6 @@ import Button from '@mui/material/Button';
 
 import { useRouter } from 'src/routes/hooks';
 
-import { CONFIG } from 'src/config-global';
-
 import { toast } from 'src/components/snackbar';
 
 import { useAuthContext } from 'src/auth/hooks';
@@ -57,14 +55,7 @@ export function SignOutButton({ onClose, ...other }: Props) {
   }, [onClose, router, signOutAuth0]);
 
   return (
-    <Button
-      fullWidth
-      variant="soft"
-      size="large"
-      color="error"
-      onClick={handleLogout}
-      {...other}
-    >
+    <Button fullWidth variant="soft" size="large" color="error" onClick={handleLogout} {...other}>
       Logout
     </Button>
   );
