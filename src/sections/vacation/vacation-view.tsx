@@ -214,7 +214,7 @@ export function VacationView() {
                   variant="outlined"
                 >
                   {workedYearList.map((year, index) => (
-                    <MenuItem key={year} value={year}>
+                    <MenuItem key={index} value={year}>
                       {year}년차 ({getYearsOfServiceRange(year)})
                     </MenuItem>
                   ))}
@@ -344,7 +344,7 @@ export function VacationView() {
                               <TableCell>
                                 <Link
                                   sx={{ cursor: 'pointer' }}
-                                  onClick={(e) => setUserName(row.userId)}
+                                  onClick={() => setUserName(row.userId)}
                                 >
                                   {row.userId}
                                 </Link>
