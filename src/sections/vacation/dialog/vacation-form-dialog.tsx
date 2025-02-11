@@ -142,28 +142,36 @@ export function VacationFormDialog({
     // item이 존재하면 수정, 아니면 생성
     if (item) {
       // 수정
-      await updateVacation(item.id, params).then((r) => {
-        if (r.status === 200) {
-          toast.success('수정되었습니다.');
-          reset(defaultValues);
-          onUpdate();
-          onClose();
-        } else {
+      await updateVacation(item.id, params)
+        .then((r) => {
+          if (r.status === 200) {
+            toast.success('수정되었습니다.');
+            reset(defaultValues);
+            onUpdate();
+            onClose();
+          } else {
+            toast.error('수정에 실패했습니다.');
+          }
+        })
+        .catch(() => {
           toast.error('수정에 실패했습니다.');
-        }
-      });
+        });
     } else {
       // 생성
-      await saveVacation(params).then((r) => {
-        if (r.status === 200) {
-          toast.success('저장되었습니다.');
-          reset(defaultValues);
-          onUpdate();
-          onClose();
-        } else {
+      await saveVacation(params)
+        .then((r) => {
+          if (r.status === 200) {
+            toast.success('저장되었습니다.');
+            reset(defaultValues);
+            onUpdate();
+            onClose();
+          } else {
+            toast.error('저장에 실패했습니다.');
+          }
+        })
+        .catch(() => {
           toast.error('저장에 실패했습니다.');
-        }
-      });
+        });
     }
   });
 
