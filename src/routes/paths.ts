@@ -14,7 +14,7 @@ const ROOTS = {
   DASHBOARD: '/dashboard',
   CALENDAR: '/calendar',
   AGREEMENT: '/agreement',
-  ASSISTANT: '/assistant',
+  ASSISTANCE: '/assistance',
   VACATION: '/vacation',
   DAILY_REPORT: '/dailyReport',
   POINT: '/point',
@@ -63,7 +63,7 @@ export const paths = {
     dashboard: '/',
     calendar: ROOTS.CALENDAR,
     agreement: ROOTS.AGREEMENT,
-    assistant: ROOTS.ASSISTANT,
+    assistance: ROOTS.ASSISTANCE,
     vacation: ROOTS.VACATION,
     dailyReport: ROOTS.DAILY_REPORT,
     point: {
