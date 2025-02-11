@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type { ApplyItem } from 'src/types/assistance';
 import type { SelectChangeEvent } from '@mui/material/Select';
 

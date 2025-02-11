@@ -57,6 +57,7 @@ export function AssistanceSuggestionDialog({ onClose, ...other }: Props) {
       })
       .catch((e) => {
         toast.error('비서 서비스 제안 등록에 실패했습니다.');
+        console.error(e);
       });
   });
 

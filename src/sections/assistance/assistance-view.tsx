@@ -18,12 +18,12 @@ import { Label } from 'src/components/label';
 
 import { AppliedServiceTable } from 'src/sections/assistance/applied-service-table';
 import { AssistanceServiceList } from 'src/sections/assistance/assistance-service-list';
+import { AssistanceFormDialog } from 'src/sections/assistance/dialog/assistance-form-dialog';
 import { AppliedServiceAdminTable } from 'src/sections/assistance/applied-service-admin-table';
 import { AssistanceReviewDialog } from 'src/sections/assistance/dialog/assistance-review-dialog';
+import { AssistanceSuggestionDialog } from 'src/sections/assistance/dialog/assistance-suggestion-dialog';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { AssistanceFormDialog } from 'src/sections/assistance/dialog/assistance-form-dialog';
-import { AssistanceSuggestionDialog } from 'src/sections/assistance/dialog/assistance-suggestion-dialog';
 
 export function AssistanceView() {
   const { user } = useAuthContext();
