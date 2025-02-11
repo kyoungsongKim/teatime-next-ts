@@ -1,20 +1,24 @@
-import Dialog, { DialogProps } from '@mui/material/Dialog';
+import type { DialogProps } from '@mui/material/Dialog';
 
 import * as zod from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import DialogTitle from '@mui/material/DialogTitle';
-import IconButton from '@mui/material/IconButton';
-import { Iconify } from 'src/components/iconify';
-import Stack from '@mui/material/Stack';
-import { Scrollbar } from 'src/components/scrollbar';
-import DialogContent from '@mui/material/DialogContent';
-import Typography from '@mui/material/Typography';
-import { Field, Form } from 'src/components/hook-form';
-import DialogActions from '@mui/material/DialogActions';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { postAssistanceSuggestion } from 'src/actions/assistance';
 import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import Stack from '@mui/material/Stack';
+import Dialog from '@mui/material/Dialog';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+
+import { postAssistanceSuggestion } from 'src/actions/assistance';
+
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
+import { Form, Field } from 'src/components/hook-form';
 
 type Props = DialogProps & {
   onClose: () => void;
@@ -70,7 +74,7 @@ export function AssistanceSuggestionDialog({ onClose, ...other }: Props) {
         <Scrollbar sx={{ maxHeight: 400 }}>
           <DialogContent>
             <Stack spacing={1}>
-              <Typography variant={'body2'}>건의하고 싶은 의견을 자유롭게 작성해주세요.</Typography>
+              <Typography variant="body2">건의하고 싶은 의견을 자유롭게 작성해주세요.</Typography>
               <Field.Text name="content" multiline rows={8} />
             </Stack>
           </DialogContent>

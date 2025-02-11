@@ -81,6 +81,7 @@ export function AssistanceReviewDialog({ id, auth, item, onClose, onUpdate, ...o
       })
       .catch((e) => {
         toast.error('리뷰 등록에 싫패했습니다.');
+        console.error(e);
       });
   });
 

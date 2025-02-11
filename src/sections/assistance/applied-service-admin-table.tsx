@@ -5,6 +5,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import { toast } from 'sonner';
 import { useMemo, useState } from 'react';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
@@ -20,7 +21,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 
 import { makeDateString } from 'src/utils/format-date';
 
-import { patchAssistanceReceive, patchAssistanceStatus } from 'src/actions/assistance';
+import { patchAssistanceStatus, patchAssistanceReceive } from 'src/actions/assistance';
 
 import { Scrollbar } from 'src/components/scrollbar';
 import {
@@ -30,7 +31,6 @@ import {
   TableHeadCustom,
   TablePaginationCustom,
 } from 'src/components/table';
-import Box from '@mui/material/Box';
 
 type Props = {
   item: ApplyItem[];
@@ -90,7 +90,7 @@ export function AppliedServiceAdminTable({ item, onUpdate, detailOpen, onReviewO
     return applyFilter(filteredByStatus, getComparator(table.order, table.orderBy));
   }, [item, statusFilter, table.order, table.orderBy]);
 
-  const handleStatusChange = (event: SelectChangeEvent<string[]>, child: ReactNode) => {
+  const handleStatusChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value as string[];
     setStatusFilter(value);
   };

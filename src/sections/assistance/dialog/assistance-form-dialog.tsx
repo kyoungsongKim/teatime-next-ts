@@ -23,13 +23,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 
 import { download } from 'src/utils/file';
+import { fData } from 'src/utils/format-number';
 
 import { postAssistanceApply } from 'src/actions/assistance';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
-import { fData } from 'src/utils/format-number';
 
 type Props = DialogProps & {
   id: string;
@@ -101,6 +101,7 @@ export function AssistanceFormDialog({
       })
       .catch((e) => {
         toast.error('서비스 신청에 실패했습니다.');
+        console.error(e);
       });
   });
 
