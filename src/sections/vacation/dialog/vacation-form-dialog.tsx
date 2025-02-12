@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 import * as zod from 'zod';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
-import { useMemo, useState, useEffect, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
@@ -22,14 +22,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { getNextBusinessDate, makeDateString } from 'src/utils/format-date';
+import { makeDateString, getNextBusinessDate } from 'src/utils/format-date';
 
 import { saveVacation, updateVacation } from 'src/actions/vacation';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { Form, Field } from 'src/components/hook-form';
-import { fNumber } from 'src/utils/format-number';
 
 const VacationHistorySchema = (auth: string) =>
   zod
@@ -168,15 +167,6 @@ export function VacationFormDialog({
     }
   });
 
-  const countAmount = useCallback(
-    (value: number, init = false) => {
-      methods.setValue('amount', init ? value : watch('amount') + value);
-      updateDates();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [methods, watch]
-  );
-
   const timeSelectOption = useMemo(() => {
     let result = [];
     if (selectedOption === '연차') {
@@ -198,7 +188,7 @@ export function VacationFormDialog({
     return result;
   }, [selectedOption, selectedTime]);
 
-  const handleSelection = (event: React.MouseEvent<HTMLElement>, newValue: string) => {
+  const handleSelection = (_event: React.MouseEvent<HTMLElement>, newValue: string) => {
     // 연차 선택 시 개수 조절 가능하도록 기본값 1 설정
     const targetValue = newValue === null ? selectedOption : newValue;
     if (selectedOption !== targetValue && targetValue === '연차') {
@@ -240,6 +230,22 @@ export function VacationFormDialog({
       );
     }
   }, [methods, selectedTime, selectedOption]);
+
+  const countAmount = useCallback(
+    (value: number, init = false) => {
+      const currentAmount = watch('amount');
+      const newAmount = init ? value : currentAmount + value;
+
+      // 남은 일수(left)를 초과하지 않도록 제한
+      if (newAmount > left) {
+        return;
+      }
+
+      methods.setValue('amount', newAmount);
+      updateDates();
+    },
+    [watch, left, methods, updateDates]
+  );
 
   const setInitData = useCallback((start: string, end: string) => {
     const startTime = dayjs(start).hour();
@@ -370,7 +376,7 @@ export function VacationFormDialog({
                   fullWidth
                   value={selectedTime}
                   disabled={auth !== 'ADMIN' && !!item}
-                  onChange={(e, newValue) => {
+                  onChange={(_e, newValue) => {
                     if (newValue !== null) {
                       setSelectedTime(newValue);
                     }
