@@ -8,6 +8,8 @@
 // type 5: 01월 16일
 // type 6: 2025-01-16T12:30:00
 // type 7: 2025-01-16 12:30:00
+import dayjs, { Dayjs } from 'dayjs';
+
 export const makeDateString = (date: Date, type: number | undefined = 1) => {
   switch (type) {
     case 1:
@@ -40,4 +42,20 @@ export const calcDateDiff = (date1: Date, date2: Date) => {
   const msPerDay = 1000 * 60 * 60 * 24;
 
   return Math.round(diff / msPerDay);
+};
+
+// 주말(토, 일) 제외하고 amount 만큼 날짜를 증가시키는 함수
+export const getNextBusinessDate = (startDate: string | Dayjs, amount: number): string => {
+  let date = dayjs(startDate); // 시작 날짜
+  let addedDays = 0;
+
+  while (addedDays < amount - 1) {
+    date = date.add(1, 'day'); // 하루 증가
+    if (date.day() !== 0 && date.day() !== 6) {
+      // 0 = 일요일, 6 = 토요일
+      addedDays += 1;
+    }
+  }
+
+  return date.format('YYYY-MM-DD HH:mm');
 };
