@@ -8,7 +8,9 @@
 // type 5: 01월 16일
 // type 6: 2025-01-16T12:30:00
 // type 7: 2025-01-16 12:30:00
-import dayjs, { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
+
+import dayjs from 'dayjs';
 
 export const makeDateString = (date: Date, type: number | undefined = 1) => {
   switch (type) {
