@@ -46,7 +46,7 @@ export function RHFUploadAvatar({ name, ...other }: Props) {
 
 // ----------------------------------------------------------------------
 
-export function RHFUploadBox({ name, multiple, ...other }: Props) {
+export function RHFUploadBox({ name, multiple, helperText, ...other }: Props) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -54,12 +54,25 @@ export function RHFUploadBox({ name, multiple, ...other }: Props) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
+        const uploadProps = {
+          multiple,
+          error: !!error,
+          helperText: error?.message ?? helperText,
+        };
         const onDrop = (acceptedFiles: File[]) => {
           const value = multiple ? [...field.value, ...acceptedFiles] : acceptedFiles[0];
 
           setValue(name, value, { shouldValidate: true });
         };
-        return <UploadBox value={field.value} error={!!error} onDrop={onDrop} {...other} />;
+        return (
+          <UploadBox
+            {...uploadProps}
+            value={field.value}
+            error={!!error}
+            onDrop={onDrop}
+            {...other}
+          />
+        );
       }}
     />
   );
