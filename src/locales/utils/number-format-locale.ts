@@ -12,3 +12,7 @@ export function formatNumberLocale() {
 
   return { code: currentLang?.numberFormat.code, currency: currentLang?.numberFormat.currency };
 }
+
+export function formatNumber(value: number) {
+  return `${value.toLocaleString()}`;
+}
