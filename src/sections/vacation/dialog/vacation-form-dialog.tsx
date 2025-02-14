@@ -6,7 +6,7 @@ import * as zod from 'zod';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 
 import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
@@ -75,6 +75,12 @@ export function VacationFormDialog({
 }: Props) {
   const vacationType = ['연차', '공가', '경조', '출산', '특별', '보상', '기타'];
 
+  const scrollBarRef = useRef<HTMLDivElement | null>(null);
+  const fieldRefs = {
+    reason: useRef<HTMLDivElement | null>(null),
+    adminMemo: useRef<HTMLDivElement | null>(null),
+  };
+
   const [selectedOption, setSelectedOption] = useState<string>('연차');
   const [selectedTime, setSelectedTime] = useState<string>('09:00');
 
@@ -119,53 +125,75 @@ export function VacationFormDialog({
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
-    const params: VacationHistoryItem = {
-      ...data,
-      userId: user,
-      eventStartDate: makeDateString(new Date(data.eventStartDate), 7),
-      eventEndDate: makeDateString(new Date(data.eventEndDate), 7),
-    };
+  const onSubmit = handleSubmit(
+    async (data) => {
+      const params: VacationHistoryItem = {
+        ...data,
+        userId: user,
+        eventStartDate: makeDateString(new Date(data.eventStartDate), 7),
+        eventEndDate: makeDateString(new Date(data.eventEndDate), 7),
+      };
 
-    // item이 존재하면 수정, 아니면 생성
-    if (item) {
-      // 수정
-      await updateVacation(item.id, params)
-        .then((r) => {
-          if (r.status === 200) {
-            toast.success('수정되었습니다.');
-            reset(defaultValues);
-            setSelectedTime('09:00');
-            setSelectedOption('연차');
-            onUpdate();
-            onClose();
-          } else {
+      // item이 존재하면 수정, 아니면 생성
+      if (item) {
+        // 수정
+        await updateVacation(item.id, params)
+          .then((r) => {
+            if (r.status === 200) {
+              toast.success('수정되었습니다.');
+              reset(defaultValues);
+              setSelectedTime('09:00');
+              setSelectedOption('연차');
+              onUpdate();
+              onClose();
+            } else {
+              toast.error('수정에 실패했습니다.');
+            }
+          })
+          .catch(() => {
             toast.error('수정에 실패했습니다.');
-          }
-        })
-        .catch(() => {
-          toast.error('수정에 실패했습니다.');
-        });
-    } else {
-      // 생성
-      await saveVacation(params)
-        .then((r) => {
-          if (r.status === 200) {
-            toast.success('저장되었습니다.');
-            reset(defaultValues);
-            setSelectedTime('09:00');
-            setSelectedOption('연차');
-            onUpdate();
-            onClose();
-          } else {
+          });
+      } else {
+        // 생성
+        await saveVacation(params)
+          .then((r) => {
+            if (r.status === 200) {
+              toast.success('저장되었습니다.');
+              reset(defaultValues);
+              setSelectedTime('09:00');
+              setSelectedOption('연차');
+              onUpdate();
+              onClose();
+            } else {
+              toast.error('저장에 실패했습니다.');
+            }
+          })
+          .catch(() => {
             toast.error('저장에 실패했습니다.');
-          }
-        })
-        .catch(() => {
-          toast.error('저장에 실패했습니다.');
-        });
+          });
+      }
+    },
+    (errors) => {
+      const fieldKeys = Object.keys(fieldRefs) as Array<keyof typeof fieldRefs>;
+      const firstErrorKey = Object.keys(errors)[0] as keyof typeof errors;
+
+      if (fieldKeys.includes(firstErrorKey as keyof typeof fieldRefs)) {
+        const fieldKey = firstErrorKey as keyof typeof fieldRefs;
+        const fieldElement = fieldRefs[fieldKey].current;
+
+        if (fieldElement && scrollBarRef.current) {
+          const { top } = fieldElement.getBoundingClientRect();
+          const { top: scrollTop } = scrollBarRef.current.getBoundingClientRect();
+
+          // Scrollbar 내부 스크롤 이동
+          scrollBarRef.current.scrollTo({
+            top: scrollBarRef.current.scrollTop + (top - scrollTop) - 20, // 살짝 여유 간격 추가
+            behavior: 'smooth',
+          });
+        }
+      }
     }
-  });
+  );
 
   const timeSelectOption = useMemo(() => {
     let result = [];
@@ -292,7 +320,7 @@ export function VacationFormDialog({
         </Stack>
       </DialogTitle>
       <Form methods={methods} onSubmit={onSubmit}>
-        <Scrollbar sx={{ maxHeight: 400 }}>
+        <Scrollbar ref={scrollBarRef} sx={{ maxHeight: 400 }}>
           <DialogContent>
             <Stack spacing={1}>
               {/* 휴가 기간 */}
@@ -410,13 +438,17 @@ export function VacationFormDialog({
 
               {/* 휴가 사유 */}
               <Typography variant="subtitle2">사유</Typography>
-              <Field.Text name="reason" disabled={auth !== 'ADMIN' && !!item} />
+              <Field.Text
+                inputRef={fieldRefs.reason}
+                name="reason"
+                disabled={auth !== 'ADMIN' && !!item}
+              />
 
               {/* 관리자만 노출 - 관리자 메모 */}
               {auth === 'ADMIN' && (
                 <>
                   <Typography variant="subtitle2">관리자 메모</Typography>
-                  <Field.Text name="adminMemo" />
+                  <Field.Text inputRef={fieldRefs.adminMemo} name="adminMemo" />
                 </>
               )}
             </Stack>
