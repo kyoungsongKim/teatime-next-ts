@@ -60,8 +60,9 @@ export const endpoints = {
   statistics: {
     sales: '/api/statistics/sales',
   },
-  users: {
+  user: {
     root: '/api/user',
+    list: '/api/users',
   },
   monthlySales: {
     current: '/api/monthly-sales/current',
