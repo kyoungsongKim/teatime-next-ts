@@ -97,9 +97,11 @@ export function VacationView() {
 
           setWorkedYearList(selectedUserWorkedYearList);
           setVacationData(r.data);
+          vacationTable.setPage(0);
         }
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [userName]
   );
 
@@ -386,6 +388,7 @@ export function VacationView() {
           getVacationListByWorkedYear(workedYear);
           getVacationListAll();
         }}
+        history={vacationData?.histories ?? []}
         item={historyItem}
         user={userName}
         auth={auth}
