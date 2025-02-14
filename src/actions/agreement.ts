@@ -59,14 +59,20 @@ export function useGetUserAgreement(userId: string) {
     swrOptions
   );
 
+  const isExistGuarantee = useMemo(
+    () => data?.some((item) => item.type === 'GUARANTEE') ?? false,
+    [data]
+  );
+
   const memoizedValue = useMemo(
     () => ({
       agreementInfo: data ?? [],
       agreementInfoLoading: isLoading,
       agreementInfoError: error,
       agreementInfoValidating: isValidating,
+      isExistGuarantee,
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, isExistGuarantee]
   );
 
   return memoizedValue;

@@ -104,11 +104,8 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
       document.body.appendChild(textarea);
       textarea.select();
       try {
-        const successful = document.execCommand('copy'); // 텍스트 복사
-        console.log('Fallback copy command result:', successful);
         toast.success('Copied!');
       } catch (fallbackError) {
-        console.error('Fallback copy method failed:', fallbackError);
         toast.error('복사 실패!');
       } finally {
         document.body.removeChild(textarea); // textarea 제거

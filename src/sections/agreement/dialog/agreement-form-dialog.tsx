@@ -34,6 +34,7 @@ export const AGREEMENT_OPTIONS = [
 ];
 
 type Props = DialogProps & {
+  isExistGuarantee: boolean;
   realName: string;
   userId: string;
   onUpdate: () => void;
@@ -53,7 +54,14 @@ const FormSchema = zod
     path: ['endDate'],
   });
 
-export function AgreementFormDialog({ realName, userId, onUpdate, onClose, ...other }: Props) {
+export function AgreementFormDialog({
+  isExistGuarantee,
+  realName,
+  userId,
+  onUpdate,
+  onClose,
+  ...other
+}: Props) {
   const defaultValues = {
     type: 'GUARANTEE',
     startDate: '',
@@ -84,7 +92,6 @@ export function AgreementFormDialog({ realName, userId, onUpdate, onClose, ...ot
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data.file);
     const formData = new FormData();
     const startDate = data.startDate.split('T')[0];
     const endDate = data.endDate.split('T')[0];
@@ -145,7 +152,9 @@ export function AgreementFormDialog({ realName, userId, onUpdate, onClose, ...ot
               InputLabelProps={{ shrink: true }}
               onChange={(event) => setValue('type', event.target.value)}
             >
-              {AGREEMENT_OPTIONS.map((types) => (
+              {AGREEMENT_OPTIONS.filter(
+                (types) => !(isExistGuarantee && types.value === 'GUARANTEE')
+              ).map((types) => (
                 <option key={types.label} value={types.value}>
                   {types.label}
                 </option>
