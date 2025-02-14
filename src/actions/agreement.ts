@@ -38,6 +38,7 @@ export function useGetUserAgreementData(userId: string, role: string) {
       agreementInfosValidating: isValidating,
       agreementInfosEmpty: !isLoading && data?.length === 0,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [normalizedData, error, isLoading, isValidating]
   );
 
