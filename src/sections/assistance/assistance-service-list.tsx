@@ -87,9 +87,11 @@ export function AssistanceServiceList({ onOpenForm, onSuggestionOpen }: Props) {
           {groupList.length !== 0 && (
             <>
               <Tabs value={selectedTab} onChange={handleChange} color="primary">
-                {groupList.map((group, idx) => (
-                  <Tab key={idx} label={group.name} />
-                ))}
+                {groupList
+                  .sort((a, b) => a.order - b.order)
+                  .map((group, idx) => (
+                    <Tab key={idx} label={group.name} />
+                  ))}
               </Tabs>
               {/* 선택된 탭에 따른 서비스 리스트 */}
               <Box>
