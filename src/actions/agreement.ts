@@ -16,8 +16,8 @@ const swrOptions = {
 
 type AgreementInfosData = IAgreementItem[];
 
-export function useGetUserAgreementInfos() {
-  const url = endpoints.agreement.info;
+export function useGetUserAgreementData(userId: string, role: string) {
+  const url = role === 'ADMIN' ? endpoints.agreement.info : `${endpoints.agreement.info}/${userId}`;
 
   const { data, isLoading, error, isValidating } = useSWR<AgreementInfosData>(
     url,
@@ -25,15 +25,20 @@ export function useGetUserAgreementInfos() {
     swrOptions
   );
 
+  const normalizedData = useMemo(() => {
+    if (!data) return [];
+    return Array.isArray(data) ? data : [data];
+  }, [data]);
+
   const memoizedValue = useMemo(
     () => ({
-      agreementInfos: data ?? [],
+      agreementInfos: normalizedData,
       agreementInfosLoading: isLoading,
       agreementInfosError: error,
       agreementInfosValidating: isValidating,
       agreementInfosEmpty: !isLoading && data?.length === 0,
     }),
-    [data, error, isLoading, isValidating]
+    [normalizedData, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -43,7 +48,7 @@ export function useGetUserAgreementInfos() {
 
 type AgreementInfoData = IAgreementDetailItem[];
 
-export function useGetUserAgreementInfo(userId: string) {
+export function useGetUserAgreement(userId: string) {
   const url = `${endpoints.agreement.root}/${userId}`;
 
   const { data, isLoading, error, isValidating } = useSWR<AgreementInfoData>(

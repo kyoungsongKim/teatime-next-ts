@@ -2,7 +2,7 @@
 
 import type { IAgreementItem, IAgreementTableFilters } from 'src/types/agreement';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -42,9 +42,10 @@ import {
 import { AgreementTableRow } from '../agreement-table-row';
 import { AgreementTableToolbar } from '../agreement-table-toolbar';
 import { AgreementTableFiltersResult } from '../agreement-table-filters-result';
-import { useGetUserAgreementInfos } from '../../../actions/agreement';
-import { deleteAgreement } from '../../../actions/agreement-ssr';
+import { useGetUserAgreementData } from '../../../actions/agreement';
 import { deleteUserInfo } from '../../../actions/user-ssr';
+import { getUserInfo } from '../../../utils/user-info';
+import { useAuthContext } from '../../../auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -66,15 +67,20 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export function AgreementListView() {
-  const table = useTable({ defaultOrderBy: 'orderNumber', defaultRowsPerPage: 10 });
+  const { user } = useAuthContext();
+  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+
+  const table = useTable({ defaultRowsPerPage: 10 });
 
   const router = useRouter();
-
-  const { agreementInfos } = useGetUserAgreementInfos();
 
   const confirm = useBoolean();
 
   const [tableData, setTableData] = useState<IAgreementItem[]>([]);
+
+  const [reloadTrigger, setReloadTrigger] = useState(false);
+
+  const { agreementInfos, agreementInfosLoading } = useGetUserAgreementData(id, auth);
 
   const filters = useSetState<IAgreementTableFilters>({
     realName: '',
@@ -96,10 +102,10 @@ export function AgreementListView() {
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   useEffect(() => {
-    if (agreementInfos.length) {
+    if (!agreementInfosLoading && agreementInfos.length > 0) {
       setTableData(agreementInfos);
     }
-  }, [agreementInfos]);
+  }, [agreementInfos, agreementInfosLoading, reloadTrigger]);
 
   const handleDeleteRow = useCallback(
     (userId: string) => {
@@ -133,9 +139,13 @@ export function AgreementListView() {
     });
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
+  const handleUpdateRow = useCallback(() => {
+    setReloadTrigger((prev) => !prev);
+  }, []);
+
   const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(paths.dashboard.order.details(id));
+    (row_id: string) => {
+      router.push(paths.dashboard.order.details(row_id));
     },
     [router]
   );
@@ -216,11 +226,13 @@ export function AgreementListView() {
                     )
                     .map((row) => (
                       <AgreementTableRow
+                        auth={auth}
                         key={row.id}
                         row={row}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.userId)}
+                        onUpdateRow={() => handleUpdateRow()}
                         onViewRow={() => handleViewRow(row.id)}
                       />
                     ))}

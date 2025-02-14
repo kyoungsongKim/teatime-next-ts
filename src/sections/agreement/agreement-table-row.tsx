@@ -28,7 +28,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from 'lodash';
 import { Label } from '../../components/label';
-import { useGetUserAgreementInfo } from '../../actions/agreement';
+import { useGetUserAgreement } from '../../actions/agreement';
 import { toast } from '../../components/snackbar';
 import { deleteAgreement } from '../../actions/agreement-ssr';
 import { AgreementFormDialog } from './dialog/agreement-form-dialog';
@@ -37,11 +37,13 @@ import { download } from '../../utils/file';
 // ----------------------------------------------------------------------
 
 type Props = {
+  auth: string;
   row: IAgreementItem;
   selected: boolean;
   onViewRow: () => void;
   onSelectRow: () => void;
   onDeleteRow: () => void;
+  onUpdateRow: () => void;
 };
 
 type RenderCellAgreementCountProps = {
@@ -150,7 +152,15 @@ export function RenderCellAmount({ row }: RenderCellAgreementCountProps) {
   );
 }
 
-export function AgreementTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }: Props) {
+export function AgreementTableRow({
+  auth,
+  row,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+  onUpdateRow,
+}: Props) {
   const agreementFormDialog = useBoolean();
   const deleteConfirm = useBoolean();
   const detailDeleteConfirm = useBoolean();
@@ -159,31 +169,40 @@ export function AgreementTableRow({ row, selected, onViewRow, onSelectRow, onDel
 
   const [selectedDetailId, setSelectedDetailId] = useState<string>('');
 
-  const { agreementInfo, agreementInfoLoading, agreementInfoValidating } = useGetUserAgreementInfo(
-    row.userId
-  );
+  const { agreementInfo, agreementInfoLoading } = useGetUserAgreement(row.userId);
 
   const [detailData, setDetailData] = useState<IAgreementDetailItem[]>(agreementInfo);
+
+  useEffect(() => {
+    if (auth !== 'ADMIN') {
+      collapse.onTrue();
+    }
+  }, [auth, collapse]);
 
   useEffect(() => {
     setDetailData((prev) => (_.isEqual(prev, agreementInfo) ? prev : agreementInfo));
   }, [agreementInfo]);
 
   const handleUpdateAgreementInfo = () => {
-    setDetailData([]);
+    onUpdateRow();
   };
 
-  const handleDeleteDetailRow = useCallback((id: string) => {
-    deleteAgreement(id)
-      .then((r) => {
-        setDetailData((prev) => prev.filter((detailRow) => detailRow.id !== id));
+  const handleDeleteDetailRow = useCallback(
+    (id: string) => {
+      deleteAgreement(id)
+        .then((r) => {
+          setDetailData((prev) => prev.filter((detailRow) => detailRow.id !== id));
 
-        toast.success('삭제에 성공 했습니다.');
-      })
-      .catch((e) => {
-        toast.error('삭제에 실패 했습니다.');
-      });
-  }, []);
+          toast.success('삭제에 성공 했습니다.');
+
+          onUpdateRow();
+        })
+        .catch((e) => {
+          toast.error('삭제에 실패 했습니다.');
+        });
+    },
+    [onUpdateRow]
+  );
 
   const handleToggleCollapse = () => {
     collapse.onToggle();
@@ -266,20 +285,22 @@ export function AgreementTableRow({ row, selected, onViewRow, onSelectRow, onDel
       <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>
         <RenderCellAmount row={row} />
       </TableCell>
-
-      {/* 액션 버튼 */}
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <IconButton
-          color={collapse.value ? 'inherit' : 'default'}
-          onClick={handleToggleCollapse}
-          sx={{ ...(collapse.value && { bgcolor: 'action.hover' }) }}
-        >
-          <Iconify icon="eva:arrow-ios-downward-fill" />a
-        </IconButton>
+        {auth === 'ADMIN' && (
+          <>
+            <IconButton
+              color={collapse.value ? 'inherit' : 'default'}
+              onClick={handleToggleCollapse}
+              sx={{ ...(collapse.value && { bgcolor: 'action.hover' }) }}
+            >
+              <Iconify icon="eva:arrow-ios-downward-fill" />
+            </IconButton>
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon="eva:more-vertical-fill" />b
-        </IconButton>
+            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </>
+        )}
       </TableCell>
     </TableRow>
   );
@@ -394,7 +415,11 @@ export function AgreementTableRow({ row, selected, onViewRow, onSelectRow, onDel
                             }
                             secondary={
                               <Box
-                                sx={{ color: typeColor, fontWeight: 'bold', alignItems: 'left' }}
+                                sx={{
+                                  color: typeColor,
+                                  fontWeight: 'bold',
+                                  alignItems: 'left',
+                                }}
                               >
                                 {typeText}
                               </Box>
@@ -445,15 +470,17 @@ export function AgreementTableRow({ row, selected, onViewRow, onSelectRow, onDel
                           {formatNumber(item.amount)} CAS
                         </Box>
 
-                        <IconButton
-                          color="error"
-                          onClick={() => {
-                            setSelectedDetailId(item.id);
-                            detailDeleteConfirm.onTrue();
-                          }}
-                        >
-                          <Iconify icon="eva:trash-2-fill" />
-                        </IconButton>
+                        {auth === 'ADMIN' && (
+                          <IconButton
+                            color="error"
+                            onClick={() => {
+                              setSelectedDetailId(item.id);
+                              detailDeleteConfirm.onTrue();
+                            }}
+                          >
+                            <Iconify icon="eva:trash-2-fill" />
+                          </IconButton>
+                        )}
                       </Stack>
                     </Stack>
                   );
