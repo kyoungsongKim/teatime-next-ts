@@ -2,7 +2,8 @@ import useSWR from 'swr';
 import { useMemo } from 'react';
 
 import { fetcher, endpoints } from 'src/utils/axios';
-import { IAgreementDetailItem, IAgreementItem } from '../types/agreement';
+
+import type { IAgreementItem, IAgreementDetailItem } from '../types/agreement';
 
 // ----------------------------------------------------------------------
 
