@@ -387,6 +387,7 @@ export function VacationView() {
           getVacationListByWorkedYear(workedYear);
           getVacationListAll();
         }}
+        history={vacationData?.histories ?? []}
         item={historyItem}
         user={userName}
         auth={auth}

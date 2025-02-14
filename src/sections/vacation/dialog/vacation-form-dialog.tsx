@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-return */
 import type { VacationHistoryItem } from 'src/types/vacation';
 
 import 'dayjs/locale/ko';
@@ -5,8 +6,9 @@ import dayjs from 'dayjs';
 import * as zod from 'zod';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
+import isBetween from 'dayjs/plugin/isBetween';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
@@ -30,7 +32,13 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { Form, Field } from 'src/components/hook-form';
 
-const VacationHistorySchema = (auth: string) =>
+dayjs.extend(isBetween);
+
+const VacationHistorySchema = (
+  auth: string,
+  history: VacationHistoryItem[],
+  item?: VacationHistoryItem
+) =>
   zod
     .object({
       eventStartDate: zod.union([zod.string(), zod.number()]),
@@ -52,9 +60,61 @@ const VacationHistorySchema = (auth: string) =>
         message: '휴가 기간이 잘못 설정되었습니다.',
         path: ['eventEndDate'], // 오류를 표시할 필드
       }
+    )
+    .refine(
+      (data) => {
+        const startDate = dayjs(data.eventStartDate);
+        const endDate = dayjs(data.eventEndDate);
+
+        // 1. 시작일과 종료일이 동일하면 오류 발생
+        if (!startDate.isBefore(endDate)) {
+          return false;
+        }
+
+        // 2. 기존 휴가 기록과 겹치는지 확인
+        const isOverlapping = history.some(({ id, eventStartDate, eventEndDate }) => {
+          // 같은 휴가 기록은 제외
+          if (item?.id && item.id === id) return false;
+
+          const existingStart = dayjs(eventStartDate);
+          const existingEnd = dayjs(eventEndDate);
+
+          return (
+            // 2-1. 같은 날짜 내에서 시간이 겹치는 경우 (단, 연속된 경우는 제외)
+            (startDate.isSame(existingStart, 'day') &&
+              endDate.isSame(existingEnd, 'day') &&
+              (startDate.isBetween(existingStart, existingEnd, 'minute', '[)') || // 시작 시간이 기존 휴가 범위 내에 포함
+                endDate.isBetween(existingStart, existingEnd, 'minute', '(]') || // 종료 시간이 기존 휴가 범위 내에 포함
+                (startDate.isBefore(existingStart) && endDate.isAfter(existingEnd))) && // 신청한 휴가가 기존 휴가를 완전히 포함
+              !(
+                startDate.isSame(existingEnd, 'minute') || endDate.isSame(existingStart, 'minute')
+              )) || // 정확히 이어지는 경우 제외
+            // 2-2. 기존 휴가가 신청한 휴가를 포함하는 경우 (날짜와 시간 모두 포함)
+            (existingStart.isBetween(startDate, endDate, 'minute', '[)') &&
+              existingEnd.isBetween(startDate, endDate, 'minute', '(]')) ||
+            // 2-3. 앞쪽 일부 겹침 (단, 연속된 경우 제외)
+            (startDate.isBefore(existingStart) &&
+              endDate.isAfter(existingStart) &&
+              endDate.isBefore(existingEnd) &&
+              !endDate.isSame(existingStart, 'minute')) ||
+            // 2-4. 뒤쪽 일부 겹침 (단, 연속된 경우 제외)
+            (startDate.isAfter(existingStart) &&
+              startDate.isBefore(existingEnd) &&
+              endDate.isAfter(existingEnd) &&
+              !startDate.isSame(existingEnd, 'minute'))
+          );
+        });
+
+        return !isOverlapping;
+      },
+      {
+        message: '이미 신청된 휴가 기간과 겹칩니다.',
+        path: ['eventStartDate'], // 시작일에서 오류 표시
+      }
     );
 
 type Props = {
+  history: VacationHistoryItem[];
   item?: VacationHistoryItem;
   user: string;
   auth: string;
@@ -65,6 +125,7 @@ type Props = {
 };
 
 export function VacationFormDialog({
+  history,
   item = undefined,
   user,
   auth,
@@ -77,6 +138,9 @@ export function VacationFormDialog({
 
   const scrollBarRef = useRef<HTMLDivElement | null>(null);
   const fieldRefs = {
+    eventStartDate: useRef<HTMLInputElement | null>(null),
+    eventEndDate: useRef<HTMLInputElement | null>(null),
+    type: useRef<HTMLDivElement | null>(null),
     reason: useRef<HTMLDivElement | null>(null),
     adminMemo: useRef<HTMLDivElement | null>(null),
   };
@@ -114,7 +178,7 @@ export function VacationFormDialog({
 
   const methods = useForm({
     mode: 'all',
-    resolver: zodResolver(VacationHistorySchema(auth)),
+    resolver: zodResolver(VacationHistorySchema(auth, history, item)),
     defaultValues,
   });
 
@@ -175,23 +239,36 @@ export function VacationFormDialog({
     },
     (errors) => {
       const fieldKeys = Object.keys(fieldRefs) as Array<keyof typeof fieldRefs>;
-      const firstErrorKey = Object.keys(errors)[0] as keyof typeof errors;
+      console.log('firstErrorKey', errors, fieldKeys);
 
-      if (fieldKeys.includes(firstErrorKey as keyof typeof fieldRefs)) {
-        const fieldKey = firstErrorKey as keyof typeof fieldRefs;
-        const fieldElement = fieldRefs[fieldKey].current;
+      // fieldKey에 선언된 순서대로 순회하면서 첫 번째 에러가 발생한 필드로 스크롤 이동
+      // 첫 번째 에러 발생 필드로 스크롤 이동
+      fieldKeys.some((key) => {
+        if (errors[key]) {
+          const fieldElement = fieldRefs[key]?.current;
+          const scrollBar = scrollBarRef.current;
 
-        if (fieldElement && scrollBarRef.current) {
-          const { top } = fieldElement.getBoundingClientRect();
-          const { top: scrollTop } = scrollBarRef.current.getBoundingClientRect();
+          if (fieldElement && scrollBar) {
+            requestAnimationFrame(() => {
+              const fieldTop = fieldElement.getBoundingClientRect().top;
+              const scrollBarTop = scrollBar.getBoundingClientRect().top;
 
-          // Scrollbar 내부 스크롤 이동
-          scrollBarRef.current.scrollTo({
-            top: scrollBarRef.current.scrollTop + (top - scrollTop) - 20, // 살짝 여유 간격 추가
-            behavior: 'smooth',
-          });
+              // 스크롤바 내에서 상대 위치 계산 후 이동
+              scrollBar.scrollTo({
+                top: scrollBar.scrollTop + (fieldTop - scrollBarTop) - 20, // 여유 간격 추가
+                behavior: 'smooth',
+              });
+
+              // 첫 번째 에러에 대한 포커스 적용
+              fieldElement.focus();
+            });
+          }
+
+          return true; // 첫 번째 에러 필드에서 루프 종료
         }
-      }
+
+        return false;
+      });
     }
   );
 
@@ -333,14 +410,25 @@ export function VacationFormDialog({
               <Stack spacing={1} direction={{ xs: 'column', sm: 'column', md: 'row' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
                   <Field.DatePicker
+                    inputRef={fieldRefs.eventStartDate}
                     name="eventStartDate"
                     format="YYYY-MM-DD HH:mm"
                     disablePast={auth !== 'ADMIN'}
                     minDate={auth !== 'ADMIN' ? dayjs().add(1, 'day') : undefined} // 관리자만 당일 휴가 신청을 작성할 수 있음
                     disabled={auth !== 'ADMIN' && !!item}
+                    onChange={(newValue) => {
+                      if (!newValue) return;
+                      methods.setValue('eventStartDate', newValue.format());
+                      updateDates();
+                    }}
                   />
 
-                  <Field.DatePicker name="eventEndDate" format="YYYY-MM-DD HH:mm" disabled />
+                  <Field.DatePicker
+                    inputRef={fieldRefs.eventEndDate}
+                    name="eventEndDate"
+                    format="YYYY-MM-DD HH:mm"
+                    disabled
+                  />
                 </LocalizationProvider>
               </Stack>
               <Stack spacing={1} direction="row" alignItems="center">
