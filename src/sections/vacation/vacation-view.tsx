@@ -97,6 +97,7 @@ export function VacationView() {
 
           setWorkedYearList(selectedUserWorkedYearList);
           setVacationData(r.data);
+          vacationTable.setPage(0);
         }
       });
     },
