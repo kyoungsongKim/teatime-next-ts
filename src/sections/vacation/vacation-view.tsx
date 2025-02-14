@@ -101,6 +101,7 @@ export function VacationView() {
         }
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [userName]
   );
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-return */
 import type { VacationHistoryItem } from 'src/types/vacation';
 
 import 'dayjs/locale/ko';
@@ -239,7 +238,6 @@ export function VacationFormDialog({
     },
     (errors) => {
       const fieldKeys = Object.keys(fieldRefs) as Array<keyof typeof fieldRefs>;
-      console.log('firstErrorKey', errors, fieldKeys);
 
       // fieldKey에 선언된 순서대로 순회하면서 첫 번째 에러가 발생한 필드로 스크롤 이동
       // 첫 번째 에러 발생 필드로 스크롤 이동
