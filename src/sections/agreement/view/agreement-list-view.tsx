@@ -39,6 +39,7 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
+import { mutate } from 'swr';
 import { AgreementTableRow } from '../agreement-table-row';
 import { AgreementTableToolbar } from '../agreement-table-toolbar';
 import { AgreementTableFiltersResult } from '../agreement-table-filters-result';
@@ -46,6 +47,7 @@ import { useGetUserAgreementData } from '../../../actions/agreement';
 import { deleteUserInfo } from '../../../actions/user-ssr';
 import { getUserInfo } from '../../../utils/user-info';
 import { useAuthContext } from '../../../auth/hooks';
+import { endpoints } from '../../../utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -78,8 +80,6 @@ export function AgreementListView() {
 
   const [tableData, setTableData] = useState<IAgreementItem[]>([]);
 
-  const [reloadTrigger, setReloadTrigger] = useState(false);
-
   const { agreementInfos, agreementInfosLoading } = useGetUserAgreementData(id, auth);
 
   const filters = useSetState<IAgreementTableFilters>({
@@ -105,7 +105,7 @@ export function AgreementListView() {
     if (!agreementInfosLoading && agreementInfos.length > 0) {
       setTableData(agreementInfos);
     }
-  }, [agreementInfos, agreementInfosLoading, reloadTrigger]);
+  }, [agreementInfos, agreementInfosLoading]);
 
   const handleDeleteRow = useCallback(
     (userId: string) => {
@@ -139,9 +139,11 @@ export function AgreementListView() {
     });
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
-  const handleUpdateRow = useCallback(() => {
-    setReloadTrigger((prev) => !prev);
-  }, []);
+  const handleUpdateRow = () => {
+    const apiUrl =
+      auth === 'ADMIN' ? endpoints.agreement.info : `${endpoints.agreement.info}/${id}`;
+    mutate(apiUrl, undefined, { revalidate: true });
+  };
 
   const handleViewRow = useCallback(
     (row_id: string) => {

@@ -65,7 +65,6 @@ export function FaqsEditDialog({ open, faqs, onClose, onFaqsUpdate }: Props) {
 
     try {
       await postFaq(selectedFaq.id, data.name, data.description).then((r) => {
-        console.log(r);
         if (r.status !== 200) {
           toast.error(r.data);
         } else {

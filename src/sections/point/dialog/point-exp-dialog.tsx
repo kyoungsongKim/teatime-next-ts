@@ -64,7 +64,6 @@ export function PointExpDialog({ id, open, userList, onClose, onUpdate }: Props)
 
   const onChangeAllExp = handleSubmit(async (data) => {
     const receiver = data.receiver ? data.receiver.id : '';
-    console.log('receiver: ', receiver, 'data: ', data.receiver);
     try {
       await changePointToExp(data.sender, receiver, data.exp, data.memo).then((r) => {
         if (r.status !== 200) {

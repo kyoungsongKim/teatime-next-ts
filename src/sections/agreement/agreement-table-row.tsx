@@ -27,12 +27,14 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import React, { useCallback, useEffect, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from 'lodash';
+import { mutate } from 'swr';
 import { Label } from '../../components/label';
 import { useGetUserAgreement } from '../../actions/agreement';
 import { toast } from '../../components/snackbar';
 import { deleteAgreement } from '../../actions/agreement-ssr';
 import { AgreementFormDialog } from './dialog/agreement-form-dialog';
 import { download } from '../../utils/file';
+import { endpoints } from '../../utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -169,7 +171,7 @@ export function AgreementTableRow({
 
   const [selectedDetailId, setSelectedDetailId] = useState<string>('');
 
-  const { agreementInfo, agreementInfoLoading } = useGetUserAgreement(row.userId);
+  const { agreementInfo, agreementInfoLoading, isExistGuarantee } = useGetUserAgreement(row.userId);
 
   const [detailData, setDetailData] = useState<IAgreementDetailItem[]>(agreementInfo);
 
@@ -185,6 +187,8 @@ export function AgreementTableRow({
 
   const handleUpdateAgreementInfo = () => {
     onUpdateRow();
+    const apiUrl = `${endpoints.agreement.root}/${row.userId}`;
+    mutate(apiUrl, undefined, { revalidate: true });
   };
 
   const handleDeleteDetailRow = useCallback(
@@ -196,12 +200,14 @@ export function AgreementTableRow({
           toast.success('삭제에 성공 했습니다.');
 
           onUpdateRow();
+          const apiUrl = `${endpoints.agreement.root}/${row.userId}`;
+          mutate(apiUrl, undefined, { revalidate: true });
         })
         .catch((e) => {
           toast.error('삭제에 실패 했습니다.');
         });
     },
-    [onUpdateRow]
+    [onUpdateRow, row.userId]
   );
 
   const handleToggleCollapse = () => {
@@ -571,6 +577,7 @@ export function AgreementTableRow({
       />
 
       <AgreementFormDialog
+        isExistGuarantee={isExistGuarantee}
         realName={row.realName}
         userId={row.userId}
         onUpdate={handleUpdateAgreementInfo}

@@ -78,7 +78,6 @@ export function AssistanceFormDialog({
       toast.error('선택된 서비스에 대한 정보가 없습니다. 다시 시도해주세요.');
       return;
     }
-    console.log('data', data, item);
 
     const formData = new FormData();
     formData.append('content', data.content);
