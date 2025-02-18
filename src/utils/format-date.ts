@@ -33,6 +33,20 @@ export const makeDateString = (date: Date, type: number | undefined = 1) => {
   }
 };
 
+export const makeDateForString = (
+  date: string,
+  split: string = '-',
+  type: number | undefined = 1
+) => {
+  const [year, month, day] = date.split(split);
+  switch (type) {
+    case 1:
+      return `${year.substring(2)}년 ${month}월 ${day}일`;
+    default:
+      return `${year}년 ${month}월 ${day}일`;
+  }
+};
+
 export const fillZero = (num: number) => String(num).padStart(2, '0');
 
 // calc date diff

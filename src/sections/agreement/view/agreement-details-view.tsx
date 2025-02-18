@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -10,74 +10,105 @@ import Tabs from '@mui/material/Tabs';
 import { paths } from 'src/routes/paths';
 
 import { useTabs } from 'src/hooks/use-tabs';
-
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from 'src/_mock';
-
+import { _userAbout } from 'src/_mock';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-
-import { useMockedUser } from 'src/auth/hooks';
-
-import { ProfileHome } from '../profile-home';
+import { AgreementProfile } from '../agreement-profile';
 import { ProfileCover } from '../profile-cover';
-import { ProfileFriends } from '../profile-friends';
-import { ProfileGallery } from '../profile-gallery';
-import { ProfileFollowers } from '../profile-followers';
-import { IAgreementDetailItem } from '../../../types/agreement';
-import { useGetUserAgreement } from '../../../actions/agreement';
+import { getUserAgreementDetail } from '../../../actions/agreement-ssr';
+import { IAgreementDetailItem, IUser } from '../../../types/agreement';
+import { useGetUserAgreementData } from '../../../actions/agreement';
 
 // ----------------------------------------------------------------------
 
 const TABS = [
   { value: 'profile', label: 'Profile', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
-  { value: 'followers', label: 'Followers', icon: <Iconify icon="solar:heart-bold" width={24} /> },
-  {
-    value: 'friends',
-    label: 'Friends',
-    icon: <Iconify icon="solar:users-group-rounded-bold" width={24} />,
-  },
-  {
-    value: 'gallery',
-    label: 'Gallery',
-    icon: <Iconify icon="solar:gallery-wide-bold" width={24} />,
-  },
 ];
 
 // ----------------------------------------------------------------------
 
 class Props {
-  agreementInfo?: IAgreementDetailItem[];
+  id?: string;
 }
 
-export function AgreementDetailsView({ agreementInfo }: Props) {
-  // const { user } = agreementInfo[0].user;
+export function AgreementDetailsView({ id }: Props) {
+  const { agreementInfos } = useGetUserAgreementData(id || '', '');
+  const [userData, setUserData] = useState<IUser>({
+    cellphone: '',
+    dailyReportList: '',
+    description: '',
+    email: '',
+    id: '',
+    position: '',
+    realName: '',
+    renewalDate: '',
+    teamName: '',
+    userName: '',
+    vacationReportList: '',
+    userDetails: {
+      address: '',
+      cbankAccount: '',
+      cbankId: '',
+      cellphone: '',
+      dailyReportList: '',
+      educationLevel: '',
+      email: '',
+      facebookUrl: '',
+      instagramUrl: '',
+      joinDate: '',
+      linkedinUrl: '',
+      renewalDate: '',
+      skillLevel: '',
+      twitterUrl: '',
+      userId: '',
+      vacationReportList: '',
+    },
+  });
+  const [detailData, setDetailData] = useState<IAgreementDetailItem[]>([]);
 
-  const [searchFriends, setSearchFriends] = useState('');
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchData = async () => {
+      try {
+        const userAgreement = await getUserAgreementDetail(id);
+
+        if (userAgreement?.data) {
+          setDetailData(userAgreement.data);
+
+          if (Array.isArray(userAgreement.data) && userAgreement.data.length > 0) {
+            setUserData(userAgreement.data[0]?.user || null);
+            console.log('userAgreement.data[0]?.user:', userAgreement.data[0]?.user);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch agreement data:', error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const tabs = useTabs('profile');
-
-  const handleSearchFriends = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchFriends(event.target.value);
-  }, []);
 
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Profile"
+        heading="Agreement Detail"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          // { name: user?.displayName },
+          { name: 'Agreement', href: paths.root.agreement.root },
+          { name: userData?.realName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={_userAbout.role}
-          // name={user?.displayName}
-          // avatarUrl={user?.photoURL}
+          role={userData?.position || ''}
+          name={userData?.realName || ''}
+          avatarUrl={userData?.realName || ''}
           coverUrl={_userAbout.coverUrl}
         />
 
@@ -101,19 +132,14 @@ export function AgreementDetailsView({ agreementInfo }: Props) {
         </Box>
       </Card>
 
-      {tabs.value === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
-
-      {tabs.value === 'followers' && <ProfileFollowers followers={_userFollowers} />}
-
-      {tabs.value === 'friends' && (
-        <ProfileFriends
-          friends={_userFriends}
-          searchFriends={searchFriends}
-          onSearchFriends={handleSearchFriends}
+      {tabs.value === 'profile' && (
+        <AgreementProfile
+          agreementInfos={agreementInfos || []}
+          detailData={detailData || []}
+          userData={userData || {}}
+          info={_userAbout}
         />
       )}
-
-      {tabs.value === 'gallery' && <ProfileGallery gallery={_userGallery} />}
     </DashboardContent>
   );
 }

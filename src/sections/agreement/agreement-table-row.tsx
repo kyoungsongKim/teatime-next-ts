@@ -35,6 +35,7 @@ import { deleteAgreement } from '../../actions/agreement-ssr';
 import { AgreementFormDialog } from './dialog/agreement-form-dialog';
 import { download } from '../../utils/file';
 import { endpoints } from '../../utils/axios';
+import { makeDateForString } from '../../utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -212,11 +213,6 @@ export function AgreementTableRow({
 
   const handleToggleCollapse = () => {
     collapse.onToggle();
-  };
-
-  const formatDate = (date: string) => {
-    const [year, month, day] = date.split('-');
-    return `${year.substring(2)}년 ${month}월 ${day}일`;
   };
 
   const renderPrimary = (
@@ -447,7 +443,7 @@ export function AgreementTableRow({
                             textAlign: 'left',
                           }}
                         >
-                          {formatDate(item.startDate)} ~ {formatDate(item.endDate)}
+                          {makeDateForString(item.startDate)} ~ {makeDateForString(item.endDate)}
                         </Box>
 
                         <Box>
@@ -538,7 +534,7 @@ export function AgreementTableRow({
             }}
           >
             <Iconify icon="solar:eye-bold" />
-            View
+            상세 보기
           </MenuItem>
         </MenuList>
       </CustomPopover>

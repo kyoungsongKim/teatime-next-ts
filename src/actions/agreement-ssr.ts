@@ -20,8 +20,8 @@ export async function deleteAgreement(agreementId: string) {
 
 // ----------------------------------------------------------------------
 
-export async function getUserAgreementHistory(userId: string) {
-  const url = `${endpoints.agreement.history}/${userId}`;
+export async function getUserAgreementDetail(userId: string) {
+  const url = `${endpoints.agreement.detail}/${userId}`;
   const res = await axios.get(url);
 
   return res;
