@@ -146,8 +146,8 @@ export function AgreementListView() {
   };
 
   const handleViewRow = useCallback(
-    (row_id: string) => {
-      router.push(paths.dashboard.order.details(row_id));
+    (userId: string) => {
+      router.push(paths.root.agreement.details(userId));
     },
     [router]
   );
@@ -159,7 +159,7 @@ export function AgreementListView() {
           heading="Agreement List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Agreement', href: paths.root.agreement },
+            { name: 'Agreement', href: paths.root.agreement.root },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -235,7 +235,7 @@ export function AgreementListView() {
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.userId)}
                         onUpdateRow={() => handleUpdateRow()}
-                        onViewRow={() => handleViewRow(row.id)}
+                        onViewRow={() => handleViewRow(row.userId)}
                       />
                     ))}
 

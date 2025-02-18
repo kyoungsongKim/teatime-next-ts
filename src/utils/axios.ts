@@ -87,6 +87,7 @@ export const endpoints = {
   agreement: {
     root: '/api/agreement',
     info: '/api/agreement/info',
+    history: '/api/agreement/history',
   },
   userNavigationHistory: {
     root: '/api/navigation-history',

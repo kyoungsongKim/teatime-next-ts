@@ -17,3 +17,12 @@ export async function deleteAgreement(agreementId: string) {
 
   return res;
 }
+
+// ----------------------------------------------------------------------
+
+export async function getUserAgreementHistory(userId: string) {
+  const url = `${endpoints.agreement.history}/${userId}`;
+  const res = await axios.get(url);
+
+  return res;
+}

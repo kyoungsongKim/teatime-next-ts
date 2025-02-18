@@ -53,7 +53,7 @@ export const navData = [
     items: [
       { title: 'Dashboard', path: paths.root.dashboard, icon: ICONS.dashboard },
       { title: 'Calendar', path: paths.root.calendar, icon: ICONS.calendar },
-      { title: 'Agreement', path: paths.root.agreement, icon: ICONS.file },
+      { title: 'Agreement', path: paths.root.agreement.root, icon: ICONS.file },
       { title: 'Assistance', path: paths.root.assistance, icon: ICONS.job },
       { title: 'Vacation', path: paths.root.vacation, icon: ICONS.booking },
       { title: 'My Point', path: paths.root.point.root, icon: ICONS.invoice },
