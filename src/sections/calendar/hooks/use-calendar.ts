@@ -7,6 +7,8 @@ import { useRef, useState, useCallback } from 'react';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
+import { makeDateString } from 'src/utils/format-date';
+
 // ----------------------------------------------------------------------
 
 export function useCalendar() {
@@ -19,15 +21,22 @@ export function useCalendar() {
   const [date, setDate] = useState(new Date());
 
   const [openForm, setOpenForm] = useState(false);
+  const [openVacationForm, setOpenVacationForm] = useState(false);
+
+  const [selectVacationId, setSelectVacationId] = useState<string>('');
 
   const [selectEventId, setSelectEventId] = useState('');
 
   const [selectedRange, setSelectedRange] = useState<ICalendarRange>(null);
 
-  const [view, setView] = useState<ICalendarView>(smUp ? 'dayGridMonth' : 'listWeek');
+  const [view, setView] = useState<ICalendarView>(smUp ? 'dayGridMonth' : 'timeGridDay');
 
   const onOpenForm = useCallback(() => {
     setOpenForm(true);
+  }, []);
+
+  const onOpenVacationForm = useCallback(() => {
+    setOpenVacationForm(true);
   }, []);
 
   const onCloseForm = useCallback(() => {
@@ -36,11 +45,15 @@ export function useCalendar() {
     setSelectEventId('');
   }, []);
 
+  const onCloseVacationForm = useCallback(() => {
+    setOpenVacationForm(false);
+  }, []);
+
   const onInitialView = useCallback(() => {
     if (calendarEl) {
       const calendarApi = calendarEl.getApi();
 
-      const newView = smUp ? 'dayGridMonth' : 'listWeek';
+      const newView = smUp ? 'dayGridMonth' : 'timeGridDay';
       calendarApi.changeView(newView);
       setView(newView);
     }
@@ -94,7 +107,13 @@ export function useCalendar() {
       }
 
       onOpenForm();
-      setSelectedRange({ start: arg.startStr, end: arg.endStr });
+      if (arg.allDay) {
+        const endDate = new Date(arg.end);
+        endDate.setDate(endDate.getDate() - 1);
+        setSelectedRange({ start: arg.startStr, end: makeDateString(endDate, 2) });
+      } else {
+        setSelectedRange({ start: arg.startStr, end: arg.endStr });
+      }
     },
     [calendarEl, onOpenForm]
   );
@@ -103,36 +122,57 @@ export function useCalendar() {
     (arg: EventClickArg) => {
       const { event } = arg;
 
-      onOpenForm();
-      setSelectEventId(event.id);
+      if (event.extendedProps.no === 0) {
+        return;
+      }
+      if (event.title !== '휴가') {
+        onOpenForm();
+        setSelectEventId(event.extendedProps.no);
+      } else {
+        onOpenVacationForm();
+        setSelectVacationId(event.extendedProps.no);
+      }
     },
-    [onOpenForm]
+    [onOpenForm, onOpenVacationForm]
   );
 
   const onResizeEvent = useCallback(
-    (arg: EventResizeDoneArg, updateEvent: (eventData: Partial<ICalendarEvent>) => void) => {
+    async (
+      arg: EventResizeDoneArg,
+      userName: string,
+      updateEvent: (userName: string, eventData: Partial<ICalendarEvent>) => void,
+      refreshEvents: () => void
+    ) => {
       const { event } = arg;
 
-      updateEvent({
-        id: event.id,
-        allDay: event.allDay,
-        start: event.startStr,
-        end: event.endStr,
-      });
+      if (event.start && event.end) {
+        await updateEvent(userName, {
+          id: event.extendedProps.no,
+          start: makeDateString(event.start, 7),
+          end: makeDateString(event.end, 7),
+        });
+        refreshEvents();
+      }
     },
     []
   );
 
   const onDropEvent = useCallback(
-    (arg: EventDropArg, updateEvent: (eventData: Partial<ICalendarEvent>) => void) => {
+    async (
+      arg: EventDropArg,
+      userName: string,
+      updateEvent: (userName: string, eventData: Partial<ICalendarEvent>) => void,
+      refreshEvents: () => void
+    ) => {
       const { event } = arg;
-
-      updateEvent({
-        id: event.id,
-        allDay: event.allDay,
-        start: event.startStr,
-        end: event.endStr,
-      });
+      if (event.start && event.end) {
+        await updateEvent(userName, {
+          id: event.extendedProps.no,
+          start: makeDateString(event.start, 7),
+          end: makeDateString(event.end, 7),
+        });
+        refreshEvents();
+      }
     },
     []
   );
@@ -164,10 +204,15 @@ export function useCalendar() {
     onInitialView,
     //
     openForm,
+    openVacationForm,
     onOpenForm,
+    onOpenVacationForm,
     onCloseForm,
+    onCloseVacationForm,
     //
     selectEventId,
+    selectVacationId,
+    setSelectEventId,
     selectedRange,
     //
     onClickEventInFilters,
