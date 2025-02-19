@@ -79,6 +79,7 @@ export const endpoints = {
   },
   vacation: {
     root: '/api/vacation',
+    list: '/api/vacation/list',
     all: '/api/vacation/all',
   },
   faqs: {
@@ -106,5 +107,15 @@ export const endpoints = {
   },
   service: {
     root: '/api/service',
+  },
+  ticket: {
+    root: '/api/ticket',
+    list: '/api/ticket/list',
+  },
+  site: {
+    root: '/api/site',
+  },
+  project: {
+    root: '/api/project',
   },
 };
