@@ -48,6 +48,7 @@ export function AgreementDetailsView({ id }: Props) {
     vacationReportList: '',
     userDetails: {
       address: '',
+      birthDate: '',
       cbankAccount: '',
       cbankId: '',
       cellphone: '',
@@ -56,6 +57,7 @@ export function AgreementDetailsView({ id }: Props) {
       email: '',
       facebookUrl: '',
       instagramUrl: '',
+      homepageUrl: '',
       joinDate: '',
       linkedinUrl: '',
       renewalDate: '',
@@ -137,7 +139,6 @@ export function AgreementDetailsView({ id }: Props) {
           agreementInfos={agreementInfos || []}
           detailData={detailData || []}
           userData={userData || {}}
-          info={_userAbout}
         />
       )}
     </DashboardContent>

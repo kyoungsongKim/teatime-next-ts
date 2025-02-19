@@ -10,6 +10,7 @@ export type IAgreementItem = {
 
 interface IUserDetails {
   address: string;
+  birthDate: string;
   cbankAccount: string;
   cbankId: string;
   cellphone: string;
@@ -23,6 +24,7 @@ interface IUserDetails {
   renewalDate: string;
   skillLevel: string;
   twitterUrl: string;
+  homepageUrl: string;
   userId: string;
   vacationReportList: string;
 }

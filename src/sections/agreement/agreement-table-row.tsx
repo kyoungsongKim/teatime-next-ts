@@ -35,7 +35,7 @@ import { deleteAgreement } from '../../actions/agreement-ssr';
 import { AgreementFormDialog } from './dialog/agreement-form-dialog';
 import { download } from '../../utils/file';
 import { endpoints } from '../../utils/axios';
-import { makeDateForString } from '../../utils/format-date';
+import { makeDateString } from '../../utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -443,7 +443,8 @@ export function AgreementTableRow({
                             textAlign: 'left',
                           }}
                         >
-                          {makeDateForString(item.startDate)} ~ {makeDateForString(item.endDate)}
+                          {makeDateString(new Date(item.startDate), 8)} ~{' '}
+                          {makeDateString(new Date(item.endDate), 8)}
                         </Box>
 
                         <Box>

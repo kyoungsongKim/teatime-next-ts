@@ -28,22 +28,10 @@ export const makeDateString = (date: Date, type: number | undefined = 1) => {
       return `${date.getFullYear()}-${fillZero(date.getMonth() + 1)}-${fillZero(date.getDate())}T${fillZero(date.getHours())}:${fillZero(date.getMinutes())}:${fillZero(date.getSeconds())}`;
     case 7:
       return `${date.getFullYear()}-${fillZero(date.getMonth() + 1)}-${fillZero(date.getDate())} ${fillZero(date.getHours())}:${fillZero(date.getMinutes())}:${fillZero(date.getSeconds())}`;
+    case 8:
+      return `${date.getFullYear().toString().substring(2)}년 ${fillZero(date.getMonth() + 1)}월 ${fillZero(date.getDate())}일`;
     default:
       return `${date.getFullYear()}년 ${fillZero(date.getMonth() + 1)}월 ${fillZero(date.getDate())}일`;
-  }
-};
-
-export const makeDateForString = (
-  date: string,
-  split: string = '-',
-  type: number | undefined = 1
-) => {
-  const [year, month, day] = date.split(split);
-  switch (type) {
-    case 1:
-      return `${year.substring(2)}년 ${month}월 ${day}일`;
-    default:
-      return `${year}년 ${month}월 ${day}일`;
   }
 };
 

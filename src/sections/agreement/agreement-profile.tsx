@@ -19,20 +19,19 @@ import ListItemText from '@mui/material/ListItemText';
 import { fNumber } from 'src/utils/format-number';
 import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
 import { Iconify } from 'src/components/iconify';
+import { Icon } from '@iconify/react';
 import { download } from '../../utils/file';
 import { Scrollbar } from '../../components/scrollbar';
-import { makeDateForString } from '../../utils/format-date';
+import { makeDateString } from '../../utils/format-date';
 import { Label, LabelColor } from '../../components/label';
 
 import type { IUser, IAgreementItem, IAgreementDetailItem } from '../../types/agreement';
-import { grey } from '../../theme/core';
 // ----------------------------------------------------------------------
 
 type Props = {
   agreementInfos: IAgreementItem[];
   detailData: IAgreementDetailItem[];
   userData: IUser;
-  info: IUserProfile;
 };
 
 const socialLinks = [
@@ -40,9 +39,14 @@ const socialLinks = [
   { key: 'instagramUrl', icon: <InstagramIcon />, label: 'Instagram' },
   { key: 'linkedinUrl', icon: <LinkedinIcon />, label: 'LinkedIn' },
   { key: 'twitterUrl', icon: <TwitterIcon />, label: 'Twitter' },
+  {
+    key: 'homepageUrl',
+    icon: <Icon icon="mdi:home" width="20px" height="20px" />,
+    label: 'Homepage',
+  },
 ];
 
-export function AgreementProfile({ agreementInfos, detailData, userData, info }: Props) {
+export function AgreementProfile({ agreementInfos, detailData, userData }: Props) {
   const renderAmountCas = (
     <Card sx={{ py: 3, textAlign: 'center', typography: 'h4' }}>
       <Stack
@@ -75,17 +79,17 @@ export function AgreementProfile({ agreementInfos, detailData, userData, info }:
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:card-account-details-outline" sx={{ mr: 2 }} />
-          ID :
-          <Link variant="subtitle2" color="inherit">
-            &nbsp;{userData?.id}
-          </Link>
+          {userData?.id}
+        </Box>
+
+        <Box display="flex">
+          <Iconify width={24} icon="mdi:party-popper" sx={{ mr: 2 }} />
+          {userData?.userDetails.birthDate}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mingcute:location-fill" sx={{ mr: 2 }} />
-          <Link variant="subtitle2" color="inherit">
-            &nbsp;{userData?.userDetails.address}
-          </Link>
+          {userData?.userDetails.address}
         </Box>
 
         <Box display="flex">
@@ -95,31 +99,22 @@ export function AgreementProfile({ agreementInfos, detailData, userData, info }:
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:cellphone" sx={{ mr: 2 }} />
-          <Link variant="subtitle2" color="inherit">
-            &nbsp;{userData?.userDetails.cellphone}
-          </Link>
+          {userData?.userDetails.cellphone}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:university" sx={{ mr: 2 }} />
-          <Link variant="subtitle2" color="inherit">
-            &nbsp;{userData?.userDetails.educationLevel}
-          </Link>
+          {userData?.userDetails.educationLevel}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:certificate" sx={{ mr: 2 }} />
-          <Link variant="subtitle2" color="inherit">
-            &nbsp;{userData?.userDetails.skillLevel}
-          </Link>
+          {userData?.userDetails.skillLevel}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:update" sx={{ mr: 2 }} />
-          {`Renewal at `}
-          <Link variant="subtitle2" color="inherit">
-            &nbsp;{userData?.userDetails.joinDate}
-          </Link>
+          입사일 {makeDateString(new Date(userData?.userDetails.joinDate))}
         </Box>
       </Stack>
     </Card>
@@ -148,6 +143,7 @@ export function AgreementProfile({ agreementInfos, detailData, userData, info }:
                 GUARANTEE_HISTORY: { label: '계약 종료', color: 'default' },
                 MANAGER_HISTORY: { label: '계약 종료', color: 'default' },
                 JOINED_HISTORY: { label: '계약 종료', color: 'default' },
+                OTHER_HISTORY: { label: '계약 종료', color: 'default' },
               };
 
               // @ts-ignore
@@ -220,7 +216,8 @@ export function AgreementProfile({ agreementInfos, detailData, userData, info }:
                         color: 'text.primary',
                       }}
                     >
-                      {makeDateForString(row.startDate)} ~ {makeDateForString(row.endDate)}
+                      {makeDateString(new Date(row.startDate), 8)} ~{' '}
+                      {makeDateString(new Date(row.endDate), 8)}
                     </Box>
                   </TableCell>
                 </TableRow>
@@ -246,7 +243,15 @@ export function AgreementProfile({ agreementInfos, detailData, userData, info }:
               sx={{ wordBreak: 'break-all', typography: 'body2' }}
             >
               {icon}
-              <Link color="inherit">{url}</Link>
+              <Link
+                color="inherit"
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+              >
+                {url}
+              </Link>
             </Stack>
           ) : null;
         })}

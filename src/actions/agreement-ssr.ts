@@ -12,7 +12,7 @@ export async function createAgreement(formData: FormData) {
 // ----------------------------------------------------------------------
 
 export async function deleteAgreement(agreementId: string) {
-  const URL = `${endpoints.agreement.root}/${agreementId}`;
+  const URL = `${endpoints.agreement.root}/${agreementId}/history`;
   const res = await axios.delete(URL);
 
   return res;
