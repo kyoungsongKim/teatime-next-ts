@@ -1,15 +1,22 @@
-import type { ICalendarEvent } from 'src/types/calendar';
+import type { VacationHistoryItem } from 'src/types/vacation';
+import type { CalendarItem, CalendarEvent, ICalendarEvent } from 'src/types/calendar';
 
+import dayjs from 'dayjs';
+import { toast } from 'sonner';
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
+import { fDate } from 'src/utils/format-time';
+import { makeDateString } from 'src/utils/format-date';
 import axios, { fetcher, endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
-const enableServer = false;
+const enableServer = true;
 
-const CALENDAR_ENDPOINT = endpoints.calendar;
+const CALENDAR_SAVE_ENDPOINT = endpoints.ticket.root;
+const CALENDAR_ENDPOINT = endpoints.ticket.list;
+const VACATION_ENDPOINT = endpoints.vacation.list;
 
 const swrOptions = {
   revalidateIfStale: enableServer,
@@ -20,88 +27,142 @@ const swrOptions = {
 // ----------------------------------------------------------------------
 
 type EventsData = {
-  events: ICalendarEvent[];
+  events: CalendarItem[];
 };
 
-export function useGetEvents() {
-  const { data, isLoading, error, isValidating } = useSWR<EventsData>(
+export function useGetEvents(userName: string, date: Date) {
+  const key = [
     CALENDAR_ENDPOINT,
+    {
+      params: {
+        userName,
+        periodYear: date.getFullYear(),
+        periodMonth: fDate(date, 'MM'),
+      },
+    },
+  ];
+
+  const vacationKey = [
+    VACATION_ENDPOINT,
+    {
+      params: {
+        userId: userName,
+        year: date.getFullYear(),
+      },
+    },
+  ];
+
+  const { data, isLoading, error, isValidating } = useSWR<CalendarEvent[]>(
+    key,
     fetcher,
     swrOptions
   );
+  const {
+    data: vacationData,
+    isLoading: vacationLoading,
+    error: vacationError,
+    isValidating: vacationValidating,
+  } = useSWR<VacationHistoryItem[]>(vacationKey, fetcher, swrOptions);
 
   const memoizedValue = useMemo(() => {
-    const events = data?.events.map((event) => ({
-      ...event,
-      textColor: event.color,
+    const events = data?.map((event) => {
+      const endDate = dayjs(event.end);
+
+      return {
+        ...event,
+        textColor: event.color,
+        // end date가 00시가 지난상태로 들어오면 1일을 더해줌
+        start: dayjs(event.start).format('YYYY-MM-DD'),
+        end:
+          endDate.hour() === 0 && endDate.minute() === 0 && endDate.second() === 0
+            ? endDate.format('YYYY-MM-DD')
+            : endDate.add(1, 'day').format('YYYY-MM-DD'), // 하루 추가,
+        editable: event.no !== 0,
+      };
+    });
+
+    const vacationEvents = vacationData?.map((event) => ({
+      no: event.id,
+      color: '#808080',
+      className: '',
+      description: '',
+      allDay: true,
+      start:
+        event.amount === 0 || event.type === '공가' || event.type === '경조'
+          ? makeDateString(new Date(event.eventStartDate), 2)
+          : event.eventStartDate,
+      end:
+        event.amount === 0 || event.type === '공가' || event.type === '경조'
+          ? makeDateString(new Date(event.eventEndDate), 2)
+          : dayjs(event.eventEndDate).add(1, 'day').format('YYYY-MM-DD HH:mm:ss'), // calendar에서 end date는 포함하지 않으므로 1일을 더해줌
+      title: '휴가',
+      textColor: '#808080',
+      editable: false,
     }));
 
     return {
-      events: events || [],
-      eventsLoading: isLoading,
-      eventsError: error,
-      eventsValidating: isValidating,
-      eventsEmpty: !isLoading && !data?.events.length,
+      events: [...(events || []), ...(vacationEvents || [])],
+      eventsLoading: isLoading || vacationLoading,
+      eventsError: error || vacationError,
+      eventsValidating: isValidating || vacationValidating,
+      eventsEmpty: !isLoading && !data?.length && !vacationLoading && !vacationData?.length,
+      refreshEvents: () => {
+        mutate(key);
+        mutate(vacationKey);
+      },
     };
-  }, [data?.events, error, isLoading, isValidating]);
+  }, [
+    data,
+    error,
+    isLoading,
+    isValidating,
+    key,
+    vacationData,
+    vacationError,
+    vacationKey,
+    vacationLoading,
+    vacationValidating,
+  ]);
 
   return memoizedValue;
 }
 
 // ----------------------------------------------------------------------
 
-export async function createEvent(eventData: ICalendarEvent) {
-  /**
-   * Work on server
-   */
-  if (enableServer) {
-    const data = { eventData };
-    await axios.post(CALENDAR_ENDPOINT, data);
-  }
+export async function createEvent(eventData: CalendarItem) {
+  const res = await axios.post(`${CALENDAR_SAVE_ENDPOINT}/`, eventData);
 
-  /**
-   * Work in local
-   */
-  mutate(
-    CALENDAR_ENDPOINT,
-    (currentData) => {
-      const currentEvents: ICalendarEvent[] = currentData?.events;
-
-      const events = [...currentEvents, eventData];
-
-      return { ...currentData, events };
-    },
-    false
-  );
+  return res;
 }
 
 // ----------------------------------------------------------------------
 
-export async function updateEvent(eventData: Partial<ICalendarEvent>) {
+export async function updateEventDate(userName: string, eventData: Partial<ICalendarEvent>) {
   /**
    * Work on server
    */
-  if (enableServer) {
-    const data = { eventData };
-    await axios.put(CALENDAR_ENDPOINT, data);
+  try {
+    const data: any = {
+      userName,
+      eventStartDate: eventData.start,
+      eventEndDate: eventData.end,
+    };
+    const res = await axios.put(`${CALENDAR_SAVE_ENDPOINT}/${eventData.id}`, data);
+
+    if (res.status === 200) {
+      toast.success('티켓이 수정되었습니다.');
+    } else {
+      toast.error('티켓 수정에 실패했습니다.');
+    }
+  } catch (e) {
+    console.error('Failed to fetch:', e);
   }
+}
 
-  /**
-   * Work in local
-   */
-  mutate(
-    CALENDAR_ENDPOINT,
-    (currentData) => {
-      const currentEvents: ICalendarEvent[] = currentData?.events;
+export async function updateEvent(eventData: any) {
+  const res = await axios.put(`${CALENDAR_SAVE_ENDPOINT}/${eventData.id}`, eventData);
 
-      const events = currentEvents.map((event) =>
-        event.id === eventData.id ? { ...event, ...eventData } : event
-      );
-
-      return { ...currentData, events };
-    },
-    false
-  );
+  return res;
 }
 
 // ----------------------------------------------------------------------
@@ -110,23 +171,6 @@ export async function deleteEvent(eventId: string) {
   /**
    * Work on server
    */
-  if (enableServer) {
-    const data = { eventId };
-    await axios.patch(CALENDAR_ENDPOINT, data);
-  }
-
-  /**
-   * Work in local
-   */
-  mutate(
-    CALENDAR_ENDPOINT,
-    (currentData) => {
-      const currentEvents: ICalendarEvent[] = currentData?.events;
-
-      const events = currentEvents.filter((event) => event.id !== eventId);
-
-      return { ...currentData, events };
-    },
-    false
-  );
+  const res = await axios.delete(`${CALENDAR_SAVE_ENDPOINT}/${eventId}`);
+  return res;
 }
