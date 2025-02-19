@@ -19,20 +19,17 @@ const VIEW_OPTIONS = [
   { value: 'dayGridMonth', label: 'Month', icon: 'mingcute:calendar-month-line' },
   { value: 'timeGridWeek', label: 'Week', icon: 'mingcute:calendar-week-line' },
   { value: 'timeGridDay', label: 'Day', icon: 'mingcute:calendar-day-line' },
-  { value: 'listWeek', label: 'Agenda', icon: 'fluent:calendar-agenda-24-regular' },
 ] as const;
 
 // ----------------------------------------------------------------------
 
 type Props = {
   loading: boolean;
-  canReset: boolean;
   view: ICalendarView;
   date: IDateValue;
   onToday: () => void;
   onNextDate: () => void;
   onPrevDate: () => void;
-  onOpenFilters: () => void;
   onChangeView: (newView: ICalendarView) => void;
 };
 
@@ -41,11 +38,9 @@ export function CalendarToolbar({
   view,
   loading,
   onToday,
-  canReset,
   onNextDate,
   onPrevDate,
   onChangeView,
-  onOpenFilters,
 }: Props) {
   const popover = usePopover();
 
@@ -86,12 +81,6 @@ export function CalendarToolbar({
           <Button size="small" color="error" variant="contained" onClick={onToday}>
             Today
           </Button>
-
-          <IconButton onClick={onOpenFilters}>
-            <Badge color="error" variant="dot" invisible={!canReset}>
-              <Iconify icon="ic:round-filter-list" />
-            </Badge>
-          </IconButton>
         </Stack>
 
         {loading && (
