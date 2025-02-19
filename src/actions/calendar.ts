@@ -26,11 +26,8 @@ const swrOptions = {
 
 // ----------------------------------------------------------------------
 
-type EventsData = {
-  events: CalendarItem[];
-};
-
 export function useGetEvents(userName: string, date: Date) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const key = [
     CALENDAR_ENDPOINT,
     {
@@ -42,6 +39,7 @@ export function useGetEvents(userName: string, date: Date) {
     },
   ];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const vacationKey = [
     VACATION_ENDPOINT,
     {

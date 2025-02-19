@@ -2,7 +2,6 @@ import type { IDateValue } from 'src/types/common';
 import type { ICalendarView } from 'src/types/calendar';
 
 import Stack from '@mui/material/Stack';
-import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';

@@ -13,10 +13,9 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogActions from '@mui/material/DialogActions';
 
-import { uuidv4 } from 'src/utils/uuidv4';
 import { fIsAfter } from 'src/utils/format-time';
 
-import { createEvent, updateEventDate, deleteEvent } from 'src/actions/calendar';
+import { deleteEvent } from 'src/actions/calendar';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -72,15 +71,15 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }: Props) {
   const dateError = fIsAfter(values.start, values.end);
 
   const onSubmit = handleSubmit(async (data) => {
-    const eventData = {
-      id: currentEvent?.id ? currentEvent?.id : uuidv4(),
-      color: data?.color,
-      title: data?.title,
-      allDay: data?.allDay,
-      description: data?.description,
-      end: data?.end,
-      start: data?.start,
-    };
+    // const eventData = {
+    //   id: currentEvent?.id ? currentEvent?.id : uuidv4(),
+    //   color: data?.color,
+    //   title: data?.title,
+    //   allDay: data?.allDay,
+    //   description: data?.description,
+    //   end: data?.end,
+    //   start: data?.start,
+    // };
 
     try {
       if (!dateError) {

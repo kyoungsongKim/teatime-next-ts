@@ -2,7 +2,6 @@
 
 import Calendar from '@fullcalendar/react'; // => request placed at the top
 import type { CUserItem } from 'src/types/user';
-import type { ICalendarFilters } from 'src/types/calendar';
 
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -17,8 +16,6 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
-
-import { useSetState } from 'src/hooks/use-set-state';
 
 import { fDate } from 'src/utils/format-time';
 import { getUserInfo } from 'src/utils/user-info';
@@ -47,12 +44,6 @@ export function CalendarView() {
 
   const [userName, setUserName] = useState<string>(id); // 사용자 이름 상태
   const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
-
-  const filters = useSetState<ICalendarFilters>({
-    colors: [],
-    startDate: null,
-    endDate: null,
-  });
 
   const {
     calendarRef,
