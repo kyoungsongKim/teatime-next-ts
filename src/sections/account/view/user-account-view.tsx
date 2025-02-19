@@ -12,12 +12,12 @@ import { _userAbout, _userPlans, _userPayment, _userInvoices, _userAddressBook }
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-
 import { AccountGeneral } from '../account-general';
 import { AccountBilling } from '../account-billing';
 import { AccountSocialLinks } from '../account-social-links';
 import { AccountNotifications } from '../account-notifications';
 import { AccountChangePassword } from '../account-change-password';
+import { useUser } from '../../../auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
@@ -37,14 +37,15 @@ const TABS = [
 
 export function AccountView() {
   const tabs = useTabs('general');
+  const { userInfo } = useUser();
 
   return (
     <DashboardContent>
       <CustomBreadcrumbs
         heading="Account"
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
+          { name: 'Dashboard', href: paths.root.dashboard },
+          { name: 'User', href: paths.root.user.root },
           { name: 'Account' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
@@ -56,7 +57,7 @@ export function AccountView() {
         ))}
       </Tabs>
 
-      {tabs.value === 'general' && <AccountGeneral />}
+      {tabs.value === 'general' && <AccountGeneral userInfo={userInfo} />}
 
       {tabs.value === 'billing' && (
         <AccountBilling

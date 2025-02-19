@@ -248,7 +248,7 @@ export function AgreementTableRow({
           spacing={{ xs: 1, md: 2 }}
           alignItems="center"
         >
-          <Avatar alt={row.realName} sx={{ width: 40, height: 40 }} />
+          <Avatar src={row.avatarImg} alt={row.realName} sx={{ width: 40, height: 40 }} />
           <Stack sx={{ typography: 'body2', alignItems: 'left' }}>
             <Box component="span">{row.realName}</Box>
             <Box

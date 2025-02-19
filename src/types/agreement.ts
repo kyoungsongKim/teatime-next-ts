@@ -1,6 +1,7 @@
 export type IAgreementItem = {
   id: string;
   userId: string;
+  avatarImg: string;
   realName: string;
   guaranteeAmount: number;
   totalAmount: number;
@@ -11,6 +12,7 @@ export type IAgreementItem = {
 interface IUserDetails {
   address: string;
   birthDate: string;
+  avatarImg: string;
   cbankAccount: string;
   cbankId: string;
   cellphone: string;

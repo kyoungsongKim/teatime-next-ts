@@ -1,6 +1,5 @@
 import { CONFIG } from 'src/config-global';
 import { AgreementDetailsView } from 'src/sections/agreement/view/agreement-details-view';
-import { getUserAgreementDetail, getUserAgreementHistory } from '../../../../actions/agreement-ssr';
 
 // ----------------------------------------------------------------------
 

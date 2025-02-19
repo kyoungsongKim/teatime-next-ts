@@ -49,6 +49,7 @@ export function AgreementDetailsView({ id }: Props) {
     userDetails: {
       address: '',
       birthDate: '',
+      avatarImg: '',
       cbankAccount: '',
       cbankId: '',
       cellphone: '',
@@ -110,7 +111,7 @@ export function AgreementDetailsView({ id }: Props) {
         <ProfileCover
           role={userData?.position || ''}
           name={userData?.realName || ''}
-          avatarUrl={userData?.realName || ''}
+          avatarUrl={userData?.userDetails.avatarImg || ''}
           coverUrl={_userAbout.coverUrl}
         />
 

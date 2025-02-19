@@ -24,6 +24,7 @@ import { CheckoutProvider } from 'src/sections/checkout/context';
 import { AuthProvider as JwtAuthProvider } from 'src/auth/context/jwt';
 
 import TrackNavigation from './track-navigation';
+import { UserProvider } from '../auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
@@ -63,18 +64,20 @@ export default async function RootLayout({ children }: Props) {
         <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
           <LocalizationProvider>
             <AuthProvider>
-              <SettingsProvider settings={defaultSettings}>
-                <ThemeProvider>
-                  <MotionLazy>
-                    <CheckoutProvider>
-                      <Snackbar />
-                      <ProgressBar />
-                      <SettingsDrawer />
-                      {children}
-                    </CheckoutProvider>
-                  </MotionLazy>
-                </ThemeProvider>
-              </SettingsProvider>
+              <UserProvider>
+                <SettingsProvider settings={defaultSettings}>
+                  <ThemeProvider>
+                    <MotionLazy>
+                      <CheckoutProvider>
+                        <Snackbar />
+                        <ProgressBar />
+                        <SettingsDrawer />
+                        {children}
+                      </CheckoutProvider>
+                    </MotionLazy>
+                  </ThemeProvider>
+                </SettingsProvider>
+              </UserProvider>
             </AuthProvider>
           </LocalizationProvider>
         </I18nProvider>

@@ -75,6 +75,16 @@ export const paths = {
       monthSummary: `${ROOTS.POINT}/monthSummary`,
     },
     faq: ROOTS.FAQ,
+    user: {
+      root: '/user',
+      new: '/user/new',
+      list: '/user/list',
+      cards: '/user/cards',
+      profile: '/user/profile',
+      account: '/user/account',
+      edit: (id: string) => `/user/${id}/edit`,
+      demo: { edit: `/user/${MOCK_ID}/edit` },
+    },
   },
   // DASHBOARD
   dashboard: {
