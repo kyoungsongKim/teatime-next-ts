@@ -1,5 +1,3 @@
-import type { IUserProfile } from 'src/types/user';
-
 import React from 'react';
 
 import Box from '@mui/material/Box';
@@ -84,37 +82,37 @@ export function AgreementProfile({ agreementInfos, detailData, userData }: Props
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:party-popper" sx={{ mr: 2 }} />
-          {userData?.userDetails.birthDate}
+          {makeDateString(new Date(userData?.userDetails?.birthDate))}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mingcute:location-fill" sx={{ mr: 2 }} />
-          {userData?.userDetails.address}
+          {userData?.userDetails?.address}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="fluent:mail-24-filled" sx={{ mr: 2 }} />
-          {userData?.userDetails.email}
+          {userData?.userDetails?.email}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:cellphone" sx={{ mr: 2 }} />
-          {userData?.userDetails.cellphone}
+          {userData?.userDetails?.cellphone}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:university" sx={{ mr: 2 }} />
-          {userData?.userDetails.educationLevel}
+          {userData?.userDetails?.educationLevel}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:certificate" sx={{ mr: 2 }} />
-          {userData?.userDetails.skillLevel}
+          {userData?.userDetails?.skillLevel}
         </Box>
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:update" sx={{ mr: 2 }} />
-          입사일 {makeDateString(new Date(userData?.userDetails.joinDate))}
+          입사일 {makeDateString(new Date(userData?.userDetails?.joinDate))}
         </Box>
       </Stack>
     </Card>

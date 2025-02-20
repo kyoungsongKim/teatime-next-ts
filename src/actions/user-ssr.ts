@@ -19,3 +19,11 @@ export async function deleteUserInfo(userId: string) {
 
   return res;
 }
+
+export async function updateUserDetail(data: Record<string, any>) {
+  const res = await axios.post(endpoints.user.details, data, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  return res;
+}

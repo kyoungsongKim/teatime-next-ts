@@ -15,7 +15,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { id } = useMemo(() => getUserInfo(user), [user]);
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
 
   const value = useMemo(() => ({ userInfo, setUserInfo }), [userInfo]);

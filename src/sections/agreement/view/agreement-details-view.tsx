@@ -82,7 +82,6 @@ export function AgreementDetailsView({ id }: Props) {
 
           if (Array.isArray(userAgreement.data) && userAgreement.data.length > 0) {
             setUserData(userAgreement.data[0]?.user || null);
-            console.log('userAgreement.data[0]?.user:', userAgreement.data[0]?.user);
           }
         }
       } catch (error) {

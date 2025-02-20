@@ -62,6 +62,7 @@ export const endpoints = {
   },
   user: {
     root: '/api/user',
+    details: '/api/user/details',
     list: '/api/users',
   },
   monthlySales: {
@@ -117,5 +118,8 @@ export const endpoints = {
   },
   project: {
     root: '/api/project',
+  },
+  team: {
+    root: '/api/team',
   },
 };

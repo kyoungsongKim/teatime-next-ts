@@ -20,6 +20,7 @@ import { AgreementProfile } from '../../agreement/agreement-profile';
 import { getUserInfo } from '../../../utils/user-info';
 import { CustomBreadcrumbs } from '../../../components/custom-breadcrumbs';
 import { paths } from '../../../routes/paths';
+import { useUser } from '../../../auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
@@ -33,56 +34,16 @@ export function UserProfileView() {
   const { user } = useAuthContext();
   const { id } = useMemo(() => getUserInfo(user), [user]);
   const { agreementInfos } = useGetUserAgreementData(id || '', '');
-  const [userData, setUserData] = useState<IUser>({
-    cellphone: '',
-    dailyReportList: '',
-    description: '',
-    email: '',
-    id: '',
-    position: '',
-    realName: '',
-    renewalDate: '',
-    teamName: '',
-    userName: '',
-    vacationReportList: '',
-    userDetails: {
-      address: '',
-      birthDate: '',
-      avatarImg: '',
-      cbankAccount: '',
-      cbankId: '',
-      cellphone: '',
-      dailyReportList: '',
-      educationLevel: '',
-      email: '',
-      facebookUrl: '',
-      instagramUrl: '',
-      homepageUrl: '',
-      joinDate: '',
-      linkedinUrl: '',
-      renewalDate: '',
-      skillLevel: '',
-      twitterUrl: '',
-      userId: '',
-      vacationReportList: '',
-    },
-  });
+  const { userInfo } = useUser();
   const [detailData, setDetailData] = useState<IAgreementDetailItem[]>([]);
-
   useEffect(() => {
     if (!id) return;
 
     const fetchData = async () => {
       try {
         const userAgreement = await getUserAgreementDetail(id);
-
         if (userAgreement?.data) {
           setDetailData(userAgreement.data);
-
-          if (Array.isArray(userAgreement.data) && userAgreement.data.length > 0) {
-            setUserData(userAgreement.data[0]?.user || null);
-            console.log('userAgreement.data[0]?.user:', userAgreement.data[0]?.user);
-          }
         }
       } catch (error) {
         console.error('Failed to fetch agreement data:', error);
@@ -104,9 +65,9 @@ export function UserProfileView() {
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={userData?.position || ''}
-          name={userData?.realName || ''}
-          avatarUrl={userData?.userDetails.avatarImg || ''}
+          role={userInfo?.position || ''}
+          name={userInfo?.realName || ''}
+          avatarUrl={userInfo?.userDetails.avatarImg || ''}
           coverUrl={_userAbout.coverUrl}
         />
 
@@ -134,7 +95,8 @@ export function UserProfileView() {
         <AgreementProfile
           agreementInfos={agreementInfos || []}
           detailData={detailData || []}
-          userData={userData || {}}
+          // @ts-ignore
+          userData={userInfo || {}}
         />
       )}
     </DashboardContent>
