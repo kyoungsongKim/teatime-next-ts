@@ -51,14 +51,16 @@ const TicketFormSchema = zod.object({
     zod.null().refine(() => false, { message: '사업부를 선택해주세요.' }),
   ]),
   content: zod.string().min(1, { message: '내용을 입력해주세요.' }),
-  md: zod.union([
-    zod.number().min(1, { message: 'CAS를 입력해주세요.' }),
-    zod
-      .string()
-      .min(1, { message: 'CAS를 입력해주세요.' }) // 빈 문자열 체크
-      .transform((val) => Number(val)) // 숫자로 변환
-      .refine((val) => !Number.isNaN(val) && val >= 1, { message: 'CAS는 1 이상이어야 합니다.' }),
-  ]),
+  md: zod
+    .union([
+      zod.number().min(0, { message: 'CAS를 입력해주세요.' }),
+      zod
+        .string()
+        .min(1, { message: 'CAS를 입력해주세요.' }) // 빈 문자열 체크
+        .transform((val) => Number(val)) // 숫자로 변환
+        .refine((val) => !Number.isNaN(val) && val >= 1, { message: 'CAS는 1 이상이어야 합니다.' }),
+    ])
+    .optional(), // 선택사항으로 변경
   eventStartDate: zod.string().min(1, { message: '시작일을 입력해주세요.' }),
   eventEndDate: zod.string().min(1, { message: '종료일을 입력해주세요.' }),
 });
