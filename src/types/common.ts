@@ -28,4 +28,5 @@ export type ISocialLink = {
   instagram: string;
   linkedin: string;
   twitter: string;
+  homepage: string;
 };

@@ -36,5 +36,19 @@ export function useUser() {
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');
   }
-  return context;
+
+  const { userInfo, setUserInfo } = context;
+
+  const refreshUserInfo = async () => {
+    try {
+      if (userInfo?.id) {
+        const updatedUserInfo = await getUserInfos(userInfo.id);
+        setUserInfo(updatedUserInfo.data);
+      }
+    } catch (error) {
+      console.error('사용자 정보 업데이트 실패:', error);
+    }
+  };
+
+  return { userInfo, setUserInfo, refreshUserInfo };
 }

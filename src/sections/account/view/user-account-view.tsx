@@ -8,7 +8,7 @@ import { paths } from 'src/routes/paths';
 import { useTabs } from 'src/hooks/use-tabs';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _userAbout, _userPlans, _userPayment, _userInvoices, _userAddressBook } from 'src/_mock';
+import { _userPlans, _userPayment, _userInvoices, _userAddressBook } from 'src/_mock';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -70,9 +70,9 @@ export function AccountView() {
 
       {tabs.value === 'notifications' && <AccountNotifications />}
 
-      {tabs.value === 'social' && <AccountSocialLinks socialLinks={_userAbout.socialLinks} />}
+      {tabs.value === 'social' && <AccountSocialLinks userInfo={userInfo} />}
 
-      {tabs.value === 'security' && <AccountChangePassword />}
+      {tabs.value === 'security' && <AccountChangePassword userInfo={userInfo} />}
     </DashboardContent>
   );
 }

@@ -13,10 +13,14 @@ export type SignInParams = {
 };
 
 export type SignUpParams = {
-  userId: string;
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  reportEmail: string;
+  vacationReportList: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  team: string;
 };
 
 /** **************************************
@@ -45,28 +49,36 @@ export const signInWithPassword = async ({ userId, password }: SignInParams): Pr
  * Sign up
  *************************************** */
 export const signUp = async ({
-  userId,
+  id,
+  name,
+  email,
+  phone,
+  reportEmail,
+  vacationReportList,
   password,
-  firstName,
-  lastName,
+  team,
 }: SignUpParams): Promise<void> => {
   const params = {
-    userId,
+    id,
+    name,
+    email,
+    phone,
+    reportEmail,
+    vacationReportList,
     password,
-    firstName,
-    lastName,
+    team,
   };
 
   try {
     const res = await axios.post(endpoints.auth.signUp, params);
 
-    const { accessToken } = res.data;
+    const { apiToken } = res.data;
 
-    if (!accessToken) {
+    if (!apiToken) {
       throw new Error('Access token not found in response');
     }
 
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    sessionStorage.setItem(STORAGE_KEY, apiToken);
   } catch (error) {
     console.error('Error during sign up:', error);
     throw error;

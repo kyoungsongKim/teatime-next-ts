@@ -82,7 +82,9 @@ export function AgreementProfile({ agreementInfos, detailData, userData }: Props
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:party-popper" sx={{ mr: 2 }} />
-          {makeDateString(new Date(userData?.userDetails?.birthDate))}
+          {userData?.userDetails?.birthDate != null
+            ? makeDateString(new Date(userData?.userDetails?.birthDate))
+            : ''}
         </Box>
 
         <Box display="flex">
@@ -112,7 +114,10 @@ export function AgreementProfile({ agreementInfos, detailData, userData }: Props
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:update" sx={{ mr: 2 }} />
-          입사일 {makeDateString(new Date(userData?.userDetails?.joinDate))}
+          입사일{' '}
+          {userData?.userDetails?.joinDate != null
+            ? makeDateString(new Date(userData?.userDetails?.joinDate))
+            : ''}
         </Box>
       </Stack>
     </Card>

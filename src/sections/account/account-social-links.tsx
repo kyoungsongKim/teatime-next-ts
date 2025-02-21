@@ -1,31 +1,51 @@
-import type { ISocialLink } from 'src/types/common';
-
 import { useForm } from 'react-hook-form';
-
 import Card from '@mui/material/Card';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
+import { Icon } from '@iconify/react';
+import React from 'react';
+import { toast } from 'src/components/snackbar';
+import { Form, Field } from 'src/components/hook-form';
 
 import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
 
-import { toast } from 'src/components/snackbar';
-import { Form, Field } from 'src/components/hook-form';
+import type { IUser } from '../../types/agreement';
+import { updateUserDetailSocial } from '../../actions/user-ssr';
+import { useUser } from '../../auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  socialLinks: ISocialLink;
+  userInfo: IUser | null;
 };
 
-export function AccountSocialLinks({ socialLinks }: Props) {
+const socialLinks = [
+  { key: 'facebookUrl', icon: <FacebookIcon width={24} />, label: 'Facebook' },
+  { key: 'instagramUrl', icon: <InstagramIcon width={24} />, label: 'Instagram' },
+  { key: 'linkedinUrl', icon: <LinkedinIcon width={24} />, label: 'LinkedIn' },
+  {
+    key: 'twitterUrl',
+    icon: <TwitterIcon width={24} sx={{ color: 'text.primary' }} />,
+    label: 'Twitter',
+  },
+  { key: 'homepageUrl', icon: <Icon icon="mdi:home" width={24} height={24} />, label: 'Homepage' },
+];
+
+export function AccountSocialLinks({ userInfo }: Props) {
+  const { refreshUserInfo } = useUser();
+
   const defaultValues = {
-    facebook: socialLinks.facebook || '',
-    instagram: socialLinks.instagram || '',
-    linkedin: socialLinks.linkedin || '',
-    twitter: socialLinks.twitter || '',
+    userId: userInfo?.id || '',
+    facebookUrl: userInfo?.userDetails?.facebookUrl || '',
+    instagramUrl: userInfo?.userDetails?.instagramUrl || '',
+    linkedinUrl: userInfo?.userDetails?.linkedinUrl || '',
+    twitterUrl: userInfo?.userDetails?.twitterUrl || '',
+    homepageUrl: userInfo?.userDetails?.homepageUrl || '',
   };
 
-  const methods = useForm({ defaultValues });
+  const methods = useForm({
+    defaultValues,
+  });
 
   const {
     handleSubmit,
@@ -34,32 +54,32 @@ export function AccountSocialLinks({ socialLinks }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      toast.success('Update success!');
-      console.info('DATA', data);
+      data.userId = userInfo?.id || '';
+      const response = await updateUserDetailSocial(data);
+
+      if (response.status === 200) {
+        await refreshUserInfo();
+        toast.success('사용자 소셜 정보 수정이 완료되었습니다.');
+      } else {
+        toast.error('사용자 소셜 정보 수정이 실패했습니다.');
+      }
     } catch (error) {
       console.error(error);
+      toast.error('사용자 소셜 정보 수정이 실패했습니다.');
     }
   });
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
       <Card sx={{ p: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
-        {Object.keys(socialLinks).map((social) => (
+        {socialLinks.map(({ key, icon, label }) => (
           <Field.Text
-            key={social}
-            name={social}
+            key={key}
+            name={key}
+            label={label} // ✅ 라벨 추가
+            placeholder={`${label} URL 입력`}
             InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  {social === 'facebook' && <FacebookIcon width={24} />}
-                  {social === 'instagram' && <InstagramIcon width={24} />}
-                  {social === 'linkedin' && <LinkedinIcon width={24} />}
-                  {social === 'twitter' && (
-                    <TwitterIcon width={24} sx={{ color: 'text.primary' }} />
-                  )}
-                </InputAdornment>
-              ),
+              startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,
             }}
           />
         ))}

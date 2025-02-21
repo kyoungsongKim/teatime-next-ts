@@ -1,12 +1,14 @@
 'use client';
 
 import { z as zod } from 'zod';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -19,7 +21,7 @@ import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { Iconify } from 'src/components/iconify';
-import { Form, Field } from 'src/components/hook-form';
+import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 import { signUp } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
@@ -31,11 +33,17 @@ import { SignUpTerms } from '../../components/sign-up-terms';
 export type SignUpSchemaType = zod.infer<typeof SignUpSchema>;
 
 export const SignUpSchema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required!' }),
-  lastName: zod.string().min(1, { message: 'Last name is required!' }),
-  userId: zod
+  userId: zod.string().min(1, { message: 'userId is required!' }),
+  realName: zod.string().min(1, { message: 'Name is required!' }),
+  email: zod
     .string()
-    .min(1, { message: 'userId is required!' }),
+    .min(1, { message: 'Email is required!' })
+    .email({ message: 'Email must be a valid email address!' }),
+  cellphone: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  dailyReportList: zod.array(zod.string().email({ message: 'Invalid email format!' })).optional(),
+  vacationReportList: zod
+    .array(zod.string().email({ message: 'Invalid email format!' }))
+    .optional(),
   password: zod
     .string()
     .min(1, { message: 'Password is required!' })
@@ -54,10 +62,13 @@ export function JwtSignUpView() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const defaultValues = {
-    firstName: 'Hello',
-    lastName: 'Friend',
-    userId: 'test',
-    password: '1234',
+    userId: '',
+    realName: '',
+    email: '',
+    cellphone: '',
+    dailyReportList: [],
+    vacationReportList: [],
+    password: '',
   };
 
   const methods = useForm<SignUpSchemaType>({
@@ -72,11 +83,21 @@ export function JwtSignUpView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      // @ts-ignore
+      const reportEmail = data.dailyReportList.length > 0 ? data.dailyReportList.join(', ') : '';
+      const vacationReportList =
+        // @ts-ignore
+        data.vacationReportList.length > 0 ? data.vacationReportList.join(', ') : '';
+
       await signUp({
-        userId: data.userId,
+        id: data.userId,
+        name: data.realName,
+        email: data.email,
+        phone: data.cellphone,
+        reportEmail,
+        vacationReportList,
         password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
+        team: 'ready',
       });
       await checkUserSession?.();
 
@@ -89,13 +110,8 @@ export function JwtSignUpView() {
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Box display="flex" gap={{ xs: 3, sm: 2 }} flexDirection={{ xs: 'column', sm: 'row' }}>
-        <Field.Text name="firstName" label="First name" InputLabelProps={{ shrink: true }} />
-        <Field.Text name="lastName" label="Last name" InputLabelProps={{ shrink: true }} />
-      </Box>
-
-      <Field.Text name="userId" label="userId address" InputLabelProps={{ shrink: true }} />
-
+      <Field.Text name="userId" label="ID" />
+      <Field.Text name="realName" label="이름" />
       <Field.Text
         name="password"
         label="Password"
@@ -112,7 +128,60 @@ export function JwtSignUpView() {
           ),
         }}
       />
-
+      <Field.Text name="email" label="Email" />
+      <Field.Phone name="cellphone" label="전화 번호" country="KR" />
+      <Field.Autocomplete
+        name="dailyReportList"
+        label="일일 리포트 Email"
+        multiple
+        freeSolo
+        disableCloseOnSelect
+        options={[]}
+        getOptionLabel={(option) => option}
+        renderOption={(props, option) => (
+          <li {...props} key={option}>
+            {option}
+          </li>
+        )}
+        renderTags={(selected, getDailyReportProps) =>
+          selected.map((option, index) => (
+            <Chip
+              {...getDailyReportProps({ index })}
+              key={option}
+              label={option}
+              size="small"
+              color="info"
+              variant="soft"
+            />
+          ))
+        }
+      />
+      <Field.Autocomplete
+        name="vacationReportList"
+        label="휴가 리포트 Email"
+        multiple
+        freeSolo
+        disableCloseOnSelect
+        options={[]}
+        getOptionLabel={(option) => option}
+        renderOption={(props, option) => (
+          <li {...props} key={option}>
+            {option}
+          </li>
+        )}
+        renderTags={(selected, getVacationReportProps) =>
+          selected.map((option, index) => (
+            <Chip
+              {...getVacationReportProps({ index })}
+              key={option}
+              label={option}
+              size="small"
+              color="info"
+              variant="soft"
+            />
+          ))
+        }
+      />
       <LoadingButton
         fullWidth
         color="inherit"

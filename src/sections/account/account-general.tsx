@@ -20,6 +20,7 @@ import type { IUser } from '../../types/agreement';
 import { ITeamItem } from '../../types/team';
 import { getTeamList } from '../../actions/team-ssr';
 import { updateUserDetail } from '../../actions/user-ssr';
+import { useUser } from '../../auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
@@ -53,6 +54,7 @@ type Props = {
 };
 
 export function AccountGeneral({ userInfo }: Props) {
+  const { refreshUserInfo } = useUser();
   const [teamList, setTeamList] = useState<ITeamItem[]>([]);
 
   const methods = useForm<UpdateUserSchemaType>({
@@ -153,6 +155,7 @@ export function AccountGeneral({ userInfo }: Props) {
 
       if (response.status === 200) {
         toast.success('사용자 정보 수정이 완료되었습니다.');
+        await refreshUserInfo();
       } else {
         toast.error('사용자 정보 수정이 실패했습니다.');
       }
@@ -221,7 +224,7 @@ export function AccountGeneral({ userInfo }: Props) {
               <Field.Text name="skillLevel" label="보유 기술" />
               <Field.Autocomplete
                 name="dailyReportList"
-                label="일일리포트 Email"
+                label="일일 리포트 Email"
                 multiple
                 freeSolo
                 disableCloseOnSelect

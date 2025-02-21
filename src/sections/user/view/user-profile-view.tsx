@@ -67,7 +67,7 @@ export function UserProfileView() {
         <ProfileCover
           role={userInfo?.position || ''}
           name={userInfo?.realName || ''}
-          avatarUrl={userInfo?.userDetails.avatarImg || ''}
+          avatarUrl={userInfo?.userDetails?.avatarImg || ''}
           coverUrl={_userAbout.coverUrl}
         />
 
