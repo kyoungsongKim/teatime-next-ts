@@ -1,3 +1,4 @@
+import type { AxiosRequestConfig } from 'axios';
 import type { VacationHistoryItem } from 'src/types/vacation';
 
 import useSWR from 'swr';
@@ -16,6 +17,21 @@ export async function getVacationAll() {
   const res = await axios.get(endpoints.vacation.all);
 
   return res;
+}
+
+export async function getVacationListByYear(args: string | [string, AxiosRequestConfig]) {
+  try {
+    const [url, config] = Array.isArray(args) ? args : [args];
+    const res = await axios.get(url, { ...config });
+
+    if (res.status === 200) {
+      return res.data;
+    }
+    return [];
+  } catch (e) {
+    console.error('Failed to fetch:', e);
+    throw e;
+  }
 }
 
 const enableServer = true;

@@ -10,6 +10,8 @@ import { fDate } from 'src/utils/format-time';
 import { makeDateString } from 'src/utils/format-date';
 import axios, { fetcher, endpoints } from 'src/utils/axios';
 
+import { getVacationListByYear } from 'src/actions/vacation-ssr';
+
 // ----------------------------------------------------------------------
 
 const enableServer = true;
@@ -60,7 +62,7 @@ export function useGetEvents(userName: string, date: Date) {
     isLoading: vacationLoading,
     error: vacationError,
     isValidating: vacationValidating,
-  } = useSWR<VacationHistoryItem[]>(vacationKey, fetcher, swrOptions);
+  } = useSWR<VacationHistoryItem[]>(vacationKey, getVacationListByYear, swrOptions);
 
   const memoizedValue = useMemo(() => {
     const events = data?.map((event) => {
