@@ -23,12 +23,12 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
+import { getTeamList } from 'src/actions/team-ssr';
 import { signUp } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
 import { ITeamItem } from '../../../types/team';
-import { getTeamList } from 'src/actions/team-ssr';
 
 // ----------------------------------------------------------------------
 
