@@ -76,7 +76,7 @@ export function AccountSocialLinks({ userInfo }: Props) {
           <Field.Text
             key={key}
             name={key}
-            label={label} // ✅ 라벨 추가
+            label={label}
             placeholder={`${label} URL 입력`}
             InputProps={{
               startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,

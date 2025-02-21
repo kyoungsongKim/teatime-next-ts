@@ -54,3 +54,9 @@ export type ChangePointExpItem = {
   memo: string;
   exp: number;
 };
+
+export type UserPointItem = {
+  expvalue: number;
+  level: number;
+  point: number;
+};

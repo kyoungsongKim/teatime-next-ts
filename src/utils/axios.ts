@@ -73,6 +73,7 @@ export const endpoints = {
     code: '/api/point/pointCode', // post -> donate, get -> make
     month: '/api/point/month',
     summary: '/api/point/summary',
+    user: '/api/point/user',
   },
   exp: {
     levelup: '/api/exp/levelup',

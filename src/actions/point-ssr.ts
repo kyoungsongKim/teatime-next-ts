@@ -27,3 +27,10 @@ export async function getMonthPointList(userName: string, year: string, month: s
 
   return res;
 }
+
+export async function getUserPoint(id: string) {
+  const URL = `${endpoints.point.user}?receiver=${id}`;
+  const res = await axios.get(URL);
+
+  return res;
+}

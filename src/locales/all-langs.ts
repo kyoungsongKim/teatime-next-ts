@@ -2,6 +2,7 @@
 
 // core (MUI)
 import {
+  koKR as koKRCore,
   frFR as frFRCore,
   viVN as viVNCore,
   zhCN as zhCNCore,
@@ -9,6 +10,7 @@ import {
 } from '@mui/material/locale';
 // date pickers (MUI)
 import {
+  koKR as koKRDate,
   enUS as enUSDate,
   frFR as frFRDate,
   viVN as viVNDate,
@@ -16,6 +18,7 @@ import {
 } from '@mui/x-date-pickers/locales';
 // data grid (MUI)
 import {
+  koKR as koKRDataGrid,
   enUS as enUSDataGrid,
   frFR as frFRDataGrid,
   viVN as viVNDataGrid,
@@ -27,6 +30,16 @@ import {
 
 export const allLangs = [
   {
+    value: 'kr',
+    label: '한국어',
+    countryCode: 'KR',
+    adapterLocale: 'ko',
+    numberFormat: { code: 'ko-KR', currency: 'KRW' },
+    systemValue: {
+      components: { ...koKRCore.components, ...koKRDate.components, ...koKRDataGrid.components },
+    },
+  },
+  {
     value: 'en',
     label: 'English',
     countryCode: 'GB',
@@ -36,46 +49,46 @@ export const allLangs = [
       components: { ...enUSDate.components, ...enUSDataGrid.components },
     },
   },
-  {
-    value: 'fr',
-    label: 'French',
-    countryCode: 'FR',
-    adapterLocale: 'fr',
-    numberFormat: { code: 'fr-Fr', currency: 'EUR' },
-    systemValue: {
-      components: { ...frFRCore.components, ...frFRDate.components, ...frFRDataGrid.components },
-    },
-  },
-  {
-    value: 'vi',
-    label: 'Vietnamese',
-    countryCode: 'VN',
-    adapterLocale: 'vi',
-    numberFormat: { code: 'vi-VN', currency: 'VND' },
-    systemValue: {
-      components: { ...viVNCore.components, ...viVNDate.components, ...viVNDataGrid.components },
-    },
-  },
-  {
-    value: 'cn',
-    label: 'Chinese',
-    countryCode: 'CN',
-    adapterLocale: 'zh-cn',
-    numberFormat: { code: 'zh-CN', currency: 'CNY' },
-    systemValue: {
-      components: { ...zhCNCore.components, ...zhCNDate.components, ...zhCNDataGrid.components },
-    },
-  },
-  {
-    value: 'ar',
-    label: 'Arabic',
-    countryCode: 'SA',
-    adapterLocale: 'ar-sa',
-    numberFormat: { code: 'ar', currency: 'AED' },
-    systemValue: {
-      components: { ...arSACore.components, ...arSDDataGrid.components },
-    },
-  },
+  // {
+  //   value: 'fr',
+  //   label: 'French',
+  //   countryCode: 'FR',
+  //   adapterLocale: 'fr',
+  //   numberFormat: { code: 'fr-Fr', currency: 'EUR' },
+  //   systemValue: {
+  //     components: { ...frFRCore.components, ...frFRDate.components, ...frFRDataGrid.components },
+  //   },
+  // },
+  // {
+  //   value: 'vi',
+  //   label: 'Vietnamese',
+  //   countryCode: 'VN',
+  //   adapterLocale: 'vi',
+  //   numberFormat: { code: 'vi-VN', currency: 'VND' },
+  //   systemValue: {
+  //     components: { ...viVNCore.components, ...viVNDate.components, ...viVNDataGrid.components },
+  //   },
+  // },
+  // {
+  //   value: 'cn',
+  //   label: 'Chinese',
+  //   countryCode: 'CN',
+  //   adapterLocale: 'zh-cn',
+  //   numberFormat: { code: 'zh-CN', currency: 'CNY' },
+  //   systemValue: {
+  //     components: { ...zhCNCore.components, ...zhCNDate.components, ...zhCNDataGrid.components },
+  //   },
+  // },
+  // {
+  //   value: 'ar',
+  //   label: 'Arabic',
+  //   countryCode: 'SA',
+  //   adapterLocale: 'ar-sa',
+  //   numberFormat: { code: 'ar', currency: 'AED' },
+  //   systemValue: {
+  //     components: { ...arSACore.components, ...arSDDataGrid.components },
+  //   },
+  // },
 ];
 
 /**

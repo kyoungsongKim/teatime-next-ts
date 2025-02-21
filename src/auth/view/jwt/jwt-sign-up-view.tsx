@@ -2,7 +2,7 @@
 
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
@@ -27,6 +27,8 @@ import { signUp } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
+import { ITeamItem } from '../../../types/team';
+import { getTeamList } from 'src/actions/team-ssr';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +42,7 @@ export const SignUpSchema = zod.object({
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
   cellphone: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  teamName: zod.string().min(1, { message: 'TeamName is required!' }),
   dailyReportList: zod.array(zod.string().email({ message: 'Invalid email format!' })).optional(),
   vacationReportList: zod
     .array(zod.string().email({ message: 'Invalid email format!' }))
@@ -61,11 +64,14 @@ export function JwtSignUpView() {
 
   const [errorMsg, setErrorMsg] = useState('');
 
+  const [teamList, setTeamList] = useState<ITeamItem[]>([]);
+
   const defaultValues = {
     userId: '',
     realName: '',
     email: '',
     cellphone: '',
+    teamName: '',
     dailyReportList: [],
     vacationReportList: [],
     password: '',
@@ -78,6 +84,7 @@ export function JwtSignUpView() {
 
   const {
     handleSubmit,
+    setValue,
     formState: { isSubmitting },
   } = methods;
 
@@ -94,10 +101,10 @@ export function JwtSignUpView() {
         name: data.realName,
         email: data.email,
         phone: data.cellphone,
+        team: data.teamName,
         reportEmail,
         vacationReportList,
         password: data.password,
-        team: 'ready',
       });
       await checkUserSession?.();
 
@@ -107,6 +114,17 @@ export function JwtSignUpView() {
       setErrorMsg(typeof error === 'string' ? error : error.message);
     }
   });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getTeamList();
+        setTeamList(response.data);
+      } catch (error) {
+        console.error('팀 리스트 불러오기 실패', error);
+      }
+    })();
+  }, []);
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
@@ -130,6 +148,19 @@ export function JwtSignUpView() {
       />
       <Field.Text name="email" label="Email" />
       <Field.Phone name="cellphone" label="전화 번호" country="KR" />
+      <Field.Select
+        native
+        name="teamName"
+        label="팀 이름"
+        InputLabelProps={{ shrink: true }}
+        onChange={(event) => setValue('teamName', event.target.value)}
+      >
+        {teamList.map((team) => (
+          <option key={team.teamName} value={team.teamName}>
+            {team.teamDescription}
+          </option>
+        ))}
+      </Field.Select>
       <Field.Autocomplete
         name="dailyReportList"
         label="일일 리포트 Email"
