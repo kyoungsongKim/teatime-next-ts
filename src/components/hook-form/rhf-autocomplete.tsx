@@ -40,17 +40,23 @@ export function RHFAutocomplete({
           {...field}
           id={`rhf-autocomplete-${name}`}
           onChange={(event, newValue) => setValue(name, newValue, { shouldValidate: true })}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={label}
-              placeholder={placeholder}
-              variant={variant}
-              error={!!error}
-              helperText={error ? error?.message : helperText}
-              inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
-            />
-          )}
+          renderInput={(params) => {
+            const errorMessage = Array.isArray(error)
+              ? error.find((e) => !!e)?.message // 첫 번째 `null`이 아닌 메시지 찾기
+              : error?.message;
+
+            return (
+              <TextField
+                {...params}
+                label={label}
+                placeholder={placeholder}
+                variant={variant}
+                error={!!error}
+                helperText={error ? errorMessage : helperText}
+                inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
+              />
+            );
+          }}
           {...other}
         />
       )}
