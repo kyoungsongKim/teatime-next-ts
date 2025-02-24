@@ -12,6 +12,7 @@ import type { IUser } from '../../types/agreement';
 interface UserContextType {
   userInfo: IUser | null;
   isAdmin: boolean | null;
+  auth: string | null;
   setUserInfo: (user: IUser | null) => void;
   refreshUserInfo: () => Promise<void>;
 }
@@ -47,8 +48,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [id]);
 
   const value = useMemo(
-    () => ({ userInfo, isAdmin, setUserInfo, refreshUserInfo }),
-    [isAdmin, refreshUserInfo, userInfo]
+    () => ({ userInfo, isAdmin, auth, setUserInfo, refreshUserInfo }),
+    [isAdmin, auth, refreshUserInfo, userInfo]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
