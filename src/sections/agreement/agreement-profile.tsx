@@ -30,6 +30,7 @@ type Props = {
   agreementInfos: IAgreementItem[];
   detailData: IAgreementDetailItem[];
   userData: IUser;
+  isProfile: boolean;
 };
 
 const socialLinks = [
@@ -44,7 +45,7 @@ const socialLinks = [
   },
 ];
 
-export function AgreementProfile({ agreementInfos, detailData, userData }: Props) {
+export function AgreementProfile({ agreementInfos, detailData, userData, isProfile }: Props) {
   const renderAmountCas = (
     <Card sx={{ py: 3, textAlign: 'center', typography: 'h4' }}>
       <Stack
@@ -266,7 +267,7 @@ export function AgreementProfile({ agreementInfos, detailData, userData }: Props
     <Grid container spacing={3}>
       <Grid xs={12} md={4}>
         <Stack spacing={3}>
-          {renderAmountCas}
+          {isProfile && renderAmountCas}
           {renderAbout}
           {renderSocials}
         </Stack>

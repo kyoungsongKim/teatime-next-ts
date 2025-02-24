@@ -3,6 +3,8 @@
 import type { NavSectionProps } from 'src/components/nav-section';
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
+import { useMemo, useState, useEffect } from 'react';
+
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
@@ -11,35 +13,32 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { allLangs } from 'src/locales';
-import { _contacts, _notifications } from 'src/_mock';
+import { _notifications } from 'src/_mock';
 
 import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Main } from './main';
 import { NavMobile } from './nav-mobile';
 import { layoutClasses } from '../classes';
 import { NavVertical } from './nav-vertical';
 import { NavHorizontal } from './nav-horizontal';
 import { _account } from '../config-nav-account';
-import { Searchbar } from '../components/searchbar';
-import { _workspaces } from '../config-nav-workspace';
+import { useAuthContext } from '../../auth/hooks';
+import { getUserInfo } from '../../utils/user-info';
 import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
+import { getUserPoint } from '../../actions/point-ssr';
 import { StyledDivider, useNavColorVars } from './styles';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
-import { ContactsPopover } from '../components/contacts-popover';
 import { WorkspacesPopover } from '../components/workspaces-popover';
 import { navData as dashboardNavData } from '../config-nav-dashboard';
 import { NotificationsDrawer } from '../components/notifications-drawer';
-import { useAuthContext } from '../../auth/hooks';
-import { getUserInfo } from '../../utils/user-info';
-import { UserPointItem } from '../../types/point';
-import { getUserPoint } from '../../actions/point-ssr';
+
+import type { UserPointItem } from '../../types/point';
 
 // ----------------------------------------------------------------------
 

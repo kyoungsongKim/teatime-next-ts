@@ -102,6 +102,7 @@ export function UserProfileView() {
           detailData={detailData || []}
           // @ts-ignore
           userData={userInfo || {}}
+          isProfile={false}
         />
       )}
     </DashboardContent>
