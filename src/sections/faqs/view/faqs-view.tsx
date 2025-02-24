@@ -2,7 +2,7 @@
 
 import type { FaqsItem } from 'src/types/faqs';
 
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,17 +10,14 @@ import Button from '@mui/material/Button';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { getUserInfo } from 'src/utils/user-info';
-
 import { getFaqs } from 'src/actions/faq-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 
-import { useAuthContext } from 'src/auth/hooks';
-
 import { FaqsList } from '../faqs-list';
 import { FaqsEditDialog } from '../dialog/faqs-edit-dialog';
+import { useUser } from '../../../auth/context/user-context';
 import { FaqsCreateDialog } from '../dialog/faqs-create-dialog';
 
 // ----------------------------------------------------------------------
@@ -31,8 +28,7 @@ export function FaqsView() {
   const [error, setError] = useState<string | null>(null);
 
   // 사용자 정보 불러오기
-  const { user } = useAuthContext();
-  const { auth } = useMemo(() => getUserInfo(user), [user]);
+  const { isAdmin } = useUser();
 
   // create faq dialog open/close
   const createDialog = useBoolean();
@@ -62,7 +58,7 @@ export function FaqsView() {
   return (
     <>
       <DashboardContent maxWidth="xl">
-        {auth === 'ADMIN' && (
+        {isAdmin && (
           <Stack spacing={2.5} sx={{ mb: { xs: 2, md: 3 } }}>
             <Stack
               spacing={3}

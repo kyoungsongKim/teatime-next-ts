@@ -5,10 +5,10 @@ import type { CUserItem } from 'src/types/user';
 
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import React, { useState, useEffect } from 'react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
-import React, { useMemo, useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
@@ -18,31 +18,28 @@ import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
 
 import { fDate } from 'src/utils/format-time';
-import { getUserInfo } from 'src/utils/user-info';
 
 import { getUserList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useGetVacation } from 'src/actions/vacation-ssr';
-import { updateEventDate, useGetEvents } from 'src/actions/calendar';
+import { useGetEvents, updateEventDate } from 'src/actions/calendar';
 
 import { Iconify } from 'src/components/iconify';
 
 import { CalendarDialog } from 'src/sections/calendar/dialog/calendar-dialog';
 import { VacationFormDialog } from 'src/sections/vacation/dialog/vacation-form-dialog';
 
-import { useAuthContext } from 'src/auth/hooks';
-
 import { StyledCalendar } from './styles';
 import { useCalendar } from './hooks/use-calendar';
 import { CalendarToolbar } from './calendar-toolbar';
+import { useUser } from '../../auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
 export function CalendarView() {
-  const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { userInfo, isAdmin } = useUser();
 
-  const [userName, setUserName] = useState<string>(id); // 사용자 이름 상태
+  const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
   const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
 
   const {
@@ -84,7 +81,7 @@ export function CalendarView() {
   const flexProps = { flex: '1 1 auto', display: 'flex', flexDirection: 'column' };
 
   useEffect(() => {
-    if (auth === 'ADMIN') {
+    if (isAdmin) {
       getUserList().then((r) => setUserList(r.data));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,7 +92,7 @@ export function CalendarView() {
       <DashboardContent maxWidth="xl" sx={{ ...flexProps }}>
         <Grid container sx={{ mb: { xs: 1, md: 2 } }}>
           <Grid xs={12} sm={6} md={6}>
-            {auth === 'ADMIN' && (
+            {isAdmin && (
               <FormControl size="small" sx={{ paddingRight: { xs: 1, sm: 1, md: 1.5 } }}>
                 <Select
                   value={userName}
@@ -103,7 +100,7 @@ export function CalendarView() {
                     const targetUser = userList.find(
                       (userItem) => newValue.target.value === userItem.id
                     );
-                    setUserName(targetUser?.id ?? id);
+                    setUserName(targetUser?.id ?? (userInfo?.id || ''));
                   }}
                   variant="outlined"
                 >
@@ -191,7 +188,7 @@ export function CalendarView() {
         history={histories || []}
         item={item}
         user={userName}
-        auth={auth}
+        isAdmin={isAdmin || false}
         open={openVacationForm}
         left={50}
         onClose={onCloseVacationForm}

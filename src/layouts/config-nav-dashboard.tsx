@@ -40,6 +40,7 @@ const ICONS = {
   dashboard: icon('ic-dashboard'),
   parameter: icon('ic-parameter'),
   faq: icon('ic-blog'),
+  attendance: icon('ic-attendance'),
 };
 
 // ----------------------------------------------------------------------
@@ -51,13 +52,54 @@ export const navData = [
   {
     subheader: '',
     items: [
-      { title: 'Dashboard', path: paths.root.dashboard, icon: ICONS.dashboard },
-      { title: 'Calendar', path: paths.root.calendar, icon: ICONS.calendar },
-      { title: 'Agreement', path: paths.root.agreement.root, icon: ICONS.file },
-      { title: 'Assistance', path: paths.root.assistance, icon: ICONS.job },
-      { title: 'Vacation', path: paths.root.vacation, icon: ICONS.booking },
-      { title: 'My Point', path: paths.root.point.root, icon: ICONS.invoice },
-      { title: 'FAQ', path: paths.root.faq, icon: ICONS.faq },
+      {
+        title: 'Dashboard',
+        path: paths.root.dashboard,
+        icon: ICONS.dashboard,
+        roles: ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+      },
+      {
+        title: 'Calendar',
+        path: paths.root.calendar,
+        icon: ICONS.calendar,
+        roles: ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+      },
+      {
+        title: 'Attendance',
+        path: paths.root.attendance,
+        icon: ICONS.attendance,
+        roles: ['USER', 'USER_VIP', 'USER_SILVER', 'USER_GOLD', 'ADMIN', 'SUPER_ADMIN'],
+      },
+      {
+        title: 'Agreement',
+        path: paths.root.agreement.root,
+        icon: ICONS.file,
+        roles: ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+      },
+      {
+        title: 'Assistance',
+        path: paths.root.assistance,
+        icon: ICONS.job,
+        roles: ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+      },
+      {
+        title: 'Vacation',
+        path: paths.root.vacation,
+        icon: ICONS.booking,
+        roles: ['USER', 'USER_GOLD', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+      },
+      {
+        title: 'My Point',
+        path: paths.root.point.root,
+        icon: ICONS.invoice,
+        roles: ['USER_BASIC', 'USER_SILVER', 'USER_GOLD', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+      },
+      {
+        title: 'FAQ',
+        path: paths.root.faq,
+        icon: ICONS.faq,
+        roles: ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+      },
     ],
   },
   /**

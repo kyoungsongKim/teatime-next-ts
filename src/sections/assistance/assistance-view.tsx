@@ -24,10 +24,10 @@ import { AssistanceReviewDialog } from 'src/sections/assistance/dialog/assistanc
 import { AssistanceSuggestionDialog } from 'src/sections/assistance/dialog/assistance-suggestion-dialog';
 
 import { useAuthContext } from 'src/auth/hooks';
+import { useUser } from '../../auth/context/user-context';
 
 export function AssistanceView() {
-  const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { userInfo, isAdmin } = useUser();
 
   const suggestionFormOpen = useBoolean();
   const serviceFormOpen = useBoolean();
@@ -46,10 +46,10 @@ export function AssistanceView() {
         const { data } = r;
         const keys = Object.keys(data);
         if (keys.includes('my')) setAppliedServiceList(data.my);
-        if (keys.includes('all') && auth === 'ADMIN') setAppliedServiceListAll(data.all);
+        if (keys.includes('all') && isAdmin) setAppliedServiceListAll(data.all);
       }
     });
-  }, [auth]);
+  }, [isAdmin]);
 
   const onOpenForm = (service: AssistanceItem) => {
     editable.onTrue();
@@ -104,7 +104,7 @@ export function AssistanceView() {
               }}
             />
           </Grid>
-          {auth === 'ADMIN' && (
+          {isAdmin && (
             <>
               <Grid xs={12} sm={12} md={12} display="inner-flex" alignItems="center">
                 {/* 관리자 메뉴 - 신청된 비서 서비스 타이틀 */}
@@ -141,8 +141,7 @@ export function AssistanceView() {
         onClose={suggestionFormOpen.onFalse}
       />
       <AssistanceFormDialog
-        id={id}
-        auth={auth}
+        id={userInfo?.id || ''}
         item={formItem}
         editable={editable.value}
         onUpdate={getAppliedServiceList}
@@ -151,8 +150,8 @@ export function AssistanceView() {
       />
       <AssistanceReviewDialog
         open={reviewFormOpen.value}
-        id={id}
-        auth={auth}
+        id={userInfo?.id || ''}
+        isAdmin={isAdmin || false}
         item={appliedServiceItem}
         onClose={reviewFormOpen.onFalse}
         onUpdate={getAppliedServiceList}

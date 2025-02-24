@@ -34,7 +34,7 @@ import { Form, Field } from 'src/components/hook-form';
 dayjs.extend(isBetween);
 
 const VacationHistorySchema = (
-  auth: string,
+  isAdmin: boolean,
   history: VacationHistoryItem[],
   item?: VacationHistoryItem
 ) =>
@@ -45,7 +45,7 @@ const VacationHistorySchema = (
       type: zod.string(),
       amount: zod.number().min(0, { message: '휴가 일수는 0일 이상이어야 합니다.' }),
       reason: zod.string().min(1, { message: '사유를 입력해주세요.' }),
-      adminMemo: zod.string().refine((value) => auth !== 'ADMIN' || value.length > 0, {
+      adminMemo: zod.string().refine((value) => !isAdmin || value.length > 0, {
         message: '관리자 메모를 입력해주세요.',
       }),
     })
@@ -116,7 +116,7 @@ type Props = {
   history: VacationHistoryItem[];
   item?: VacationHistoryItem;
   user: string;
-  auth: string;
+  isAdmin: boolean;
   open: boolean;
   left: number;
   onClose: () => void;
@@ -127,7 +127,7 @@ export function VacationFormDialog({
   history,
   item = undefined,
   user,
-  auth,
+  isAdmin,
   open,
   left,
   onClose,
@@ -177,7 +177,7 @@ export function VacationFormDialog({
 
   const methods = useForm({
     mode: 'all',
-    resolver: zodResolver(VacationHistorySchema(auth, history, item)),
+    resolver: zodResolver(VacationHistorySchema(isAdmin, history, item)),
     defaultValues,
   });
 
@@ -411,9 +411,9 @@ export function VacationFormDialog({
                     inputRef={fieldRefs.eventStartDate}
                     name="eventStartDate"
                     format="YYYY-MM-DD HH:mm"
-                    disablePast={auth !== 'ADMIN'}
-                    minDate={auth !== 'ADMIN' ? dayjs().add(1, 'day') : undefined} // 관리자만 당일 휴가 신청을 작성할 수 있음
-                    disabled={auth !== 'ADMIN' && !!item}
+                    disablePast={!isAdmin}
+                    minDate={!isAdmin ? dayjs().add(1, 'day') : undefined} // 관리자만 당일 휴가 신청을 작성할 수 있음
+                    disabled={!isAdmin && !!item}
                     onChange={(newValue) => {
                       if (!newValue) return;
                       methods.setValue('eventStartDate', newValue.format());
@@ -438,7 +438,7 @@ export function VacationFormDialog({
                     methods.setValue('amount', 1);
                     updateDates();
                   }}
-                  disabled={auth !== 'ADMIN' && !!item}
+                  disabled={!isAdmin && !!item}
                 >
                   <Iconify icon="eva:refresh-outline" />
                 </IconButton>
@@ -462,7 +462,7 @@ export function VacationFormDialog({
                       textWrap: 'nowrap',
                     },
                   }}
-                  disabled={auth !== 'ADMIN' && !!item}
+                  disabled={!isAdmin && !!item}
                 >
                   <ToggleButton value="반반차(오전)" onClick={() => countAmount(0.25, true)}>
                     반반차 (오전)
@@ -489,7 +489,7 @@ export function VacationFormDialog({
                   exclusive
                   fullWidth
                   value={selectedTime}
-                  disabled={auth !== 'ADMIN' && !!item}
+                  disabled={!isAdmin && !!item}
                   onChange={(_e, newValue) => {
                     if (newValue !== null) {
                       setSelectedTime(newValue);
@@ -519,19 +519,15 @@ export function VacationFormDialog({
                     textWrap: 'nowrap',
                   },
                 }}
-                disabled={auth !== 'ADMIN' && !!item}
+                disabled={!isAdmin && !!item}
               />
 
               {/* 휴가 사유 */}
               <Typography variant="subtitle2">사유</Typography>
-              <Field.Text
-                inputRef={fieldRefs.reason}
-                name="reason"
-                disabled={auth !== 'ADMIN' && !!item}
-              />
+              <Field.Text inputRef={fieldRefs.reason} name="reason" disabled={!isAdmin && !!item} />
 
               {/* 관리자만 노출 - 관리자 메모 */}
-              {auth === 'ADMIN' && (
+              {isAdmin && (
                 <>
                   <Typography variant="subtitle2">관리자 메모</Typography>
                   <Field.Text inputRef={fieldRefs.adminMemo} name="adminMemo" />
@@ -546,7 +542,7 @@ export function VacationFormDialog({
               setSelectedOption('연차');
               reset(defaultValues);
             }}
-            disabled={auth !== 'ADMIN' && !!item}
+            disabled={!isAdmin && !!item}
           >
             초기화
           </Button>
@@ -555,7 +551,7 @@ export function VacationFormDialog({
             loading={isSubmitting}
             variant="soft"
             color="primary"
-            disabled={isSubmitting || (auth !== 'ADMIN' && !!item)}
+            disabled={isSubmitting || (!isAdmin && !!item)}
           >
             저장
           </LoadingButton>

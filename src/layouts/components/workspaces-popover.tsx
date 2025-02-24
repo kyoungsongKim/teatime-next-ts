@@ -26,7 +26,7 @@ export function WorkspacesPopover({ data, sx, ...other }: WorkspacesPopoverProps
   };
 
   const renderLabel = (
-    icon: string,
+    prefix: string,
     // eslint-disable-next-line @typescript-eslint/default-param-last
     value?: number | string,
     // @ts-ignore
@@ -46,8 +46,7 @@ export function WorkspacesPopover({ data, sx, ...other }: WorkspacesPopoverProps
         maxWidth: '100%',
       }}
     >
-      <Iconify icon={icon} width="24" height="24" />
-      {value}
+      {prefix} {value}
     </Label>
   );
 
@@ -68,15 +67,15 @@ export function WorkspacesPopover({ data, sx, ...other }: WorkspacesPopoverProps
         }}
         {...other}
       >
-        {renderLabel('mdi:trophy', data?.level, 'level')}
-        {renderLabel('mdi:cash-multiple', data?.point, 'point', false) && (
+        {renderLabel('Lv', data?.level, 'level')}
+        {renderLabel('P', data?.point, 'point', false) && (
           <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            {renderLabel('mdi:cash-multiple', data?.point, 'point')}
+            {renderLabel('P', data?.point, 'point')}
           </Box>
         )}
-        {renderLabel('mdi:star', data?.expvalue, 'expvalue', false) && (
+        {renderLabel('Ex', data?.expvalue, 'expvalue', false) && (
           <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            {renderLabel('mdi:star', data?.expvalue, 'expvalue')}
+            {renderLabel('Ex', data?.expvalue, 'expvalue')}
           </Box>
         )}
 
@@ -99,9 +98,9 @@ export function WorkspacesPopover({ data, sx, ...other }: WorkspacesPopoverProps
             width: '100%',
           }}
         >
-          {renderLabel('mdi:trophy', `레벨 : ${data?.level}`, 'level', true)}
-          {renderLabel('mdi:cash-multiple', `포인트 : ${data?.point}`, 'point', true)}
-          {renderLabel('mdi:star', `경험치 : ${data?.expvalue}`, 'expvalue', true)}
+          {renderLabel('', `레벨 : ${data?.level}`, 'level', true)}
+          {renderLabel('', `포인트 : ${data?.point}`, 'point', true)}
+          {renderLabel('', `경험치 : ${data?.expvalue}`, 'expvalue', true)}
         </Box>
       </CustomPopover>
     </>

@@ -25,7 +25,7 @@ import { Form, Field } from 'src/components/hook-form';
 
 type Props = DialogProps & {
   id: string;
-  auth: string;
+  isAdmin: boolean;
   item?: ApplyItem;
   onClose: () => void;
   onUpdate: () => void;
@@ -36,7 +36,7 @@ export const ReviewSchema = zod.object({
   content: zod.string(),
 });
 
-export function AssistanceReviewDialog({ id, auth, item, onClose, onUpdate, ...other }: Props) {
+export function AssistanceReviewDialog({ id, isAdmin, item, onClose, onUpdate, ...other }: Props) {
   const defaultValues = useMemo(
     () =>
       item && item.review
@@ -104,11 +104,8 @@ export function AssistanceReviewDialog({ id, auth, item, onClose, onUpdate, ...o
           <DialogContent>
             <Stack spacing={1}>
               <Typography>별점</Typography>
-              <Field.Rating name="rating" readOnly={item?.applier.id !== id && auth === 'ADMIN'} />
-              <Field.Text
-                name="content"
-                aria-readonly={item?.applier.id !== id && auth === 'ADMIN'}
-              />
+              <Field.Rating name="rating" readOnly={item?.applier.id !== id && isAdmin} />
+              <Field.Text name="content" aria-readonly={item?.applier.id !== id && isAdmin} />
             </Stack>
           </DialogContent>
         </Scrollbar>

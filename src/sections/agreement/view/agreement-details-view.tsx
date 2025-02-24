@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -33,7 +33,7 @@ class Props {
 }
 
 export function AgreementDetailsView({ id }: Props) {
-  const { agreementInfos } = useGetUserAgreementData(id || '', '');
+  const { agreementInfos } = useGetUserAgreementData(id || '', false);
   const [userData, setUserData] = useState<IUser>({
     cellphone: '',
     dailyReportList: '',

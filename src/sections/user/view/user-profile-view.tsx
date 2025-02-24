@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -8,19 +8,24 @@ import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
 
 import { useTabs } from 'src/hooks/use-tabs';
-import { DashboardContent } from 'src/layouts/dashboard';
+
 import { _userAbout } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
+
 import { Iconify } from 'src/components/iconify';
+
 import { useAuthContext } from 'src/auth/hooks';
-import { ProfileCover } from '../profile-cover';
-import { useGetUserAgreementData } from '../../../actions/agreement';
-import { IAgreementDetailItem, IUser } from '../../../types/agreement';
-import { getUserAgreementDetail } from '../../../actions/agreement-ssr';
-import { AgreementProfile } from '../../agreement/agreement-profile';
-import { getUserInfo } from '../../../utils/user-info';
-import { CustomBreadcrumbs } from '../../../components/custom-breadcrumbs';
+
 import { paths } from '../../../routes/paths';
+import { ProfileCover } from '../profile-cover';
+import { getUserInfo } from '../../../utils/user-info';
 import { useUser } from '../../../auth/context/user-context';
+import { useGetUserAgreementData } from '../../../actions/agreement';
+import { AgreementProfile } from '../../agreement/agreement-profile';
+import { getUserAgreementDetail } from '../../../actions/agreement-ssr';
+import { CustomBreadcrumbs } from '../../../components/custom-breadcrumbs';
+
+import type { IAgreementDetailItem } from '../../../types/agreement';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +38,7 @@ const TABS = [
 export function UserProfileView() {
   const { user } = useAuthContext();
   const { id } = useMemo(() => getUserInfo(user), [user]);
-  const { agreementInfos } = useGetUserAgreementData(id || '', '');
+  const { agreementInfos } = useGetUserAgreementData(id || '', false);
   const { userInfo } = useUser();
   const [detailData, setDetailData] = useState<IAgreementDetailItem[]>([]);
   useEffect(() => {
@@ -50,7 +55,7 @@ export function UserProfileView() {
       }
     };
 
-    fetchData();
+    fetchData().then((r) => r);
   }, [id]);
 
   const tabs = useTabs('profile');

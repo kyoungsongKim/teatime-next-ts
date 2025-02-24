@@ -33,7 +33,6 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 type Props = DialogProps & {
   id: string;
-  auth: string;
   item?: AssistanceItem;
   editable: boolean;
   onUpdate: () => void;
@@ -45,15 +44,7 @@ const FormSchema = zod.object({
   files: schemaHelper.files({ minFiles: 0 }).optional(),
 });
 
-export function AssistanceFormDialog({
-  id,
-  auth,
-  item,
-  editable,
-  onUpdate,
-  onClose,
-  ...other
-}: Props) {
+export function AssistanceFormDialog({ id, item, editable, onUpdate, onClose, ...other }: Props) {
   const defaultValues = {
     content: !item ? '' : item.form.replaceAll('<br>', '\n'),
     files: [] as File[],

@@ -40,7 +40,7 @@ import { makeDateString } from '../../utils/format-date';
 // ----------------------------------------------------------------------
 
 type Props = {
-  auth: string;
+  isAdmin: boolean | null;
   row: IAgreementItem;
   selected: boolean;
   onViewRow: () => void;
@@ -156,7 +156,7 @@ export function RenderCellAmount({ row }: RenderCellAgreementCountProps) {
 }
 
 export function AgreementTableRow({
-  auth,
+  isAdmin,
   row,
   selected,
   onViewRow,
@@ -177,10 +177,10 @@ export function AgreementTableRow({
   const [detailData, setDetailData] = useState<IAgreementDetailItem[]>(agreementInfo);
 
   useEffect(() => {
-    if (auth !== 'ADMIN') {
+    if (!isAdmin) {
       collapse.onTrue();
     }
-  }, [auth, collapse]);
+  }, [isAdmin, collapse]);
 
   useEffect(() => {
     setDetailData((prev) => (_.isEqual(prev, agreementInfo) ? prev : agreementInfo));
@@ -288,7 +288,7 @@ export function AgreementTableRow({
         <RenderCellAmount row={row} />
       </TableCell>
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        {auth === 'ADMIN' && (
+        {isAdmin && (
           <>
             <IconButton
               color={collapse.value ? 'inherit' : 'default'}
@@ -473,7 +473,7 @@ export function AgreementTableRow({
                           {formatNumber(item.amount)} CAS
                         </Box>
 
-                        {auth === 'ADMIN' && (
+                        {isAdmin && (
                           <IconButton
                             color="error"
                             onClick={() => {

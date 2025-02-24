@@ -2,7 +2,8 @@
 
 import type { IAgreementItem, IAgreementTableFilters } from 'src/types/agreement';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { mutate } from 'swr';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -18,7 +19,7 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
-import { fIsAfter, fIsBetween } from 'src/utils/format-time';
+import { fIsAfter } from 'src/utils/format-time';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -39,15 +40,13 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { mutate } from 'swr';
-import { AgreementTableRow } from '../agreement-table-row';
-import { AgreementTableToolbar } from '../agreement-table-toolbar';
-import { AgreementTableFiltersResult } from '../agreement-table-filters-result';
-import { useGetUserAgreementData } from '../../../actions/agreement';
-import { deleteUserInfo } from '../../../actions/user-ssr';
-import { getUserInfo } from '../../../utils/user-info';
-import { useAuthContext } from '../../../auth/hooks';
 import { endpoints } from '../../../utils/axios';
+import { AgreementTableRow } from '../agreement-table-row';
+import { deleteUserInfo } from '../../../actions/user-ssr';
+import { useUser } from '../../../auth/context/user-context';
+import { AgreementTableToolbar } from '../agreement-table-toolbar';
+import { useGetUserAgreementData } from '../../../actions/agreement';
+import { AgreementTableFiltersResult } from '../agreement-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -69,8 +68,7 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export function AgreementListView() {
-  const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { userInfo, isAdmin } = useUser();
 
   const table = useTable({ defaultRowsPerPage: 10 });
 
@@ -80,7 +78,7 @@ export function AgreementListView() {
 
   const [tableData, setTableData] = useState<IAgreementItem[]>([]);
 
-  const { agreementInfos, agreementInfosLoading } = useGetUserAgreementData(id, auth);
+  const { agreementInfos, agreementInfosLoading } = useGetUserAgreementData(userInfo?.id, isAdmin);
 
   const filters = useSetState<IAgreementTableFilters>({
     realName: '',
@@ -140,8 +138,9 @@ export function AgreementListView() {
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleUpdateRow = () => {
-    const apiUrl =
-      auth === 'ADMIN' ? endpoints.agreement.info : `${endpoints.agreement.info}/${id}`;
+    const apiUrl = isAdmin
+      ? endpoints.agreement.info
+      : `${endpoints.agreement.info}/${userInfo?.id}`;
     mutate(apiUrl, undefined, { revalidate: true });
   };
 
@@ -228,7 +227,7 @@ export function AgreementListView() {
                     )
                     .map((row) => (
                       <AgreementTableRow
-                        auth={auth}
+                        isAdmin={isAdmin}
                         key={row.id}
                         row={row}
                         selected={table.selected.includes(row.id)}

@@ -17,8 +17,8 @@ const swrOptions = {
 
 type AgreementInfosData = IAgreementItem[];
 
-export function useGetUserAgreementData(userId: string, role: string) {
-  const url = role === 'ADMIN' ? endpoints.agreement.info : `${endpoints.agreement.info}/${userId}`;
+export function useGetUserAgreementData(userId: string | undefined, isAdmin: boolean | null) {
+  const url = isAdmin ? endpoints.agreement.info : `${endpoints.agreement.info}/${userId}`;
 
   const { data, isLoading, error, isValidating } = useSWR<AgreementInfosData>(
     url,

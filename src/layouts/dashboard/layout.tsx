@@ -56,7 +56,7 @@ export type DashboardLayoutProps = {
 
 export function DashboardLayout({ sx, children, header, data }: DashboardLayoutProps) {
   const { user } = useAuthContext();
-  const { id } = useMemo(() => getUserInfo(user), [user]);
+  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
 
   const theme = useTheme();
 
@@ -68,7 +68,21 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
 
   const layoutQuery: Breakpoint = 'lg';
 
-  const navData = data?.nav ?? dashboardNavData;
+  const filteredNavData = useMemo(() => {
+    if (!auth) return [];
+    const ALL_ACCESS_ROLES = ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'];
+
+    return dashboardNavData
+      .map((section) => ({
+        ...section,
+        items: section.items.filter(
+          (item) => !item.roles || item.roles.includes(auth) || ALL_ACCESS_ROLES.includes(auth)
+        ),
+      }))
+      .filter((section) => section.items.length > 0);
+  }, [auth]);
+
+  const navData = data?.nav ?? filteredNavData;
 
   const isNavMini = settings.navLayout === 'mini';
   const isNavHorizontal = settings.navLayout === 'horizontal';
