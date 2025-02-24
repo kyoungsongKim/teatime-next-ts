@@ -8,12 +8,12 @@ import { makeDateString } from 'src/utils/format-date';
 
 type Props = {
   row: VacationHistoryItem;
-  auth: string;
+  isAdmin: boolean;
   onOpen: () => void;
   onDelete: () => void;
 };
 
-export function VacationTableRow({ row, auth, onOpen, onDelete }: Props) {
+export function VacationTableRow({ row, isAdmin, onOpen, onDelete }: Props) {
   return (
     <TableRow hover>
       <TableCell>
@@ -33,7 +33,7 @@ export function VacationTableRow({ row, auth, onOpen, onDelete }: Props) {
         >
           상세
         </Button>
-        {auth === 'ADMIN' && (
+        {isAdmin && (
           <Button variant="soft" color="error" size="small" onClick={onDelete}>
             삭제
           </Button>
