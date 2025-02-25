@@ -10,6 +10,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { fData } from 'src/utils/format-number';
@@ -17,7 +18,9 @@ import { fData } from 'src/utils/format-number';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
+import { Iconify } from '../../components/iconify';
 import { getTeamList } from '../../actions/team-ssr';
+import { makeDateString } from '../../utils/format-date';
 import { updateUserDetail } from '../../actions/user-ssr';
 import { useUser } from '../../auth/context/user-context';
 
@@ -145,6 +148,10 @@ export function AccountGeneral({ userInfo }: Props) {
         data.avatarImg = await fileToBase64(data.avatarImg);
       }
 
+      if (data.birthDate) {
+        data.birthDate = makeDateString(new Date(data.birthDate), 2);
+      }
+
       // @ts-ignore
       data.dailyReportList = data.dailyReportList.length > 0 ? data.dailyReportList.join(', ') : '';
       // @ts-ignore
@@ -191,6 +198,21 @@ export function AccountGeneral({ userInfo }: Props) {
                 </Typography>
               }
             />
+            <IconButton
+              onClick={() => setValue('avatarImg', null)}
+              sx={{
+                position: 'absolute',
+                top: 5,
+                right: 5,
+                width: 15,
+                height: 15,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                color: 'white',
+                '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+              }}
+            >
+              <Iconify icon="mingcute:close-line" />
+            </IconButton>
           </Card>
         </Grid>
 
