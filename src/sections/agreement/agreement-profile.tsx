@@ -83,7 +83,7 @@ export function AgreementProfile({ agreementInfos, detailData, userData, isProfi
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:party-popper" sx={{ mr: 2 }} />
-          {userData?.userDetails?.birthDate != null
+          {userData?.userDetails?.birthDate
             ? makeDateString(new Date(userData?.userDetails?.birthDate))
             : ''}
         </Box>
@@ -116,7 +116,7 @@ export function AgreementProfile({ agreementInfos, detailData, userData, isProfi
         <Box display="flex">
           <Iconify width={24} icon="mdi:update" sx={{ mr: 2 }} />
           입사일{' '}
-          {userData?.userDetails?.joinDate != null
+          {userData?.userDetails?.joinDate
             ? makeDateString(new Date(userData?.userDetails?.joinDate))
             : ''}
         </Box>

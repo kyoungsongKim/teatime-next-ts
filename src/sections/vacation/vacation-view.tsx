@@ -346,7 +346,7 @@ export function VacationView() {
                                   sx={{ cursor: 'pointer' }}
                                   onClick={() => setUserName(row.userId)}
                                 >
-                                  {row.userId}
+                                  {row.realName}
                                 </Link>
                               </TableCell>
                               <TableCell>
