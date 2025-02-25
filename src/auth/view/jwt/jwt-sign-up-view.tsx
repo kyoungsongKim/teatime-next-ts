@@ -73,7 +73,7 @@ export function JwtSignUpView() {
     realName: '',
     email: '',
     cellphone: '',
-    teamName: '',
+    teamName: 'saram',
     dailyReportList: [],
     vacationReportList: [],
     password: '',

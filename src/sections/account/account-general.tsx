@@ -30,7 +30,7 @@ export type UpdateUserSchemaType = zod.infer<typeof UpdateUserSchema>;
 
 export const UpdateUserSchema = zod.object({
   userId: zod.string(),
-  avatarImg: schemaHelper.file({ message: { required_error: 'Avatar is required!' } }),
+  avatarImg: schemaHelper.file().optional(),
   realName: zod.string().min(1, { message: 'Name is required!' }),
   email: zod
     .string()
@@ -40,15 +40,15 @@ export const UpdateUserSchema = zod.object({
   address: zod.string().min(1, { message: 'Address is required!' }),
   position: zod.string().min(1, { message: 'Position is required!' }),
   teamName: zod.string().min(1, { message: 'TeamName is required!' }),
-  birthDate: zod.string().min(1, { message: 'BirthDate is required!' }),
-  cbankAccount: zod.string().min(1, { message: 'CbankAccount is required!' }),
-  educationLevel: zod.string().min(1, { message: 'EducationLevel is required!' }),
-  skillLevel: zod.string().min(1, { message: 'SkillLevel is required!' }),
+  birthDate: zod.string().optional(),
+  cbankAccount: zod.string().optional(),
+  educationLevel: zod.string().optional(),
+  skillLevel: zod.string().optional(),
   dailyReportList: zod.array(zod.string().email({ message: 'Invalid email format!' })).optional(),
   vacationReportList: zod
     .array(zod.string().email({ message: 'Invalid email format!' }))
     .optional(),
-  description: zod.string().min(1, { message: 'About is required!' }),
+  description: zod.string().optional(),
 });
 
 type Props = {
