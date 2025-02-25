@@ -17,7 +17,6 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
-import ListItemText from '@mui/material/ListItemText';
 import { Paper, CircularProgress } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 
@@ -227,21 +226,6 @@ export function AgreementTableRow({
         />
       </TableCell>
 
-      {/* ID */}
-      <TableCell sx={{ whiteSpace: { xs: 'nowrap', md: 'normal' } }}>
-        <Link
-          color="inherit"
-          onClick={onViewRow}
-          underline="always"
-          sx={{
-            cursor: 'pointer',
-            fontSize: { xs: '0.875rem', md: '1rem' },
-          }}
-        >
-          {row.id}
-        </Link>
-      </TableCell>
-
       {/* 사용자 정보 */}
       <TableCell sx={{ flex: 1 }}>
         <Stack
@@ -250,8 +234,25 @@ export function AgreementTableRow({
           alignItems="center"
         >
           <Avatar src={row.avatarImg} alt={row.realName} sx={{ width: 40, height: 40 }} />
-          <Stack sx={{ typography: 'body2', alignItems: 'left' }}>
-            <Box component="span">{row.realName}</Box>
+          <Stack
+            sx={{
+              typography: 'body2',
+              alignItems: { xs: 'center', sm: 'flex-start' },
+              textAlign: { xs: 'center', sm: 'left' },
+            }}
+          >
+            <Box component="span">
+              <Link
+                color="inherit"
+                onClick={onViewRow}
+                underline="always"
+                sx={{
+                  cursor: 'pointer',
+                }}
+              >
+                {row.realName}
+              </Link>
+            </Box>
             <Box
               component="span"
               sx={{ color: 'text.disabled', fontSize: { xs: '0.75rem', md: '0.875rem' } }}

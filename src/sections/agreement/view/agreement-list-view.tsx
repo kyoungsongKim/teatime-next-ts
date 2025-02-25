@@ -51,7 +51,6 @@ import { AgreementTableFiltersResult } from '../agreement-table-filters-result';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', width: 88 },
   { id: 'realName', label: '이름', align: 'center', width: 100 },
   {
     id: 'agreementCount',
@@ -70,7 +69,7 @@ const TABLE_HEAD = [
 export function AgreementListView() {
   const { userInfo, isAdmin } = useUser();
 
-  const table = useTable({ defaultRowsPerPage: 10 });
+  const table = useTable({ defaultRowsPerPage: 10, defaultOrderBy: 'realName' });
 
   const router = useRouter();
 
