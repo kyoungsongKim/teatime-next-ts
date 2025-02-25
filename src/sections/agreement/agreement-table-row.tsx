@@ -1,5 +1,10 @@
 import type { IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import _ from 'lodash';
+import { mutate } from 'swr';
+import React, { useCallback, useEffect, useState } from 'react';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -24,18 +29,14 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import React, { useCallback, useEffect, useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import _ from 'lodash';
-import { mutate } from 'swr';
-import { Label } from '../../components/label';
-import { useGetUserAgreement } from '../../actions/agreement';
-import { toast } from '../../components/snackbar';
-import { deleteAgreement } from '../../actions/agreement-ssr';
-import { AgreementFormDialog } from './dialog/agreement-form-dialog';
 import { download } from '../../utils/file';
 import { endpoints } from '../../utils/axios';
+import { Label } from '../../components/label';
+import { toast } from '../../components/snackbar';
 import { makeDateString } from '../../utils/format-date';
+import { useGetUserAgreement } from '../../actions/agreement';
+import { deleteAgreement } from '../../actions/agreement-ssr';
+import { AgreementFormDialog } from './dialog/agreement-form-dialog';
 
 // ----------------------------------------------------------------------
 

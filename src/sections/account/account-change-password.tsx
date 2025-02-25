@@ -13,7 +13,9 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
+
 import { updateUserPassword } from '../../actions/user-ssr';
+
 import type { IUser } from '../../types/agreement';
 
 // ----------------------------------------------------------------------

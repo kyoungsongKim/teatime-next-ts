@@ -1,14 +1,17 @@
 'use client';
 
 import type { ButtonBaseProps } from '@mui/material/ButtonBase';
+
 import React from 'react';
+
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-import { UserPointItem } from '../../types/point';
+
+import type { UserPointItem } from '../../types/point';
 
 // ----------------------------------------------------------------------
 

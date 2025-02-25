@@ -1,6 +1,6 @@
-import type { IAgreementTableFilters } from 'src/types/agreement';
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+import type { IAgreementTableFilters } from 'src/types/agreement';
 
 import { useCallback } from 'react';
 

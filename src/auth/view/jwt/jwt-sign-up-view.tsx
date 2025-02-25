@@ -2,7 +2,7 @@
 
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
@@ -20,15 +20,16 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { getTeamList } from 'src/actions/team-ssr';
+
 import { Iconify } from 'src/components/iconify';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import { getTeamList } from 'src/actions/team-ssr';
 import { signUp } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
+import { ITeamItem } from '../../../types/team';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
-import { ITeamItem } from '../../../types/team';
 
 // ----------------------------------------------------------------------
 

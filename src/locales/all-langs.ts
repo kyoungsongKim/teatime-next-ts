@@ -3,27 +3,27 @@
 // core (MUI)
 import {
   koKR as koKRCore,
-  frFR as frFRCore,
-  viVN as viVNCore,
-  zhCN as zhCNCore,
-  arSA as arSACore,
+  // frFR as frFRCore,
+  // viVN as viVNCore,
+  // zhCN as zhCNCore,
+  // arSA as arSACore,
 } from '@mui/material/locale';
 // date pickers (MUI)
 import {
   koKR as koKRDate,
   enUS as enUSDate,
-  frFR as frFRDate,
-  viVN as viVNDate,
-  zhCN as zhCNDate,
+  // frFR as frFRDate,
+  // viVN as viVNDate,
+  // zhCN as zhCNDate,
 } from '@mui/x-date-pickers/locales';
 // data grid (MUI)
 import {
   koKR as koKRDataGrid,
   enUS as enUSDataGrid,
-  frFR as frFRDataGrid,
-  viVN as viVNDataGrid,
-  zhCN as zhCNDataGrid,
-  arSD as arSDDataGrid,
+  // frFR as frFRDataGrid,
+  // viVN as viVNDataGrid,
+  // zhCN as zhCNDataGrid,
+  // arSD as arSDDataGrid,
 } from '@mui/x-data-grid/locales';
 
 // ----------------------------------------------------------------------

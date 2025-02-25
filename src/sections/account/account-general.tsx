@@ -1,26 +1,28 @@
 import { z as zod } from 'zod';
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { fData } from 'src/utils/format-number';
+
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import Chip from '@mui/material/Chip';
-import type { IUser } from '../../types/agreement';
-import { ITeamItem } from '../../types/team';
 import { getTeamList } from '../../actions/team-ssr';
 import { updateUserDetail } from '../../actions/user-ssr';
 import { useUser } from '../../auth/context/user-context';
+
+import type { ITeamItem } from '../../types/team';
+import type { IUser } from '../../types/agreement';
 
 // ----------------------------------------------------------------------
 

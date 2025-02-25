@@ -2,14 +2,12 @@
 
 import type { ApplyItem, AssistanceItem } from 'src/types/assistance';
 
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-
-import { getUserInfo } from 'src/utils/user-info';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getApplyList } from 'src/actions/assistance-ssr';
@@ -23,7 +21,6 @@ import { AppliedServiceAdminTable } from 'src/sections/assistance/applied-servic
 import { AssistanceReviewDialog } from 'src/sections/assistance/dialog/assistance-review-dialog';
 import { AssistanceSuggestionDialog } from 'src/sections/assistance/dialog/assistance-suggestion-dialog';
 
-import { useAuthContext } from 'src/auth/hooks';
 import { useUser } from '../../auth/context/user-context';
 
 export function AssistanceView() {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '@iconify/react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -15,14 +16,17 @@ import CardHeader from '@mui/material/CardHeader';
 import ListItemText from '@mui/material/ListItemText';
 
 import { fNumber } from 'src/utils/format-number';
+
 import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
+
 import { Iconify } from 'src/components/iconify';
-import { Icon } from '@iconify/react';
+
 import { download } from '../../utils/file';
+import { Label } from '../../components/label';
 import { Scrollbar } from '../../components/scrollbar';
 import { makeDateString } from '../../utils/format-date';
-import { Label, LabelColor } from '../../components/label';
 
+import type { LabelColor } from '../../components/label';
 import type { IUser, IAgreementItem, IAgreementDetailItem } from '../../types/agreement';
 // ----------------------------------------------------------------------
 
