@@ -76,9 +76,9 @@ export function WorkspacesPopover({ data, sx, ...other }: WorkspacesPopoverProps
             {renderLabel('P', data?.point, 'point')}
           </Box>
         )}
-        {renderLabel('Ex', data?.expvalue, 'expvalue', false) && (
+        {renderLabel('Exp', data?.expvalue, 'expvalue', false) && (
           <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            {renderLabel('Ex', data?.expvalue, 'expvalue')}
+            {renderLabel('Exp', data?.expvalue, 'expvalue')}
           </Box>
         )}
 

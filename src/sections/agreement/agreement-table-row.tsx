@@ -3,7 +3,7 @@ import type { IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from 'lodash';
 import { mutate } from 'swr';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';

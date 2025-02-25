@@ -27,9 +27,10 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 import { signUp } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
-import { ITeamItem } from '../../../types/team';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
+
+import type { ITeamItem } from '../../../types/team';
 
 // ----------------------------------------------------------------------
 
