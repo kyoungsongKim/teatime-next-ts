@@ -367,25 +367,18 @@ export function AgreementTableRow({
                         },
                       }}
                     >
-                      <Stack direction="row" spacing={2} alignItems="left" sx={{ flexGrow: 1 }}>
-                        {/* 타입 아이콘 */}
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            width: 48,
-                            height: 48,
-                            mr: 2,
-                            bgcolor: typeColor,
-                            color: 'white',
-                            fontWeight: 'bold',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {typeText.charAt(0)}
-                        </Avatar>
-
+                      <Stack direction="row" spacing={2} alignItems="center" sx={{ flexGrow: 1 }}>
+                        <Box>
+                          <Label
+                            sx={{
+                              minWidth: '30px',
+                              bgcolor: isExpired ? 'grey.400' : typeColor,
+                              color: 'white',
+                            }}
+                          >
+                            {typeText}
+                          </Label>
+                        </Box>
                         <Box
                           sx={{
                             display: 'flex',
@@ -395,44 +388,23 @@ export function AgreementTableRow({
                             color: isExpired ? 'grey.700' : 'text.primary',
                           }}
                         >
-                          {/* 파일명 */}
-                          <ListItemText
-                            primary={
-                              <Link
-                                component="button"
-                                onClick={() => download(item.file.id, item.file.originalName)}
-                                underline="hover"
-                                sx={{
-                                  color: isExpired ? 'grey.700' : '#007BFF',
-                                  cursor: 'pointer',
-                                  fontWeight: 'bold',
-                                  background: 'none',
-                                  border: 'none',
-                                  alignItems: 'left',
-                                  padding: 0,
-                                  textAlign: 'left',
-                                }}
-                              >
-                                {item.file.originalName}
-                              </Link>
-                            }
-                            secondary={
-                              <Box
-                                sx={{
-                                  color: typeColor,
-                                  fontWeight: 'bold',
-                                  alignItems: 'left',
-                                }}
-                              >
-                                {typeText}
-                              </Box>
-                            }
-                            primaryTypographyProps={{ typography: 'body2' }}
-                            secondaryTypographyProps={{
-                              component: 'span',
-                              mt: 0.5,
+                          <Link
+                            component="button"
+                            onClick={() => download(item.file.id, item.file.originalName)}
+                            underline="hover"
+                            sx={{
+                              color: isExpired ? 'grey.700' : '',
+                              cursor: 'pointer',
+                              fontWeight: 'bold',
+                              background: 'none',
+                              border: 'none',
+                              alignItems: 'left',
+                              padding: 0,
+                              textAlign: 'left',
                             }}
-                          />
+                          >
+                            {item.file.originalName}
+                          </Link>
                         </Box>
                       </Stack>
 
