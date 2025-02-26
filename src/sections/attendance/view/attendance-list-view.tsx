@@ -28,25 +28,25 @@ export default function AttendanceListView() {
 
   // ✅ 출근 버튼 클릭
   const handleCheckIn = () => {
-    const now = format(new Date(), 'HH:mm');
-    setCurrentCheckIn(now);
+    // const now = format(new Date(), 'HH:mm');
+    // setCurrentCheckIn(now);
   };
 
   // ✅ 퇴근 버튼 클릭
   const handleCheckOut = () => {
-    if (!currentCheckIn) return;
-    const now = format(new Date(), 'HH:mm');
-
-    setAttendanceData((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        date: format(new Date(), 'yyyy-MM-dd'),
-        checkIn: currentCheckIn,
-        checkOut: now,
-        status: '출근',
-      },
-    ]);
+    // if (!currentCheckIn) return;
+    // const now = format(new Date(), 'HH:mm');
+    //
+    // setAttendanceData((prev) => [
+    //   ...prev,
+    //   {
+    //     id: prev.length + 1,
+    //     date: format(new Date(), 'yyyy-MM-dd'),
+    //     checkIn: currentCheckIn,
+    //     checkOut: now,
+    //     status: '출근',
+    //   },
+    // ]);
 
     setCurrentCheckIn(null);
     setCurrentCheckOut(null);
