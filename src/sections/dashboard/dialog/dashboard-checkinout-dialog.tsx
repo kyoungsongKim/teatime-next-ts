@@ -71,7 +71,7 @@ export function DashboardCheckInOutDialog({ open, onClose, checkType }: Props) {
           setDistanceMessage(`${checkType === 'checkIn' ? '출근' : '퇴근'}체크 가능합니다.`);
         } else {
           setIsCheckAllowed(false);
-          setDistanceMessage(`출근 불가: 현재 위치는 ${Math.round(distance)}m 떨어져 있습니다.`);
+          setDistanceMessage(`체크 불가: 여기는 ${Math.round(distance)}m 떨어져 있습니다.`);
         }
       },
       (error) => {
@@ -92,20 +92,18 @@ export function DashboardCheckInOutDialog({ open, onClose, checkType }: Props) {
           </IconButton>
         </DialogTitle>
 
-        <DialogContent>
-          <Stack spacing={3} sx={{ textAlign: 'center' }}>
-            <Typography variant="body1" color="text.secondary">
-              📍 GPS를 이용하여 위치 확인 후 {checkType === 'checkIn' ? '출근' : '퇴근'} 체크합니다.
-            </Typography>
-
-            {/* 출근/퇴근 가능 여부 메시지 */}
-            <Typography
-              variant="h6"
-              color={isCheckAllowed ? 'success.main' : 'error.main'}
-              sx={{ fontWeight: 'bold' }}
-            >
-              {distanceMessage}
-            </Typography>
+        <DialogContent sx={{ bgcolor: 'grey.200', borderRadius: 2 }}>
+          <Stack spacing={2} sx={{ pt: 1, pb: 1 }}>
+            <Stack spacing={1}>
+              <Typography variant="body2">📍본사 100m 이내에서 체크 가능합니다.</Typography>
+              <Typography
+                variant="h6"
+                color={isCheckAllowed ? 'success.main' : 'error.main'}
+                sx={{ fontWeight: 'bold' }}
+              >
+                {distanceMessage}
+              </Typography>
+            </Stack>
 
             {/* 구글 지도 표시 */}
             {isLoaded && (
@@ -130,11 +128,18 @@ export function DashboardCheckInOutDialog({ open, onClose, checkType }: Props) {
             )}
           </Stack>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
+        <DialogActions sx={{ justifyContent: 'center' }}>
           <Button
             variant="soft"
-            color={isCheckAllowed ? 'info' : 'error'}
+            color={isCheckAllowed ? 'info' : 'warning'}
             disabled={!isCheckAllowed}
+            sx={{
+              fontSize: '1.2rem',
+              px: 4,
+              py: 1,
+              fontWeight: 'bold',
+              width: '50%',
+            }}
           >
             {checkType === 'checkIn' ? '출근' : '퇴근'}
           </Button>
