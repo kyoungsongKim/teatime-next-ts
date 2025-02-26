@@ -21,7 +21,6 @@ import FormControl from '@mui/material/FormControl';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { getUserInfo } from 'src/utils/user-info';
 import { makeDateString } from 'src/utils/format-date';
 
 import { getUserList } from 'src/actions/user-ssr';
@@ -44,7 +43,7 @@ import { VacationTableRow } from 'src/sections/vacation/VacationTableRow';
 import { VacationSummaryWidget } from 'src/sections/vacation/vacation-summary-widget';
 import { VacationFormDialog } from 'src/sections/vacation/dialog/vacation-form-dialog';
 
-import { useAuthContext } from 'src/auth/hooks';
+import { useUser } from '../../auth/context/user-context';
 
 const VACATION_TABLE_HEAD = [
   { id: 'eventStartDate', label: '기간' },
@@ -63,15 +62,14 @@ const USER_VACATION_TABLE_HEAD = [
 ];
 
 export function VacationView() {
-  const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { userInfo, isAdmin } = useUser();
 
   const open = useBoolean();
   const [historyItem, setHistoryItem] = useState<VacationHistoryItem>();
 
   const confirm = useBoolean();
 
-  const [userName, setUserName] = useState<string>(id); // 사용자 이름 상태
+  const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
   const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
 
   const [workedYear, setWorkedYear] = useState(1); // 근속년수 상태
@@ -106,7 +104,7 @@ export function VacationView() {
   );
 
   const getVacationListAll = useCallback(() => {
-    if (auth === 'ADMIN') {
+    if (isAdmin) {
       getVacationAll().then((r) => {
         if (r.status === 200) {
           setUsersVacationList(r.data);
@@ -115,7 +113,7 @@ export function VacationView() {
         }
       });
     }
-  }, [auth]);
+  }, [isAdmin]);
 
   const remainingVacationDays = useMemo(
     () => (vacationData ? vacationData.left : '-'),
@@ -177,17 +175,17 @@ export function VacationView() {
       }
     });
 
-    if (auth === 'ADMIN') {
+    if (isAdmin) {
       getUserList().then((r) => setUserList(r.data));
       getVacationListAll();
     }
-  }, [userName, auth, getVacationListByWorkedYear, getVacationListAll]);
+  }, [userName, isAdmin, getVacationListByWorkedYear, getVacationListAll]);
 
   return (
     <>
       <DashboardContent maxWidth="xl">
         <Grid container spacing={3}>
-          {auth === 'ADMIN' && (
+          {isAdmin && (
             <Grid xs={12} sm={12} md={12} sx={{ textAlign: { xs: 'end', sm: 'end', md: 'start' } }}>
               {/* 사용자 리스트 및 연차 리스트 노출 */}
               <FormControl size="small" sx={{ paddingRight: { xs: 1, sm: 1, md: 1.5 } }}>
@@ -195,7 +193,7 @@ export function VacationView() {
                   value={userName}
                   onChange={(newValue) => {
                     const targetUser = userList.find((item) => newValue.target.value === item.id);
-                    setUserName(targetUser?.id ?? id);
+                    setUserName(targetUser?.id ?? (userInfo?.id || ''));
                   }}
                   variant="outlined"
                 >
@@ -293,7 +291,7 @@ export function VacationView() {
                           <VacationTableRow
                             key={index}
                             row={row}
-                            auth={auth}
+                            isAdmin={isAdmin || false}
                             onOpen={() => {
                               setHistoryItem(row);
                               open.onTrue();
@@ -319,7 +317,7 @@ export function VacationView() {
           </Grid>
 
           {/* 관리자인 경우에만 노출되는 형상 */}
-          {auth === 'ADMIN' && (
+          {isAdmin && (
             <>
               <Grid xs={12} sm={12} md={12} alignSelf="center">
                 <Typography variant="subtitle1">
@@ -348,7 +346,7 @@ export function VacationView() {
                                   sx={{ cursor: 'pointer' }}
                                   onClick={() => setUserName(row.userId)}
                                 >
-                                  {row.userId}
+                                  {row.realName}
                                 </Link>
                               </TableCell>
                               <TableCell>
@@ -391,7 +389,7 @@ export function VacationView() {
         history={vacationData?.histories ?? []}
         item={historyItem}
         user={userName}
-        auth={auth}
+        isAdmin={isAdmin || false}
         left={vacationData?.left ?? 0}
       />
       <ConfirmDialog

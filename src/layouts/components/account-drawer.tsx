@@ -23,6 +23,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { AnimateAvatar } from 'src/components/animate';
 
 import { useUser } from 'src/auth/context/user-context';
+
 import { AccountButton } from './account-button';
 import { SignOutButton } from './sign-out-button';
 
@@ -37,8 +38,18 @@ export type AccountDrawerProps = IconButtonProps & {
   }[];
 };
 
+const roleTranslations: Record<string, string> = {
+  USER_BASIC: '일반 사용자',
+  USER_SILVER: '실버 사용자',
+  USER_GOLD: '골드 사용자',
+  USER_VIP: 'VIP 사용자',
+  USER: 'VIP 사용자',
+  ADMIN: '관리자',
+  SUPER_ADMIN: '최고 관리자',
+};
+
 export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
-  const { userInfo } = useUser();
+  const { userInfo, auth } = useUser();
 
   const theme = useTheme();
 
@@ -69,7 +80,7 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
       width={96}
       slotProps={{
         avatar: {
-          src: userInfo?.userDetails.avatarImg,
+          src: userInfo?.userDetails?.avatarImg,
           alt: userInfo?.realName,
         },
         overlay: {
@@ -87,7 +98,7 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
     <>
       <AccountButton
         onClick={handleOpenDrawer}
-        photoURL={userInfo?.userDetails.avatarImg || ''}
+        photoURL={userInfo?.userDetails?.avatarImg || ''}
         displayName={userInfo?.realName || ''}
         sx={sx}
         {...other}
@@ -111,10 +122,24 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
           <Stack alignItems="center" sx={{ pt: 8 }}>
             {renderAvatar}
 
-            <Typography variant="subtitle1" noWrap sx={{ mt: 2 }}>
-              {userInfo?.realName}
-            </Typography>
+            <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: 2 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                {userInfo?.realName} 님
+              </Typography>
 
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '0.875rem',
+                  borderLeft: '1px solid',
+                  borderColor: 'grey.400',
+                  pl: 1,
+                }}
+              >
+                {roleTranslations[auth || ''] || '알 수 없음'}
+              </Typography>
+            </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }} noWrap>
               {userInfo?.email}
             </Typography>

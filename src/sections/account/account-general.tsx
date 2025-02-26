@@ -1,25 +1,31 @@
 import { z as zod } from 'zod';
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { fData } from 'src/utils/format-number';
+
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import Chip from '@mui/material/Chip';
-import type { IUser } from '../../types/agreement';
-import { ITeamItem } from '../../types/team';
+import { Iconify } from '../../components/iconify';
 import { getTeamList } from '../../actions/team-ssr';
+import { makeDateString } from '../../utils/format-date';
 import { updateUserDetail } from '../../actions/user-ssr';
+import { useUser } from '../../auth/context/user-context';
+
+import type { ITeamItem } from '../../types/team';
+import type { IUser } from '../../types/agreement';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +33,7 @@ export type UpdateUserSchemaType = zod.infer<typeof UpdateUserSchema>;
 
 export const UpdateUserSchema = zod.object({
   userId: zod.string(),
-  avatarImg: schemaHelper.file({ message: { required_error: 'Avatar is required!' } }),
+  avatarImg: schemaHelper.file().optional(),
   realName: zod.string().min(1, { message: 'Name is required!' }),
   email: zod
     .string()
@@ -37,15 +43,15 @@ export const UpdateUserSchema = zod.object({
   address: zod.string().min(1, { message: 'Address is required!' }),
   position: zod.string().min(1, { message: 'Position is required!' }),
   teamName: zod.string().min(1, { message: 'TeamName is required!' }),
-  birthDate: zod.string().min(1, { message: 'BirthDate is required!' }),
-  cbankAccount: zod.string().min(1, { message: 'CbankAccount is required!' }),
-  educationLevel: zod.string().min(1, { message: 'EducationLevel is required!' }),
-  skillLevel: zod.string().min(1, { message: 'SkillLevel is required!' }),
+  birthDate: zod.string().optional(),
+  cbankAccount: zod.string().optional(),
+  educationLevel: zod.string().optional(),
+  skillLevel: zod.string().optional(),
   dailyReportList: zod.array(zod.string().email({ message: 'Invalid email format!' })).optional(),
   vacationReportList: zod
     .array(zod.string().email({ message: 'Invalid email format!' }))
     .optional(),
-  description: zod.string().min(1, { message: 'About is required!' }),
+  description: zod.string().optional(),
 });
 
 type Props = {
@@ -53,6 +59,7 @@ type Props = {
 };
 
 export function AccountGeneral({ userInfo }: Props) {
+  const { refreshUserInfo } = useUser();
   const [teamList, setTeamList] = useState<ITeamItem[]>([]);
 
   const methods = useForm<UpdateUserSchemaType>({
@@ -141,6 +148,10 @@ export function AccountGeneral({ userInfo }: Props) {
         data.avatarImg = await fileToBase64(data.avatarImg);
       }
 
+      if (data.birthDate) {
+        data.birthDate = makeDateString(new Date(data.birthDate), 2);
+      }
+
       // @ts-ignore
       data.dailyReportList = data.dailyReportList.length > 0 ? data.dailyReportList.join(', ') : '';
       // @ts-ignore
@@ -153,6 +164,7 @@ export function AccountGeneral({ userInfo }: Props) {
 
       if (response.status === 200) {
         toast.success('사용자 정보 수정이 완료되었습니다.');
+        await refreshUserInfo();
       } else {
         toast.error('사용자 정보 수정이 실패했습니다.');
       }
@@ -186,6 +198,21 @@ export function AccountGeneral({ userInfo }: Props) {
                 </Typography>
               }
             />
+            <IconButton
+              onClick={() => setValue('avatarImg', null)}
+              sx={{
+                position: 'absolute',
+                top: 5,
+                right: 5,
+                width: 15,
+                height: 15,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                color: 'white',
+                '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+              }}
+            >
+              <Iconify icon="mingcute:close-line" />
+            </IconButton>
           </Card>
         </Grid>
 
@@ -221,7 +248,7 @@ export function AccountGeneral({ userInfo }: Props) {
               <Field.Text name="skillLevel" label="보유 기술" />
               <Field.Autocomplete
                 name="dailyReportList"
-                label="일일리포트 Email"
+                label="일일 리포트 Email"
                 multiple
                 freeSolo
                 disableCloseOnSelect

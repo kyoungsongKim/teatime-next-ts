@@ -90,10 +90,10 @@ export const schemaHelper = {
     zod.custom<File | string | null>().transform((data, ctx) => {
       const hasFile = data instanceof File || (typeof data === 'string' && !!data.length);
 
-      if (!hasFile) {
+      if (!hasFile && props?.message?.required_error) {
         ctx.addIssue({
           code: zod.ZodIssueCode.custom,
-          message: props?.message?.required_error ?? 'File is required!',
+          message: props.message.required_error,
         });
         return null;
       }

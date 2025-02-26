@@ -30,9 +30,7 @@ import { signInWithPassword } from '../../context/jwt';
 export type SignInSchemaType = zod.infer<typeof SignInSchema>;
 
 export const SignInSchema = zod.object({
-  userId: zod
-    .string()
-    .min(1, { message: 'userId is required!' }),
+  userId: zod.string().min(1, { message: 'userId is required!' }),
   password: zod
     .string()
     .min(1, { message: 'Password is required!' })
@@ -73,7 +71,7 @@ export function JwtSignInView() {
       router.refresh();
     } catch (error) {
       console.error(error);
-      setErrorMsg(typeof error === 'string' ? error : error.message);
+      setErrorMsg(typeof error === 'string' ? error : error.msg);
     }
   });
 

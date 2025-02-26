@@ -1,4 +1,5 @@
 import { CONFIG } from 'src/config-global';
+
 import { AgreementDetailsView } from 'src/sections/agreement/view/agreement-details-view';
 
 // ----------------------------------------------------------------------

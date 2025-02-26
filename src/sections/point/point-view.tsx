@@ -22,8 +22,6 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { getUserInfo } from 'src/utils/user-info';
-
 import { getUserList } from 'src/actions/user-ssr';
 import { getPointList } from 'src/actions/point-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -41,8 +39,7 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { useAuthContext } from 'src/auth/hooks';
-
+import { useUser } from '../../auth/context/user-context';
 import { PointListTableRow } from './point-list-table-row';
 import { PointDonateDialog } from './dialog/point-donate-dialog';
 import { PointCreateDialog } from './dialog/point-create-dialog';
@@ -60,8 +57,7 @@ export function PointView() {
   const notFound = false;
 
   // 사용자 정보 불러오기
-  const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { userInfo, isAdmin } = useUser();
 
   const router = useRouter();
 
@@ -96,10 +92,10 @@ export function PointView() {
   const [userList, setUserList] = useState<CUserItem[]>([]);
 
   const fetchPointList = useCallback(() => {
-    getPointList(id, selectedYear).then((r) => {
+    getPointList(userInfo?.id || '', selectedYear).then((r) => {
       setPointData(r);
     });
-  }, [id, selectedYear]);
+  }, [userInfo?.id, selectedYear]);
 
   useEffect(() => {
     fetchPointList();
@@ -107,7 +103,7 @@ export function PointView() {
 
   useEffect(() => {
     try {
-      getUserList(id).then((r) => {
+      getUserList(userInfo?.id || '').then((r) => {
         if (r.status === 200) {
           setUserList(r.data);
         }
@@ -116,7 +112,7 @@ export function PointView() {
       setUserList([] as CUserItem[]);
       console.error(error);
     }
-  }, [id]);
+  }, [userInfo?.id]);
 
   return (
     <>
@@ -146,7 +142,7 @@ export function PointView() {
               <Button variant="soft" color="primary" onClick={donateDialog.onTrue}>
                 Donation Point
               </Button>
-              {auth === 'ADMIN' && (
+              {isAdmin && (
                 <>
                   <Button
                     variant="soft"
@@ -163,7 +159,7 @@ export function PointView() {
             </Stack>
           </Stack>
         </Stack>
-        {auth === 'ADMIN' && (
+        {isAdmin && (
           <CustomPopover
             open={popover.open}
             anchorEl={popover.anchorEl}
@@ -218,13 +214,13 @@ export function PointView() {
         </Card>
       </DashboardContent>
       <PointDonateDialog
-        id={id}
+        id={userInfo?.id || ''}
         open={donateDialog.value}
         onClose={donateDialog.onFalse}
         onUpdate={fetchPointList}
       />
       <PointCreateDialog
-        id={id}
+        id={userInfo?.id || ''}
         open={createDialog.value}
         userList={userList}
         onClose={createDialog.onFalse}

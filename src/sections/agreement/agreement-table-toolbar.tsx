@@ -11,7 +11,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-import { IAgreementTableFilters } from '../../types/agreement';
+
+import type { IAgreementTableFilters } from '../../types/agreement';
 
 // ----------------------------------------------------------------------
 

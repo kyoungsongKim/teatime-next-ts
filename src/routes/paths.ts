@@ -13,6 +13,7 @@ const ROOTS = {
   AUTH_DEMO: '/auth-demo',
   DASHBOARD: '/dashboard',
   CALENDAR: '/calendar',
+  ATTENDANCE: '/attendance',
   AGREEMENT: '/agreement',
   ASSISTANCE: '/assistance',
   VACATION: '/vacation',
@@ -62,6 +63,7 @@ export const paths = {
   root: {
     dashboard: '/',
     calendar: ROOTS.CALENDAR,
+    attendance: ROOTS.ATTENDANCE,
     agreement: {
       root: ROOTS.AGREEMENT,
       details: (id: string) => `${ROOTS.AGREEMENT}/${id}`,

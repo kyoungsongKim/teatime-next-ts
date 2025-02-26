@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '@iconify/react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -15,14 +16,17 @@ import CardHeader from '@mui/material/CardHeader';
 import ListItemText from '@mui/material/ListItemText';
 
 import { fNumber } from 'src/utils/format-number';
+
 import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
+
 import { Iconify } from 'src/components/iconify';
-import { Icon } from '@iconify/react';
+
 import { download } from '../../utils/file';
+import { Label } from '../../components/label';
 import { Scrollbar } from '../../components/scrollbar';
 import { makeDateString } from '../../utils/format-date';
-import { Label, LabelColor } from '../../components/label';
 
+import type { LabelColor } from '../../components/label';
 import type { IUser, IAgreementItem, IAgreementDetailItem } from '../../types/agreement';
 // ----------------------------------------------------------------------
 
@@ -30,6 +34,7 @@ type Props = {
   agreementInfos: IAgreementItem[];
   detailData: IAgreementDetailItem[];
   userData: IUser;
+  isProfile: boolean;
 };
 
 const socialLinks = [
@@ -44,7 +49,7 @@ const socialLinks = [
   },
 ];
 
-export function AgreementProfile({ agreementInfos, detailData, userData }: Props) {
+export function AgreementProfile({ agreementInfos, detailData, userData, isProfile }: Props) {
   const renderAmountCas = (
     <Card sx={{ py: 3, textAlign: 'center', typography: 'h4' }}>
       <Stack
@@ -82,7 +87,9 @@ export function AgreementProfile({ agreementInfos, detailData, userData }: Props
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:party-popper" sx={{ mr: 2 }} />
-          {makeDateString(new Date(userData?.userDetails?.birthDate))}
+          {userData?.userDetails?.birthDate
+            ? makeDateString(new Date(userData?.userDetails?.birthDate))
+            : ''}
         </Box>
 
         <Box display="flex">
@@ -112,7 +119,10 @@ export function AgreementProfile({ agreementInfos, detailData, userData }: Props
 
         <Box display="flex">
           <Iconify width={24} icon="mdi:update" sx={{ mr: 2 }} />
-          입사일 {makeDateString(new Date(userData?.userDetails?.joinDate))}
+          입사일{' '}
+          {userData?.userDetails?.joinDate
+            ? makeDateString(new Date(userData?.userDetails?.joinDate))
+            : ''}
         </Box>
       </Stack>
     </Card>
@@ -261,7 +271,7 @@ export function AgreementProfile({ agreementInfos, detailData, userData }: Props
     <Grid container spacing={3}>
       <Grid xs={12} md={4}>
         <Stack spacing={3}>
-          {renderAmountCas}
+          {isProfile && renderAmountCas}
           {renderAbout}
           {renderSocials}
         </Stack>

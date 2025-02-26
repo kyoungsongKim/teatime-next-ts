@@ -1,5 +1,10 @@
 import type { IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import _ from 'lodash';
+import { mutate } from 'swr';
+import React, { useState, useEffect, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -12,7 +17,6 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
-import ListItemText from '@mui/material/ListItemText';
 import { Paper, CircularProgress } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 
@@ -24,23 +28,19 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import React, { useCallback, useEffect, useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import _ from 'lodash';
-import { mutate } from 'swr';
-import { Label } from '../../components/label';
-import { useGetUserAgreement } from '../../actions/agreement';
-import { toast } from '../../components/snackbar';
-import { deleteAgreement } from '../../actions/agreement-ssr';
-import { AgreementFormDialog } from './dialog/agreement-form-dialog';
 import { download } from '../../utils/file';
 import { endpoints } from '../../utils/axios';
+import { Label } from '../../components/label';
+import { toast } from '../../components/snackbar';
 import { makeDateString } from '../../utils/format-date';
+import { useGetUserAgreement } from '../../actions/agreement';
+import { deleteAgreement } from '../../actions/agreement-ssr';
+import { AgreementFormDialog } from './dialog/agreement-form-dialog';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  auth: string;
+  isAdmin: boolean | null;
   row: IAgreementItem;
   selected: boolean;
   onViewRow: () => void;
@@ -156,7 +156,7 @@ export function RenderCellAmount({ row }: RenderCellAgreementCountProps) {
 }
 
 export function AgreementTableRow({
-  auth,
+  isAdmin,
   row,
   selected,
   onViewRow,
@@ -177,10 +177,10 @@ export function AgreementTableRow({
   const [detailData, setDetailData] = useState<IAgreementDetailItem[]>(agreementInfo);
 
   useEffect(() => {
-    if (auth !== 'ADMIN') {
+    if (!isAdmin) {
       collapse.onTrue();
     }
-  }, [auth, collapse]);
+  }, [isAdmin, collapse]);
 
   useEffect(() => {
     setDetailData((prev) => (_.isEqual(prev, agreementInfo) ? prev : agreementInfo));
@@ -226,21 +226,6 @@ export function AgreementTableRow({
         />
       </TableCell>
 
-      {/* ID */}
-      <TableCell sx={{ whiteSpace: { xs: 'nowrap', md: 'normal' } }}>
-        <Link
-          color="inherit"
-          onClick={onViewRow}
-          underline="always"
-          sx={{
-            cursor: 'pointer',
-            fontSize: { xs: '0.875rem', md: '1rem' },
-          }}
-        >
-          {row.id}
-        </Link>
-      </TableCell>
-
       {/* 사용자 정보 */}
       <TableCell sx={{ flex: 1 }}>
         <Stack
@@ -249,8 +234,25 @@ export function AgreementTableRow({
           alignItems="center"
         >
           <Avatar src={row.avatarImg} alt={row.realName} sx={{ width: 40, height: 40 }} />
-          <Stack sx={{ typography: 'body2', alignItems: 'left' }}>
-            <Box component="span">{row.realName}</Box>
+          <Stack
+            sx={{
+              typography: 'body2',
+              alignItems: { xs: 'center', sm: 'flex-start' },
+              textAlign: { xs: 'center', sm: 'left' },
+            }}
+          >
+            <Box component="span">
+              <Link
+                color="inherit"
+                onClick={onViewRow}
+                underline="always"
+                sx={{
+                  cursor: 'pointer',
+                }}
+              >
+                {row.realName}
+              </Link>
+            </Box>
             <Box
               component="span"
               sx={{ color: 'text.disabled', fontSize: { xs: '0.75rem', md: '0.875rem' } }}
@@ -288,7 +290,7 @@ export function AgreementTableRow({
         <RenderCellAmount row={row} />
       </TableCell>
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        {auth === 'ADMIN' && (
+        {isAdmin && (
           <>
             <IconButton
               color={collapse.value ? 'inherit' : 'default'}
@@ -366,25 +368,18 @@ export function AgreementTableRow({
                         },
                       }}
                     >
-                      <Stack direction="row" spacing={2} alignItems="left" sx={{ flexGrow: 1 }}>
-                        {/* 타입 아이콘 */}
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            width: 48,
-                            height: 48,
-                            mr: 2,
-                            bgcolor: typeColor,
-                            color: 'white',
-                            fontWeight: 'bold',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {typeText.charAt(0)}
-                        </Avatar>
-
+                      <Stack direction="row" spacing={2} alignItems="center" sx={{ flexGrow: 1 }}>
+                        <Box>
+                          <Label
+                            sx={{
+                              minWidth: '30px',
+                              bgcolor: isExpired ? 'grey.400' : typeColor,
+                              color: 'white',
+                            }}
+                          >
+                            {typeText}
+                          </Label>
+                        </Box>
                         <Box
                           sx={{
                             display: 'flex',
@@ -394,44 +389,23 @@ export function AgreementTableRow({
                             color: isExpired ? 'grey.700' : 'text.primary',
                           }}
                         >
-                          {/* 파일명 */}
-                          <ListItemText
-                            primary={
-                              <Link
-                                component="button"
-                                onClick={() => download(item.file.id, item.file.originalName)}
-                                underline="hover"
-                                sx={{
-                                  color: isExpired ? 'grey.700' : '#007BFF',
-                                  cursor: 'pointer',
-                                  fontWeight: 'bold',
-                                  background: 'none',
-                                  border: 'none',
-                                  alignItems: 'left',
-                                  padding: 0,
-                                  textAlign: 'left',
-                                }}
-                              >
-                                {item.file.originalName}
-                              </Link>
-                            }
-                            secondary={
-                              <Box
-                                sx={{
-                                  color: typeColor,
-                                  fontWeight: 'bold',
-                                  alignItems: 'left',
-                                }}
-                              >
-                                {typeText}
-                              </Box>
-                            }
-                            primaryTypographyProps={{ typography: 'body2' }}
-                            secondaryTypographyProps={{
-                              component: 'span',
-                              mt: 0.5,
+                          <Link
+                            component="button"
+                            onClick={() => download(item.file.id, item.file.originalName)}
+                            underline="hover"
+                            sx={{
+                              color: isExpired ? 'grey.700' : '',
+                              cursor: 'pointer',
+                              fontWeight: 'bold',
+                              background: 'none',
+                              border: 'none',
+                              alignItems: 'left',
+                              padding: 0,
+                              textAlign: 'left',
                             }}
-                          />
+                          >
+                            {item.file.originalName}
+                          </Link>
                         </Box>
                       </Stack>
 
@@ -473,7 +447,7 @@ export function AgreementTableRow({
                           {formatNumber(item.amount)} CAS
                         </Box>
 
-                        {auth === 'ADMIN' && (
+                        {isAdmin && (
                           <IconButton
                             color="error"
                             onClick={() => {

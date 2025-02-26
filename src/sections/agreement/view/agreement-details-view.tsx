@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -10,15 +10,19 @@ import Tabs from '@mui/material/Tabs';
 import { paths } from 'src/routes/paths';
 
 import { useTabs } from 'src/hooks/use-tabs';
-import { DashboardContent } from 'src/layouts/dashboard';
+
 import { _userAbout } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
+
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import { AgreementProfile } from '../agreement-profile';
+
 import { ProfileCover } from '../profile-cover';
-import { getUserAgreementDetail } from '../../../actions/agreement-ssr';
-import { IAgreementDetailItem, IUser } from '../../../types/agreement';
+import { AgreementProfile } from '../agreement-profile';
 import { useGetUserAgreementData } from '../../../actions/agreement';
+import { getUserAgreementDetail } from '../../../actions/agreement-ssr';
+
+import type { IUser, IAgreementDetailItem } from '../../../types/agreement';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +37,7 @@ class Props {
 }
 
 export function AgreementDetailsView({ id }: Props) {
-  const { agreementInfos } = useGetUserAgreementData(id || '', '');
+  const { agreementInfos } = useGetUserAgreementData(id || '', false);
   const [userData, setUserData] = useState<IUser>({
     cellphone: '',
     dailyReportList: '',
@@ -139,6 +143,7 @@ export function AgreementDetailsView({ id }: Props) {
           agreementInfos={agreementInfos || []}
           detailData={detailData || []}
           userData={userData || {}}
+          isProfile
         />
       )}
     </DashboardContent>

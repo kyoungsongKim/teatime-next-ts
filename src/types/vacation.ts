@@ -18,5 +18,6 @@ export type VacationItem = {
   total: number;
   used: number;
   userId: string;
+  realName: string;
   workedYearList: number[];
 };

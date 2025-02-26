@@ -27,3 +27,21 @@ export async function updateUserDetail(data: Record<string, any>) {
 
   return res;
 }
+
+export async function updateUserDetailSocial(data: Record<string, any>) {
+  const URL = `${endpoints.user.details}/social`;
+  const res = await axios.post(URL, data, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  return res;
+}
+
+export async function updateUserPassword(data: Record<string, any>) {
+  const URL = `${endpoints.user.root}/pass`;
+  const res = await axios.post(URL, data, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  return res;
+}

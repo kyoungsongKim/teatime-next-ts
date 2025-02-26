@@ -1,24 +1,43 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
+
 import { getUserInfos } from 'src/actions/user-ssr';
+
 import { useAuthContext } from '../hooks';
 import { getUserInfo } from '../../utils/user-info';
-import { IUser } from '../../types/agreement';
+
+import type { IUser } from '../../types/agreement';
 
 interface UserContextType {
   userInfo: IUser | null;
+  isAdmin: boolean | null;
+  auth: string | null;
   setUserInfo: (user: IUser | null) => void;
+  refreshUserInfo: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+const ADMIN_ROLES = ['ADMIN', 'SUPER_ADMIN'];
+
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuthContext();
-  const { id } = useMemo(() => getUserInfo(user), [user]);
+  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
 
-  const value = useMemo(() => ({ userInfo, setUserInfo }), [userInfo]);
+  const isAdmin = useMemo(() => userInfo && ADMIN_ROLES.includes(auth), [auth, userInfo]);
+
+  const refreshUserInfo = useCallback(async () => {
+    try {
+      if (userInfo?.id) {
+        const updatedUserInfo = await getUserInfos(userInfo.id);
+        setUserInfo(updatedUserInfo.data);
+      }
+    } catch (error) {
+      console.error('사용자 정보 업데이트 실패:', error);
+    }
+  }, [userInfo?.id]);
 
   useEffect(() => {
     if (id) {
@@ -27,6 +46,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         .catch((error) => console.error('Failed to fetch user info:', error));
     }
   }, [id]);
+
+  const value = useMemo(
+    () => ({ userInfo, isAdmin, auth, setUserInfo, refreshUserInfo }),
+    [isAdmin, auth, refreshUserInfo, userInfo]
+  );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

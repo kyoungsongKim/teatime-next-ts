@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 
-export type LanguageValue = 'en' | 'fr' | 'vi' | 'cn' | 'ar';
+export type LanguageValue = 'kr' | 'en' | 'fr' | 'vi' | 'cn' | 'ar';
 
-export const fallbackLng = 'en';
-export const languages = ['en', 'fr', 'vi', 'cn', 'ar'];
+export const fallbackLng = 'kr';
+export const languages = ['kr', 'en', 'fr', 'vi', 'cn', 'ar'];
 export const defaultNS = 'common';
 export const cookieName = 'i18next';
 
@@ -27,6 +27,11 @@ export const changeLangMessages: Record<
   LanguageValue,
   { success: string; error: string; loading: string }
 > = {
+  kr: {
+    success: '언어 변경에 성공했습니다!',
+    error: '언어 변경에 실패 했습니다!',
+    loading: '로딩중...',
+  },
   en: {
     success: 'Language has been changed!',
     error: 'Error changing language!',

@@ -14,12 +14,21 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
+import { updateUserPassword } from '../../actions/user-ssr';
+
+import type { IUser } from '../../types/agreement';
+
 // ----------------------------------------------------------------------
+
+type Props = {
+  userInfo: IUser | null;
+};
 
 export type ChangePassWordSchemaType = zod.infer<typeof ChangePassWordSchema>;
 
 export const ChangePassWordSchema = zod
   .object({
+    id: zod.string().min(1, { message: 'User id is required!' }),
     oldPassword: zod
       .string()
       .min(1, { message: 'Password is required!' })
@@ -38,10 +47,15 @@ export const ChangePassWordSchema = zod
 
 // ----------------------------------------------------------------------
 
-export function AccountChangePassword() {
+export function AccountChangePassword({ userInfo }: Props) {
   const password = useBoolean();
 
-  const defaultValues = { oldPassword: '', newPassword: '', confirmNewPassword: '' };
+  const defaultValues = {
+    id: userInfo?.id || '',
+    oldPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  };
 
   const methods = useForm<ChangePassWordSchemaType>({
     mode: 'all',
@@ -57,12 +71,17 @@ export function AccountChangePassword() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      toast.success('Update success!');
-      console.info('DATA', data);
+      data.id = userInfo?.id || '';
+      const response = await updateUserPassword(data);
+
+      if (response.status === 200) {
+        reset();
+        toast.success('비밀번호가 변경되었습니다.');
+      } else {
+        toast.error(`비밀번호 변경이 실패 했습니다.${response.data}`);
+      }
     } catch (error) {
-      console.error(error);
+      toast.error(`비밀번호 변경이 실패 했습니다. (${error.msg})`);
     }
   });
 

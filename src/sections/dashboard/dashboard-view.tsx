@@ -10,28 +10,24 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
 
-import { getUserInfo } from 'src/utils/user-info';
-
 import { getUserList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getStatisticsSales } from 'src/actions/statistics-ssr';
 import { getMonthlySales } from 'src/actions/monthly-sales-ssr';
 
-import { useAuthContext } from 'src/auth/hooks';
-
+import { useUser } from '../../auth/context/user-context';
 import { DashboardSummaryWidget } from './dashboard-summary-widget';
 import { DashboardSalesLineChartWidget } from './dashboard-sales-line-chart-widget';
 import { DashboardSalesRadialChartWidget } from './dashboard-sales-radialbar-chart-widget';
 
 export function DashboardView() {
-  const { user } = useAuthContext();
-  const { id, auth } = useMemo(() => getUserInfo(user), [user]);
+  const { userInfo, isAdmin } = useUser();
 
   const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear())); // 현재 연도 상태
   const currentMonth = new Date().getMonth() + 1; // 현재 월 (1월은 1, 12월은 12)
   const [currentSales, setCurrentSales] = useState<number>(0); // 현재 월 매출 상태
 
-  const [userName, setUserName] = useState<string>(id); // 사용자 이름 상태
+  const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
   const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
 
   const [salesData, setSalesData] = useState<StatisticsSalesItem>({
@@ -152,23 +148,23 @@ export function DashboardView() {
     fetchData().then();
 
     // 관리자일 경우 사용자 리스트 가져오기
-    if (auth === 'ADMIN') {
+    if (isAdmin) {
       getUserList().then((data) => setUserList(data.data));
     }
-  }, [userName, auth, currentYear]);
+  }, [userName, isAdmin, currentYear]);
 
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
         {/* 관리자의 경우 사용자 리스트 노출 */}
-        {auth === 'ADMIN' && (
+        {isAdmin && (
           <Grid xs={12} md={12}>
             <FormControl size="small">
               <Select
                 value={userName}
                 onChange={(newValue) => {
                   const targetUser = userList.find((item) => newValue.target.value === item.id);
-                  setUserName(targetUser?.id ?? id);
+                  setUserName(targetUser?.id ?? (userInfo?.id || ''));
                 }}
                 variant="outlined"
               >
