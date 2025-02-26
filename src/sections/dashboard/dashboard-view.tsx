@@ -162,6 +162,12 @@ export function DashboardView() {
     }
   }, [userName, isAdmin, currentYear]);
 
+  useEffect(() => {
+    if (userInfo?.id) {
+      setUserName(userInfo.id);
+    }
+  }, [userInfo]);
+
   return (
     <>
       <DashboardContent maxWidth="xl">

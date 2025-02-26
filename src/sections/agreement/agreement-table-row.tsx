@@ -1,5 +1,6 @@
 import type { IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
 
+// @ts-ignore
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from 'lodash';
 import { mutate } from 'swr';
