@@ -181,6 +181,12 @@ export function VacationView() {
     }
   }, [userName, isAdmin, getVacationListByWorkedYear, getVacationListAll]);
 
+  useEffect(() => {
+    if (userInfo?.id) {
+      setUserName(userInfo.id);
+    }
+  }, [userInfo]);
+
   return (
     <>
       <DashboardContent maxWidth="xl">

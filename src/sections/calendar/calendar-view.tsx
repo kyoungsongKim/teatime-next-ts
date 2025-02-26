@@ -84,8 +84,13 @@ export function CalendarView() {
     if (isAdmin) {
       getUserList().then((r) => setUserList(r.data));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (userInfo?.id) {
+      setUserName(userInfo.id);
+    }
+  }, [userInfo]);
 
   return (
     <>
