@@ -3,11 +3,14 @@
 import type { CUserItem } from 'src/types/user';
 import type { StatisticsSalesItem } from 'src/types/sales';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
+import Box from '@mui/material/Box';
+import { Modal } from '@mui/material';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
+import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 
 import { getUserList } from 'src/actions/user-ssr';
@@ -15,13 +18,19 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { getStatisticsSales } from 'src/actions/statistics-ssr';
 import { getMonthlySales } from 'src/actions/monthly-sales-ssr';
 
+import { CONFIG } from '../../config-global';
+import { Iconify } from '../../components/iconify';
 import { useUser } from '../../auth/context/user-context';
 import { DashboardSummaryWidget } from './dashboard-summary-widget';
+import { CheckInButton } from '../../components/map/check-in-button';
 import { DashboardSalesLineChartWidget } from './dashboard-sales-line-chart-widget';
+import { DashboardAttendanceWidgetButton } from './dashboard-attendance-widget-button';
 import { DashboardSalesRadialChartWidget } from './dashboard-sales-radialbar-chart-widget';
 
 export function DashboardView() {
   const { userInfo, isAdmin } = useUser();
+
+  const [openCheckIn, setOpenCheckIn] = useState(false);
 
   const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear())); // 현재 연도 상태
   const currentMonth = new Date().getMonth() + 1; // 현재 월 (1월은 1, 12월은 12)
@@ -154,89 +163,168 @@ export function DashboardView() {
   }, [userName, isAdmin, currentYear]);
 
   return (
-    <DashboardContent maxWidth="xl">
-      <Grid container spacing={3}>
-        {/* 관리자의 경우 사용자 리스트 노출 */}
-        {isAdmin && (
-          <Grid xs={12} md={12}>
-            <FormControl size="small">
-              <Select
-                value={userName}
-                onChange={(newValue) => {
-                  const targetUser = userList.find((item) => newValue.target.value === item.id);
-                  setUserName(targetUser?.id ?? (userInfo?.id || ''));
-                }}
-                variant="outlined"
-              >
-                {userList.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {`${item.realName}(${item.id})`}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-        )}
-        {/* 요약 위젯 */}
-        <Grid xs={12} md={4}>
-          <DashboardSummaryWidget
-            title={`${currentMonth}월 목표`}
-            total={targetSales}
-            percent={0}
-          />
-        </Grid>
-        <Grid xs={12} md={4}>
-          <DashboardSummaryWidget
-            title={`${currentYear}년 누적`}
-            total={yearTotalSales}
-            percent={0}
-          />
-        </Grid>
-        <Grid xs={12} md={4}>
-          <DashboardSummaryWidget
-            title={`${currentYear}년 목표`}
-            total={yearTargetSales}
-            percent={0}
-          />
-        </Grid>
-        {/* 사업부 별 매출 */}
-        <Grid xs={12} md={4}>
-          <DashboardSalesRadialChartWidget
-            title="사업부 별 매출"
-            total={currentSales}
-            chart={{
-              series: [{ label: '공통', value: salesPercentage }], // currentSales를 반영
-            }}
-          />
-        </Grid>
-        {/* 매출 추이 그래프 */}
-        <Grid xs={12} md={6} lg={8}>
-          {salesSeries.length > 0 && (
-            <DashboardSalesLineChartWidget
-              title="매출 추이"
-              chart={{
-                series: salesSeries,
-                categories: [
-                  '1월',
-                  '2월',
-                  '3월',
-                  '4월',
-                  '5월',
-                  '6월',
-                  '7월',
-                  '8월',
-                  '9월',
-                  '10월',
-                  '11월',
-                  '12월',
-                ],
-              }}
-              selectedSeries={currentYear}
-              onSeriesChange={(newValue) => setCurrentYear(newValue)}
-            />
+    <>
+      <DashboardContent maxWidth="xl">
+        <Grid container spacing={3}>
+          {/* 관리자의 경우 사용자 리스트 노출 */}
+          {isAdmin && (
+            <Grid xs={12} md={12}>
+              <FormControl size="small">
+                <Select
+                  value={userName}
+                  onChange={(newValue) => {
+                    const targetUser = userList.find((item) => newValue.target.value === item.id);
+                    setUserName(targetUser?.id ?? (userInfo?.id || ''));
+                  }}
+                  variant="outlined"
+                >
+                  {userList.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {`${item.realName}(${item.id})`}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           )}
+          {/* 출퇴근 위젯 */}
+          <Grid xs={12} md={3}>
+            <DashboardAttendanceWidgetButton
+              title="출근"
+              time="09:00"
+              tooltip="출근 가능 지역에서만 가능합니다."
+              icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-clock-in.svg`}
+              onClick={() => setOpenCheckIn(true)}
+            />
+          </Grid>
+          <Grid xs={12} md={3}>
+            <DashboardAttendanceWidgetButton
+              title="퇴근"
+              time="18:00"
+              color="success"
+              tooltip="퇴근 가능 지역에서만 가능합니다."
+              icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-clock-out.svg`}
+            />
+          </Grid>
+          <Grid xs={12} md={3}>
+            <DashboardAttendanceWidgetButton
+              title="재택"
+              time="09:00 - 18:00"
+              color="secondary"
+              tooltip=""
+              icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-home-work.svg`}
+            />
+          </Grid>
+          <Grid xs={12} md={3}>
+            <DashboardAttendanceWidgetButton
+              title="외근"
+              time="09:00 - 18:00"
+              color="info"
+              tooltip=""
+              icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-field-work.svg`}
+            />
+          </Grid>
+          {/* 요약 위젯 */}
+          <Grid xs={12} md={4}>
+            <DashboardSummaryWidget
+              title={`${currentMonth}월 목표`}
+              total={targetSales}
+              percent={0}
+            />
+          </Grid>
+          <Grid xs={12} md={4}>
+            <DashboardSummaryWidget
+              title={`${currentYear}년 누적`}
+              total={yearTotalSales}
+              percent={0}
+            />
+          </Grid>
+          <Grid xs={12} md={4}>
+            <DashboardSummaryWidget
+              title={`${currentYear}년 목표`}
+              total={yearTargetSales}
+              percent={0}
+            />
+          </Grid>
+          {/* 사업부 별 매출 */}
+          <Grid xs={12} md={4}>
+            <DashboardSalesRadialChartWidget
+              title="사업부 별 매출"
+              total={currentSales}
+              chart={{
+                series: [{ label: '공통', value: salesPercentage }], // currentSales를 반영
+              }}
+            />
+          </Grid>
+          {/* 매출 추이 그래프 */}
+          <Grid xs={12} md={6} lg={8}>
+            {salesSeries.length > 0 && (
+              <DashboardSalesLineChartWidget
+                title="매출 추이"
+                chart={{
+                  series: salesSeries,
+                  categories: [
+                    '1월',
+                    '2월',
+                    '3월',
+                    '4월',
+                    '5월',
+                    '6월',
+                    '7월',
+                    '8월',
+                    '9월',
+                    '10월',
+                    '11월',
+                    '12월',
+                  ],
+                }}
+                selectedSeries={currentYear}
+                onSeriesChange={(newValue) => setCurrentYear(newValue)}
+              />
+            )}
+          </Grid>
         </Grid>
-      </Grid>
-    </DashboardContent>
+        {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
+      </DashboardContent>
+      {/* @ts-ignore */}
+      <Modal
+        open={openCheckIn}
+        onClose={() => setOpenCheckIn(false)}
+        title="출근하기"
+        action={undefined}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '80%',
+            height: '80%',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            transform: 'translate(-50%, -50%)',
+            p: 2,
+            borderRadius: 3,
+          }}
+        >
+          {/* 닫기 버튼 추가 */}
+          <IconButton
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              bgcolor: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+            }}
+            onClick={() => setOpenCheckIn(false)}
+          >
+            <Iconify icon="mingcute:close-line" />
+          </IconButton>
+
+          <CheckInButton />
+        </Box>
+      </Modal>
+    </>
   );
 }
