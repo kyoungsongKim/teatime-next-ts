@@ -36,6 +36,8 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { Form, Field } from 'src/components/hook-form';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
+import { CalendarReportDialog } from 'src/sections/calendar/dialog/calendar-report-dialog';
+
 type Props = DialogProps & {
   userName: string;
   item: string;
@@ -76,6 +78,7 @@ export function CalendarDialog({
   ...other
 }: Props) {
   const deleteConfirm = useBoolean();
+  const sendConfirm = useBoolean();
 
   const [siteList, setSiteList] = useState<string[]>([]);
   const [projectList, setProjectList] = useState<ProjectItem[]>([]);
@@ -384,26 +387,40 @@ export function CalendarDialog({
                 </IconButton>
               )}
             </Box>
-            <Stack direction="row" spacing={1} flex={2} justifyContent="center">
+            <Stack direction="row" spacing={1} flex={2} justifyContent="space-between">
+              <Box>
+                <Button
+                  onClick={() => {
+                    reset(methods.formState.defaultValues);
+                  }}
+                  disabled={isFieldDisabled}
+                >
+                  초기화
+                </Button>
+                <LoadingButton
+                  type="submit"
+                  loading={isSubmitting}
+                  variant="soft"
+                  color="primary"
+                  disabled={isSubmitting || isFieldDisabled}
+                >
+                  저장
+                </LoadingButton>
+              </Box>
               <Button
-                onClick={() => {
-                  reset(methods.formState.defaultValues);
-                }}
-                disabled={isFieldDisabled}
-              >
-                초기화
-              </Button>
-              <LoadingButton
-                type="submit"
-                loading={isSubmitting}
-                variant="soft"
+                variant="outlined"
                 color="primary"
-                disabled={isSubmitting || isFieldDisabled}
+                startIcon={<Iconify icon="eva:paper-plane-outline" />}
+                onClick={async () => {
+                  const isValid = await methods.trigger();
+                  if (isValid) {
+                    sendConfirm.onTrue();
+                  }
+                }}
               >
-                저장
-              </LoadingButton>
+                {!item ? '일일 보고 후 저장' : '일일 보고'}
+              </Button>
             </Stack>
-            <Box flex={1} />
           </DialogActions>
         </Form>
       </Dialog>
@@ -425,6 +442,21 @@ export function CalendarDialog({
             삭제
           </Button>
         }
+      />
+      <CalendarReportDialog
+        open={sendConfirm.value}
+        date={dayjs(values.eventStartDate).format('YYYY-MM-DD')}
+        site={values.site}
+        project={values.project}
+        md={Number(values.md) ?? 0}
+        content={values.content}
+        justReport={!!item}
+        parentSubmit={onSubmit}
+        parentClose={() => {
+          onClose();
+          reset(defaultValues);
+        }}
+        onClose={sendConfirm.onFalse}
       />
     </>
   );
