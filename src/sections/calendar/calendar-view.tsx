@@ -29,10 +29,11 @@ import { Iconify } from 'src/components/iconify';
 import { CalendarDialog } from 'src/sections/calendar/dialog/calendar-dialog';
 import { VacationFormDialog } from 'src/sections/vacation/dialog/vacation-form-dialog';
 
+import { useUser } from 'src/auth/context/user-context';
+
 import { StyledCalendar } from './styles';
 import { useCalendar } from './hooks/use-calendar';
 import { CalendarToolbar } from './calendar-toolbar';
-import { useUser } from '../../auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
