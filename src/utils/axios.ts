@@ -123,4 +123,7 @@ export const endpoints = {
   team: {
     root: '/api/team',
   },
+  report: {
+    email: '/api/report/emails',
+  },
 };
