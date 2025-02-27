@@ -1,13 +1,14 @@
 'use client';
 
+import type { IUser } from 'src/types/agreement';
+
 import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
+
+import { getUserInfo } from 'src/utils/user-info';
 
 import { getUserInfos } from 'src/actions/user-ssr';
 
 import { useAuthContext } from '../hooks';
-import { getUserInfo } from '../../utils/user-info';
-
-import type { IUser } from '../../types/agreement';
 
 interface UserContextType {
   userInfo: IUser | null;
