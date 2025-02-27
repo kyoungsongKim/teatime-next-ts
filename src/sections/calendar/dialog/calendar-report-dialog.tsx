@@ -73,7 +73,7 @@ export function CalendarReportDialog({
       receiveEmail: userInfo ? userInfo?.dailyReportList.split(',') : [],
       contents: defaultContents,
     }),
-    [defaultContents, defaultTitle, userInfo?.dailyReportList, userInfo?.email, userInfo?.userName]
+    [defaultContents, defaultTitle, userInfo]
   );
 
   const methods = useForm({
@@ -85,7 +85,7 @@ export function CalendarReportDialog({
   const {
     reset,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = methods;
 
   const onSubmit = handleSubmit(async (values) => {
