@@ -32,8 +32,10 @@ type Props = DialogProps & {
   project: string;
   md: number;
   content: string;
+  justReport: boolean;
   onClose: () => void;
   parentSubmit: () => void;
+  parentClose: () => void;
 };
 
 const ReportSchema = zod.object({
@@ -52,8 +54,10 @@ export function CalendarReportDialog({
   project,
   md,
   content,
+  justReport,
   onClose,
   parentSubmit,
+  parentClose,
   ...other
 }: Props) {
   const { userInfo } = useUser();
@@ -107,7 +111,11 @@ export function CalendarReportDialog({
           toast.error(r.data);
         } else {
           toast.success('일일업무 보고가 성공적으로 전송되었습니다.');
-          parentSubmit();
+          if (!justReport) {
+            parentSubmit();
+          } else {
+            parentClose();
+          }
           onClose();
         }
       });
