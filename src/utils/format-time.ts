@@ -76,6 +76,17 @@ export function fTime(date: DatePickerFormat, format?: string) {
   return isValid ? dayjs(date).format(format ?? formatStr.time) : 'Invalid time value';
 }
 
+export function fTimeForString(date: string | Date, format: string = 'HH:mm') {
+  if (!date) return '--:--';
+
+  // 시간(HH:mm)만 입력된 경우, 오늘 날짜를 자동 추가
+  const hasOnlyTime = typeof date === 'string' && /^\d{1,2}:\d{2}(:\d{2})?$/.test(date);
+  const parsedDate = hasOnlyTime ? `${dayjs().format('YYYY-MM-DD')} ${date}` : date;
+
+  const result = dayjs(parsedDate);
+  return result.isValid() ? result.format(format) : 'Invalid time value';
+}
+
 // ----------------------------------------------------------------------
 
 /** output: 1713250100

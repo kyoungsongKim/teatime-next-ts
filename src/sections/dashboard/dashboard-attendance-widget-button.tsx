@@ -1,5 +1,8 @@
 import type { CardProps } from '@mui/material/Card';
 import type { ColorType } from 'src/theme/core/palette';
+import type { IAttendance } from 'src/types/attendance';
+
+import { useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -15,7 +18,8 @@ import { SvgColor } from 'src/components/svg-color';
 type Props = CardProps & {
   icon: string;
   title: string;
-  time: string;
+  timeType: 'startTime' | 'endTime' | '';
+  attendance?: IAttendance; // ✅ `undefined` 허용
   tooltip: string;
   color?: ColorType;
   onClick?: () => void;
@@ -25,16 +29,37 @@ export function DashboardAttendanceWidgetButton({
   sx,
   icon,
   title,
-  time,
+  timeType,
+  attendance,
   tooltip,
   color = 'warning',
   onClick,
   ...other
 }: Props) {
+  const isDisabled = useMemo(() => {
+    if (!attendance) return false;
+    if (timeType === 'startTime') return !!attendance.workStartTime;
+    return false;
+  }, [attendance, timeType]);
+
+  const getAttendanceTime = () => {
+    if (!attendance) return '--:--:--';
+
+    switch (attendance.workType) {
+      case 'OFFICE':
+        return timeType === 'startTime'
+          ? attendance.workStartTime || '--:--:--'
+          : attendance.workEndTime || '--:--:--';
+      case 'REMOTE':
+      case 'FIELD':
+        return `${attendance.workStartTime || '--:--:--'} - ${attendance.workEndTime || '--:--:--'}`;
+      default:
+        return '--:--:--';
+    }
+  };
+
   return (
-    // @ts-ignore
     <Tooltip title={tooltip} arrow>
-      {' '}
       <Card
         onClick={onClick}
         sx={{
@@ -46,13 +71,10 @@ export function DashboardAttendanceWidgetButton({
           alignItems: 'center',
           justifyContent: 'space-between',
           position: 'relative',
-          cursor: 'pointer',
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
           transition: 'all 0.3s ease',
-          boxShadow: 3,
-          '&:hover': {
-            boxShadow: 6,
-            transform: 'scale(1.02)',
-          },
+          boxShadow: isDisabled ? 1 : 3,
+          '&:hover': isDisabled ? {} : { boxShadow: 6, transform: 'scale(1.02)' },
           ...sx,
         }}
         {...other}
@@ -62,7 +84,7 @@ export function DashboardAttendanceWidgetButton({
             {title}
           </Typography>
           <Typography noWrap variant="subtitle2" component="div" sx={{ color: 'text.secondary' }}>
-            {time}
+            {getAttendanceTime()}
           </Typography>
         </Box>
 

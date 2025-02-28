@@ -33,10 +33,10 @@ type Props = {
   open: boolean;
   faqs: FaqsItem[];
   onClose: () => void;
-  onFaqsUpdate: (updatedFaqs: FaqsItem[]) => void;
+  onUpdate: (updatedFaqs: FaqsItem[]) => void;
 };
 
-export function FaqsEditDialog({ open, faqs, onClose, onFaqsUpdate }: Props) {
+export function FaqsEditDialog({ open, faqs, onClose, onUpdate }: Props) {
   const confirm = useBoolean();
 
   const defaultEditValue: { name: string; description: string } = {
@@ -70,7 +70,7 @@ export function FaqsEditDialog({ open, faqs, onClose, onFaqsUpdate }: Props) {
         } else {
           confirm.onTrue();
           reset();
-          onFaqsUpdate(
+          onUpdate(
             faqs.map((faq) =>
               faq.id === selectedFaq.id
                 ? { ...faq, name: data.name, description: data.description }
@@ -98,7 +98,7 @@ export function FaqsEditDialog({ open, faqs, onClose, onFaqsUpdate }: Props) {
         } else {
           confirm.onTrue();
           reset();
-          onFaqsUpdate(faqs.filter((faq) => faq.id !== selectedFaq.id));
+          onUpdate(faqs.filter((faq) => faq.id !== selectedFaq.id));
           onClose();
         }
       });

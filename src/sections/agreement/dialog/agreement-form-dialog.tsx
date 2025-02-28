@@ -21,10 +21,10 @@ import DialogActions from '@mui/material/DialogActions';
 
 import { fData } from 'src/utils/format-number';
 
+import { createAgreement } from 'src/actions/agreement-ssr';
+
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
-
-import { createAgreement } from '../../../actions/agreement-ssr';
 
 export const AGREEMENT_OPTIONS = [
   { value: 'GUARANTEE', label: '보장' },

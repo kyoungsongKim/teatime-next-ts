@@ -19,9 +19,12 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
+import { endpoints } from 'src/utils/axios';
 import { fIsAfter } from 'src/utils/format-time';
 
+import { deleteUserInfo } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetUserAgreementData } from 'src/actions/agreement';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -40,12 +43,10 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { endpoints } from '../../../utils/axios';
+import { useUser } from 'src/auth/context/user-context';
+
 import { AgreementTableRow } from '../agreement-table-row';
-import { deleteUserInfo } from '../../../actions/user-ssr';
-import { useUser } from '../../../auth/context/user-context';
 import { AgreementTableToolbar } from '../agreement-table-toolbar';
-import { useGetUserAgreementData } from '../../../actions/agreement';
 import { AgreementTableFiltersResult } from '../agreement-table-filters-result';
 
 // ----------------------------------------------------------------------

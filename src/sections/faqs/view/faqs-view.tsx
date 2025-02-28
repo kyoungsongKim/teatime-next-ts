@@ -15,9 +15,10 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 
+import { useUser } from 'src/auth/context/user-context';
+
 import { FaqsList } from '../faqs-list';
 import { FaqsEditDialog } from '../dialog/faqs-edit-dialog';
-import { useUser } from '../../../auth/context/user-context';
 import { FaqsCreateDialog } from '../dialog/faqs-create-dialog';
 
 // ----------------------------------------------------------------------
@@ -47,7 +48,7 @@ export function FaqsView() {
       });
   }, []);
 
-  const updateFaqsList = (updatedFaqs: FaqsItem[]) => {
+  const updateList = (updatedFaqs: FaqsItem[]) => {
     setFaqs(updatedFaqs);
   };
 
@@ -103,7 +104,7 @@ export function FaqsView() {
           editDialog.onFalse();
           fetchFaqList();
         }}
-        onFaqsUpdate={updateFaqsList}
+        onUpdate={updateList}
       />
     </>
   );

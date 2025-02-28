@@ -1,3 +1,6 @@
+import type { ITeamItem } from 'src/types/team';
+import type { IUser } from 'src/types/agreement';
+
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
@@ -14,18 +17,16 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { fData } from 'src/utils/format-number';
+import { makeDateString } from 'src/utils/format-date';
+
+import { getTeamList } from 'src/actions/team-ssr';
+import { updateUserDetail } from 'src/actions/user-ssr';
 
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import { Iconify } from '../../components/iconify';
-import { getTeamList } from '../../actions/team-ssr';
-import { makeDateString } from '../../utils/format-date';
-import { updateUserDetail } from '../../actions/user-ssr';
-import { useUser } from '../../auth/context/user-context';
-
-import type { ITeamItem } from '../../types/team';
-import type { IUser } from '../../types/agreement';
+import { useUser } from 'src/auth/context/user-context';
 
 // ----------------------------------------------------------------------
 

@@ -1,3 +1,6 @@
+import type { LabelColor } from 'src/components/label';
+import type { IUser, IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
+
 import React from 'react';
 import { Icon } from '@iconify/react';
 
@@ -15,19 +18,15 @@ import TableBody from '@mui/material/TableBody';
 import CardHeader from '@mui/material/CardHeader';
 import ListItemText from '@mui/material/ListItemText';
 
+import { download } from 'src/utils/file';
 import { fNumber } from 'src/utils/format-number';
+import { makeDateString } from 'src/utils/format-date';
 
 import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
 
+import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-
-import { download } from '../../utils/file';
-import { Label } from '../../components/label';
-import { Scrollbar } from '../../components/scrollbar';
-import { makeDateString } from '../../utils/format-date';
-
-import type { LabelColor } from '../../components/label';
-import type { IUser, IAgreementItem, IAgreementDetailItem } from '../../types/agreement';
+import { Scrollbar } from 'src/components/scrollbar';
 // ----------------------------------------------------------------------
 
 type Props = {

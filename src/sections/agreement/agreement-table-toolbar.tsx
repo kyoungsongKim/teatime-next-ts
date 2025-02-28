@@ -1,4 +1,5 @@
 import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+import type { IAgreementTableFilters } from 'src/types/agreement';
 
 import { useCallback } from 'react';
 
@@ -11,8 +12,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-
-import type { IAgreementTableFilters } from '../../types/agreement';
 
 // ----------------------------------------------------------------------
 

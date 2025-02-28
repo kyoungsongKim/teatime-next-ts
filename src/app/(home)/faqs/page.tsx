@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import { FaqsView } from '../../../sections/faqs/view';
+import { FaqsView } from 'src/sections/faqs/view';
 
 export const metadata = { title: `FAQ - ${CONFIG.appName}` };
 

@@ -1,5 +1,7 @@
 'use client';
 
+import type { IUser, IAgreementDetailItem } from 'src/types/agreement';
+
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
@@ -13,16 +15,14 @@ import { useTabs } from 'src/hooks/use-tabs';
 
 import { _userAbout } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetUserAgreementData } from 'src/actions/agreement';
+import { getUserAgreementDetail } from 'src/actions/agreement-ssr';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { ProfileCover } from '../profile-cover';
 import { AgreementProfile } from '../agreement-profile';
-import { useGetUserAgreementData } from '../../../actions/agreement';
-import { getUserAgreementDetail } from '../../../actions/agreement-ssr';
-
-import type { IUser, IAgreementDetailItem } from '../../../types/agreement';
 
 // ----------------------------------------------------------------------
 

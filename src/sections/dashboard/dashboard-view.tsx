@@ -1,6 +1,7 @@
 'use client';
 
 import type { CUserItem } from 'src/types/user';
+import type { IAttendance } from 'src/types/attendance';
 import type { StatisticsSalesItem } from 'src/types/sales';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
@@ -10,14 +11,19 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
 
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import { CONFIG } from 'src/config-global';
 import { getUserList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getAttendance } from 'src/actions/attendance-ssr';
 import { getStatisticsSales } from 'src/actions/statistics-ssr';
 import { getMonthlySales } from 'src/actions/monthly-sales-ssr';
 
-import { CONFIG } from '../../config-global';
-import { useBoolean } from '../../hooks/use-boolean';
-import { useUser } from '../../auth/context/user-context';
+import { DashboardWorkDialog } from 'src/sections/dashboard/dialog/dashboard-work-dialog';
+
+import { useUser } from 'src/auth/context/user-context';
+
 import { DashboardSummaryWidget } from './dashboard-summary-widget';
 import { DashboardCheckInOutDialog } from './dialog/dashboard-checkinout-dialog';
 import { DashboardSalesLineChartWidget } from './dashboard-sales-line-chart-widget';
@@ -28,7 +34,10 @@ export function DashboardView() {
   const { userInfo, isAdmin } = useUser();
 
   const checkInOutDialog = useBoolean();
-  const [checkType, setCheckType] = useState<'checkIn' | 'checkOut'>('checkIn');
+  const workDialog = useBoolean();
+  const [timeType, setCheckType] = useState<'startTime' | 'endTime'>('startTime');
+  const [workedType, setWorkType] = useState<'REMOTE' | 'FIELD'>('REMOTE');
+  const [latestAttendance, setLatestAttendance] = useState<IAttendance[]>([]);
 
   const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear())); // 현재 연도 상태
   const currentMonth = new Date().getMonth() + 1; // 현재 월 (1월은 1, 12월은 12)
@@ -166,6 +175,33 @@ export function DashboardView() {
     }
   }, [userInfo]);
 
+  const fetchLatestAttendance = useCallback(async () => {
+    try {
+      if (userInfo?.id) {
+        const data = await getAttendance(userInfo.id, new Date().toISOString().split('T')[0]);
+        setLatestAttendance(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch latest attendance:', error);
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+    fetchLatestAttendance().then((r) => r);
+  }, [fetchLatestAttendance]);
+
+  const updateAttendance = useCallback(() => {
+    fetchLatestAttendance().then((r) => r);
+  }, [fetchLatestAttendance]);
+
+  const getTimeForType = useMemo(
+    () => (workType: 'OFFICE' | 'REMOTE' | 'FIELD') => {
+      if (!latestAttendance) return undefined;
+      return latestAttendance.find((item) => item.workType === workType);
+    },
+    [latestAttendance]
+  );
+
   return (
     <>
       <DashboardContent maxWidth="xl">
@@ -195,11 +231,17 @@ export function DashboardView() {
           <Grid xs={12} md={3}>
             <DashboardAttendanceWidgetButton
               title="출근"
-              time="09:00"
-              tooltip="출근 가능 지역에서만 가능합니다."
+              timeType="startTime"
+              attendance={getTimeForType('OFFICE')}
+              tooltip={
+                getTimeForType('OFFICE')?.workStartTime
+                  ? '출근 시간이 이미 등록되었습니다.'
+                  : '출근 가능 지역에서만 가능합니다.'
+              }
               icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-clock-in.svg`}
               onClick={() => {
-                setCheckType('checkIn');
+                if (getTimeForType('OFFICE')?.workStartTime) return;
+                setCheckType('startTime');
                 checkInOutDialog.onTrue();
               }}
             />
@@ -207,12 +249,13 @@ export function DashboardView() {
           <Grid xs={12} md={3}>
             <DashboardAttendanceWidgetButton
               title="퇴근"
-              time="18:00"
+              timeType="endTime"
+              attendance={getTimeForType('OFFICE')}
               color="success"
               tooltip="퇴근 가능 지역에서만 가능합니다."
               icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-clock-out.svg`}
               onClick={() => {
-                setCheckType('checkOut');
+                setCheckType('endTime');
                 checkInOutDialog.onTrue();
               }}
             />
@@ -220,19 +263,29 @@ export function DashboardView() {
           <Grid xs={12} md={3}>
             <DashboardAttendanceWidgetButton
               title="재택"
-              time="09:00 - 18:00"
+              timeType=""
+              attendance={getTimeForType('REMOTE')}
               color="secondary"
               tooltip=""
               icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-home-work.svg`}
+              onClick={() => {
+                setWorkType('REMOTE');
+                workDialog.onTrue();
+              }}
             />
           </Grid>
           <Grid xs={12} md={3}>
             <DashboardAttendanceWidgetButton
               title="외근"
-              time="09:00 - 18:00"
+              timeType=""
+              attendance={getTimeForType('FIELD')}
               color="info"
               tooltip=""
               icon={`${CONFIG.assetsDir}/assets/icons/dashboard/ic-field-work.svg`}
+              onClick={() => {
+                setWorkType('FIELD');
+                workDialog.onTrue();
+              }}
             />
           </Grid>
           {/* 요약 위젯 */}
@@ -299,11 +352,24 @@ export function DashboardView() {
       </DashboardContent>
 
       <DashboardCheckInOutDialog
+        userId={userInfo?.id || ''}
         open={checkInOutDialog.value}
         onClose={() => {
           checkInOutDialog.onFalse();
         }}
-        checkType={checkType}
+        timeType={timeType}
+        onUpdate={updateAttendance}
+      />
+
+      <DashboardWorkDialog
+        userId={userInfo?.id || ''}
+        open={workDialog.value}
+        onClose={() => {
+          workDialog.onFalse();
+        }}
+        onUpdate={updateAttendance}
+        attendance={getTimeForType(workedType)}
+        workType={workedType}
       />
     </>
   );
