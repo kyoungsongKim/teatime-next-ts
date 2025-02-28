@@ -16,8 +16,6 @@ import TableBody from '@mui/material/TableBody';
 import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
 
-import { paths } from 'src/routes/paths';
-
 import { useSetState } from 'src/hooks/use-set-state';
 
 import { fIsAfter, fIsBetween } from 'src/utils/format-time';
@@ -29,7 +27,7 @@ import { getAttendance } from 'src/actions/attendance-ssr';
 
 import { Label } from 'src/components/label';
 import { Scrollbar } from 'src/components/scrollbar';
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
 import {
   useTable,
   emptyRows,
@@ -146,134 +144,128 @@ export function AttendanceListView() {
 
   return (
     <DashboardContent>
-      <CustomBreadcrumbs
-        heading="Attendance List"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Attendance', href: paths.root.attendance },
-          { name: 'List' },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      />
-
-      {/* 관리자의 경우 사용자 리스트 노출 */}
-      {isAdmin && (
-        <Grid xs={12} md={12}>
-          <FormControl size="small">
-            <Select
-              value={userName}
-              onChange={(newValue) => {
-                const targetUser = userList.find((item) => newValue.target.value === item.id);
-                setUserName(targetUser?.id ?? (userInfo?.id || ''));
-              }}
-              variant="outlined"
-            >
-              {userList.map((item) => (
-                <MenuItem key={item.id} value={item.id}>
-                  {`${item.realName}(${item.id})`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-      )}
-
-      <Card>
-        <Tabs
-          value={filters.state.workType}
-          onChange={handleFilterStatus}
-          sx={{
-            px: 2.5,
-            boxShadow: (theme) =>
-              `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-          }}
-        >
-          {STATUS_OPTIONS.map((tab) => (
-            <Tab
-              key={tab.value}
-              iconPosition="end"
-              value={tab.value}
-              label={tab.label}
-              icon={
-                <Label
-                  variant={
-                    ((tab.value === 'all' || tab.value === filters.state.workType) && 'filled') ||
-                    'soft'
-                  }
-                  color={
-                    (tab.value === 'OFFICE' && 'success') ||
-                    (tab.value === 'REMOTE' && 'warning') ||
-                    (tab.value === 'FIELD' && 'error') ||
-                    'default'
-                  }
-                >
-                  {['OFFICE', 'REMOTE', 'FIELD'].includes(tab.value)
-                    ? (tableData || []).filter((work) => work.workType === tab.value).length
-                    : (tableData || []).length}
-                </Label>
-              }
-            />
-          ))}
-        </Tabs>
-
-        <AttendanceTableToolbar
-          filters={filters}
-          onResetPage={table.onResetPage}
-          dateError={dateError}
-        />
-
-        {canReset && (
-          <AttendanceTableFiltersResult
-            filters={filters}
-            totalResults={dataFiltered.length}
-            onResetPage={table.onResetPage}
-            sx={{ p: 2.5, pt: 0 }}
-          />
+      <Grid container spacing={3}>
+        {/* 관리자의 경우 사용자 리스트 노출 */}
+        {isAdmin && (
+          <Grid xs={12} md={12}>
+            <FormControl size="small">
+              <Select
+                value={userName}
+                onChange={(newValue) => {
+                  const targetUser = userList.find((item) => newValue.target.value === item.id);
+                  setUserName(targetUser?.id ?? (userInfo?.id || ''));
+                }}
+                variant="outlined"
+              >
+                {userList.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {`${item.realName}(${item.id})`}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         )}
-
-        <Box sx={{ position: 'relative' }}>
-          <Scrollbar sx={{ minHeight: 444 }}>
-            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-              <TableHeadCustom
-                order={table.order}
-                orderBy={table.orderBy}
-                headLabel={TABLE_HEAD}
-                rowCount={dataFiltered.length}
-                numSelected={table.selected.length}
-                onSort={table.onSort}
-              />
-
-              <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row) => (
-                    <AttendanceTableRow key={row.workId} row={row} />
-                  ))}
-
-                <TableEmptyRows
-                  height={table.dense ? 56 : 56 + 20}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+        <Grid xs={12} md={12}>
+          <Card>
+            <Tabs
+              value={filters.state.workType}
+              onChange={handleFilterStatus}
+              sx={{
+                px: 2.5,
+                boxShadow: (theme) =>
+                  `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+              }}
+            >
+              {STATUS_OPTIONS.map((tab) => (
+                <Tab
+                  key={tab.value}
+                  iconPosition="end"
+                  value={tab.value}
+                  label={tab.label}
+                  icon={
+                    <Label
+                      variant={
+                        ((tab.value === 'all' || tab.value === filters.state.workType) &&
+                          'filled') ||
+                        'soft'
+                      }
+                      color={
+                        (tab.value === 'OFFICE' && 'success') ||
+                        (tab.value === 'REMOTE' && 'warning') ||
+                        (tab.value === 'FIELD' && 'error') ||
+                        'default'
+                      }
+                    >
+                      {['OFFICE', 'REMOTE', 'FIELD'].includes(tab.value)
+                        ? (tableData || []).filter((work) => work.workType === tab.value).length
+                        : (tableData || []).length}
+                    </Label>
+                  }
                 />
+              ))}
+            </Tabs>
 
-                <TableNoData notFound={notFound} />
-              </TableBody>
-            </Table>
-          </Scrollbar>
-        </Box>
+            <AttendanceTableToolbar
+              filters={filters}
+              onResetPage={table.onResetPage}
+              dateError={dateError}
+            />
 
-        <TablePaginationCustom
-          page={table.page}
-          dense={table.dense}
-          count={dataFiltered.length}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
-          onChangeDense={table.onChangeDense}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
-      </Card>
+            {canReset && (
+              <AttendanceTableFiltersResult
+                filters={filters}
+                totalResults={dataFiltered.length}
+                onResetPage={table.onResetPage}
+                sx={{ p: 2.5, pt: 0 }}
+              />
+            )}
+
+            <Box sx={{ position: 'relative' }}>
+              <Scrollbar sx={{ minHeight: 444 }}>
+                <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+                  <TableHeadCustom
+                    order={table.order}
+                    orderBy={table.orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={dataFiltered.length}
+                    numSelected={table.selected.length}
+                    onSort={table.onSort}
+                  />
+
+                  <TableBody>
+                    {dataFiltered
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row) => (
+                        <AttendanceTableRow key={row.workId} row={row} />
+                      ))}
+
+                    <TableEmptyRows
+                      height={table.dense ? 56 : 56 + 20}
+                      emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    />
+
+                    <TableNoData notFound={notFound} />
+                  </TableBody>
+                </Table>
+              </Scrollbar>
+            </Box>
+
+            <TablePaginationCustom
+              page={table.page}
+              dense={table.dense}
+              count={dataFiltered.length}
+              rowsPerPage={table.rowsPerPage}
+              onPageChange={table.onChangePage}
+              onChangeDense={table.onChangeDense}
+              onRowsPerPageChange={table.onChangeRowsPerPage}
+            />
+          </Card>
+        </Grid>
+      </Grid>
     </DashboardContent>
   );
 }

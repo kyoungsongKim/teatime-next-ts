@@ -1,9 +1,11 @@
 'use client';
 
 import type { CUserItem } from 'src/types/user';
+import type { ReportItem } from 'src/types/report';
 import type { StatisticsSalesItem } from 'src/types/sales';
 import type { IAttendanceItem } from 'src/types/attendance';
 
+import { toast } from 'sonner';
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Select from '@mui/material/Select';
@@ -14,6 +16,7 @@ import FormControl from '@mui/material/FormControl';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { CONFIG } from 'src/config-global';
+import { sendReport } from 'src/actions/report';
 import { getUserList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getAttendance } from 'src/actions/attendance-ssr';
@@ -202,6 +205,63 @@ export function DashboardView() {
     [latestAttendance]
   );
 
+  const sendAttendanceReport = async (attendance: IAttendanceItem) => {
+    try {
+      if (!userInfo) {
+        toast.error('로그인 정보가 없습니다.');
+        return;
+      }
+
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 형식
+      const workTypeLabel =
+        attendance.workType === 'OFFICE'
+          ? '출퇴근'
+          : attendance.workType === 'REMOTE'
+            ? '재택'
+            : '외근';
+
+      const title = `[${workTypeLabel} 보고] ${today} ${workTypeLabel} 보고 입니다`;
+
+      let contents = '';
+      if (attendance.workType === 'OFFICE') {
+        if (timeType === 'startTime') {
+          contents = '사내에 출근 했습니다.';
+        } else {
+          contents = '업무 종료 합니다.';
+        }
+      } else if (attendance.workType === 'REMOTE') {
+        contents = `재택 근무 시작합니다.\n승인자: ${attendance.managerName || '없음'}\n업무 내용: ${attendance.taskDescription || '없음'}`;
+      } else if (attendance.workType === 'FIELD') {
+        contents = `외근 요청자: ${attendance.managerName || '없음'}\n외근 위치: ${attendance.location || '없음'}\n업무 내용: ${attendance.taskDescription || '없음'}`;
+      }
+
+      const receiveEmailList = userInfo.dailyReportList ? userInfo.dailyReportList.split(',') : [];
+      if (receiveEmailList.length === 0) {
+        toast.error('업무 보고 대상자가 없습니다.');
+        return;
+      }
+
+      const params: ReportItem = {
+        sendUserName: userInfo.id,
+        receiveEmail: receiveEmailList,
+        title,
+        contents,
+      };
+
+      const response = await sendReport(params);
+
+      if (response.status !== 200) {
+        console.error('이메일 전송 실패:', response.data);
+        toast.error(`업무 보고 전송 실패: ${response.data}`);
+      } else {
+        toast.success('담당자에게 메일이 전송되었습니다.');
+      }
+    } catch (error) {
+      console.error('이메일 전송 중 오류 발생:', error);
+      toast.error('담당자에게 메일 전송이 실패 했습니다.');
+    }
+  };
+
   return (
     <>
       <DashboardContent maxWidth="xl">
@@ -356,6 +416,8 @@ export function DashboardView() {
         open={checkInOutDialog.value}
         onClose={() => {
           checkInOutDialog.onFalse();
+          const attendance = getTimeForType('OFFICE');
+          sendAttendanceReport(attendance as IAttendanceItem).then((r) => r);
         }}
         timeType={timeType}
         onUpdate={updateAttendance}
@@ -366,6 +428,9 @@ export function DashboardView() {
         open={workDialog.value}
         onClose={() => {
           workDialog.onFalse();
+          workDialog.onFalse();
+          const attendance = getTimeForType(workedType);
+          sendAttendanceReport(attendance as IAttendanceItem).then((r) => r);
         }}
         onUpdate={updateAttendance}
         attendance={getTimeForType(workedType)}

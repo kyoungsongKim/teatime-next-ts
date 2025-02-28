@@ -101,7 +101,7 @@ export function CalendarReportDialog({
       const params: ReportItem = {
         sendUserName: userInfo.id,
         receiveEmail: values.receiveEmail,
-        title: values.title,
+        title: `[업무보고] ${values.title}`,
         contents: values.contents,
       };
 

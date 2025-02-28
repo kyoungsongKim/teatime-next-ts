@@ -8,8 +8,7 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
-
-import { paths } from 'src/routes/paths';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import { useTabs } from 'src/hooks/use-tabs';
 
@@ -19,7 +18,6 @@ import { useGetUserAgreementData } from 'src/actions/agreement';
 import { getUserAgreementDetail } from 'src/actions/agreement-ssr';
 
 import { Iconify } from 'src/components/iconify';
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { ProfileCover } from '../profile-cover';
 import { AgreementProfile } from '../agreement-profile';
@@ -100,52 +98,44 @@ export function AgreementDetailsView({ id }: Props) {
 
   return (
     <DashboardContent>
-      <CustomBreadcrumbs
-        heading="Agreement Detail"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Agreement', href: paths.root.agreement.root },
-          { name: userData?.realName },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      />
+      <Grid xs={12} md={12}>
+        <Card sx={{ mb: 3, height: 290 }}>
+          <ProfileCover
+            role={userData?.position || ''}
+            name={userData?.realName || ''}
+            avatarUrl={userData?.userDetails.avatarImg || ''}
+            coverUrl={_userAbout.coverUrl}
+          />
 
-      <Card sx={{ mb: 3, height: 290 }}>
-        <ProfileCover
-          role={userData?.position || ''}
-          name={userData?.realName || ''}
-          avatarUrl={userData?.userDetails.avatarImg || ''}
-          coverUrl={_userAbout.coverUrl}
-        />
+          <Box
+            display="flex"
+            justifyContent={{ xs: 'center', md: 'flex-end' }}
+            sx={{
+              width: 1,
+              bottom: 0,
+              zIndex: 9,
+              px: { md: 3 },
+              position: 'absolute',
+              bgcolor: 'background.paper',
+            }}
+          >
+            <Tabs value={tabs.value} onChange={tabs.onChange}>
+              {TABS.map((tab) => (
+                <Tab key={tab.value} value={tab.value} icon={tab.icon} label={tab.label} />
+              ))}
+            </Tabs>
+          </Box>
+        </Card>
 
-        <Box
-          display="flex"
-          justifyContent={{ xs: 'center', md: 'flex-end' }}
-          sx={{
-            width: 1,
-            bottom: 0,
-            zIndex: 9,
-            px: { md: 3 },
-            position: 'absolute',
-            bgcolor: 'background.paper',
-          }}
-        >
-          <Tabs value={tabs.value} onChange={tabs.onChange}>
-            {TABS.map((tab) => (
-              <Tab key={tab.value} value={tab.value} icon={tab.icon} label={tab.label} />
-            ))}
-          </Tabs>
-        </Box>
-      </Card>
-
-      {tabs.value === 'profile' && (
-        <AgreementProfile
-          agreementInfos={agreementInfos || []}
-          detailData={detailData || []}
-          userData={userData || {}}
-          isProfile
-        />
-      )}
+        {tabs.value === 'profile' && (
+          <AgreementProfile
+            agreementInfos={agreementInfos || []}
+            detailData={detailData || []}
+            userData={userData || {}}
+            isProfile
+          />
+        )}
+      </Grid>
     </DashboardContent>
   );
 }

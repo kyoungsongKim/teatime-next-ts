@@ -7,6 +7,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -59,36 +60,38 @@ export function FaqsView() {
   return (
     <>
       <DashboardContent maxWidth="xl">
-        {isAdmin && (
-          <Stack spacing={2.5} sx={{ mb: { xs: 2, md: 3 } }}>
-            <Stack
-              spacing={3}
-              justifyContent="flex-end"
-              alignItems={{ xs: 'flex-end', sm: 'center' }}
-              direction={{ xs: 'row', sm: 'row' }}
-            >
-              <Stack direction="row" spacing={1} flexShrink={0}>
-                <Button
-                  variant="soft"
-                  color="primary"
-                  startIcon={<Iconify icon="mingcute:add-line" />}
-                  onClick={createDialog.onTrue}
-                >
-                  Create FAQ
-                </Button>
-                <Button variant="soft" color="error" onClick={editDialog.onTrue}>
-                  Edit FAQ
-                </Button>
+        <Grid xs={12} md={12}>
+          {isAdmin && (
+            <Stack spacing={2.5} sx={{ mb: { xs: 2, md: 3 } }}>
+              <Stack
+                spacing={3}
+                justifyContent="flex-end"
+                alignItems={{ xs: 'flex-end', sm: 'center' }}
+                direction={{ xs: 'row', sm: 'row' }}
+              >
+                <Stack direction="row" spacing={1} flexShrink={0}>
+                  <Button
+                    variant="soft"
+                    color="primary"
+                    startIcon={<Iconify icon="mingcute:add-line" />}
+                    onClick={createDialog.onTrue}
+                  >
+                    Create FAQ
+                  </Button>
+                  <Button variant="soft" color="error" onClick={editDialog.onTrue}>
+                    Edit FAQ
+                  </Button>
+                </Stack>
               </Stack>
             </Stack>
-          </Stack>
-        )}
+          )}
 
-        <Box gap={1} display="grid" gridTemplateColumns="repeat(1, 1fr)">
-          {loading && <p>Loading FAQs...</p>}
-          {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-          {!loading && !error && <FaqsList faqs={faqs} />}
-        </Box>
+          <Box gap={1} display="grid" gridTemplateColumns="repeat(1, 1fr)">
+            {loading && <p>Loading FAQs...</p>}
+            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+            {!loading && !error && <FaqsList faqs={faqs} />}
+          </Box>
+        </Grid>
       </DashboardContent>
       <FaqsCreateDialog
         open={createDialog.value}
