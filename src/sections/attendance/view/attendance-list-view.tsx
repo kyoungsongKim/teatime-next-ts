@@ -1,108 +1,328 @@
 'use client';
 
-import { useState } from 'react';
-// @ts-ignore
-// import { format } from 'date-fns';
+import type { CUserItem } from 'src/types/user';
+import type { IAttendanceItem, IAttendanceTableFilters } from 'src/types/attendance';
 
+import React, { useState, useEffect, useCallback } from 'react';
+
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Card from '@mui/material/Card';
+import Table from '@mui/material/Table';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TableBody from '@mui/material/TableBody';
+import Grid from '@mui/material/Unstable_Grid2';
+import FormControl from '@mui/material/FormControl';
+
+import { paths } from 'src/routes/paths';
+
+import { useSetState } from 'src/hooks/use-set-state';
+
+import { fIsAfter, fIsBetween } from 'src/utils/format-time';
+
+import { varAlpha } from 'src/theme/styles';
+import { getUserList } from 'src/actions/user-ssr';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { getAttendance } from 'src/actions/attendance-ssr';
+
+import { Label } from 'src/components/label';
+import { Scrollbar } from 'src/components/scrollbar';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import {
-  Card,
-  Table,
-  Stack,
-  Button,
-  TableRow,
-  TableBody,
-  TableCell,
-  TableHead,
-  Typography,
-  TableContainer,
-} from '@mui/material';
+  useTable,
+  emptyRows,
+  TableNoData,
+  getComparator,
+  TableEmptyRows,
+  TableHeadCustom,
+  TablePaginationCustom,
+} from 'src/components/table';
 
-export default function AttendanceListView() {
-  const [attendanceData, setAttendanceData] = useState([
-    { id: 1, date: '2025-02-25', checkIn: '09:00', checkOut: '18:00', status: '출근' },
-    { id: 2, date: '2025-02-26', checkIn: '09:30', checkOut: '18:30', status: '출근' },
-  ]);
+import { useUser } from 'src/auth/context/user-context';
 
-  const [currentCheckIn, setCurrentCheckIn] = useState<string | null>(null);
-  const [currentCheckOut, setCurrentCheckOut] = useState<string | null>(null);
+import { AttendanceTableRow } from '../attendance-table-row';
+import { AttendanceTableToolbar } from '../attendance-table-toolbar';
+import { AttendanceTableFiltersResult } from '../attendance-table-filters-result';
 
-  // ✅ 출근 버튼 클릭
-  const handleCheckIn = () => {
-    // const now = format(new Date(), 'HH:mm');
-    // setCurrentCheckIn(now);
-  };
+// ----------------------------------------------------------------------
 
-  // ✅ 퇴근 버튼 클릭
-  const handleCheckOut = () => {
-    // if (!currentCheckIn) return;
-    // const now = format(new Date(), 'HH:mm');
-    //
-    // setAttendanceData((prev) => [
-    //   ...prev,
-    //   {
-    //     id: prev.length + 1,
-    //     date: format(new Date(), 'yyyy-MM-dd'),
-    //     checkIn: currentCheckIn,
-    //     checkOut: now,
-    //     status: '출근',
-    //   },
-    // ]);
+export const WORK_STATUS_OPTIONS = [
+  { value: 'OFFICE', label: '정상근무' },
+  { value: 'REMOTE', label: '재택' },
+  { value: 'FIELD', label: '외근' },
+];
 
-    setCurrentCheckIn(null);
-    setCurrentCheckOut(null);
-  };
+const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...WORK_STATUS_OPTIONS];
+
+const TABLE_HEAD = [
+  { id: 'workType', label: '업무 종류' },
+  { id: 'workDate', label: '업무일' },
+  { id: 'workStartTime', label: '시작시간' },
+  { id: 'workEndTime', label: '종료시간' },
+  { id: 'location', label: '위치' },
+  { id: 'managerName', label: '승인자' },
+  { id: 'taskDescription', label: '업무내용' },
+];
+
+// ----------------------------------------------------------------------
+
+export function AttendanceListView() {
+  const { userInfo, isAdmin } = useUser();
+
+  const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
+  const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
+
+  const table = useTable({
+    defaultOrderBy: 'workDate',
+    defaultOrder: 'desc',
+    defaultRowsPerPage: 10,
+  });
+
+  const [tableData, setTableData] = useState<IAttendanceItem[]>();
+
+  const filters = useSetState<IAttendanceTableFilters>({
+    name: '',
+    workType: 'all',
+    workStartDate: null,
+    workEndDate: null,
+  });
+
+  const dateError = fIsAfter(filters.state.workStartDate, filters.state.workEndDate);
+
+  const dataFiltered = applyFilter({
+    inputData: tableData || [],
+    comparator: getComparator(table.order, table.orderBy),
+    filters: filters.state,
+    dateError,
+  });
+
+  const canReset =
+    !!filters.state.name ||
+    filters.state.workType !== 'all' ||
+    (!!filters.state.workStartDate && !!filters.state.workEndDate);
+
+  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+
+  const handleFilterStatus = useCallback(
+    (event: React.SyntheticEvent, newValue: string) => {
+      table.onResetPage();
+      filters.setState({ workType: newValue });
+    },
+    [filters, table]
+  );
+
+  const fetchLatestAttendance = useCallback(async () => {
+    try {
+      if (userName) {
+        const today = new Date().toISOString().split('T')[0];
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        threeMonthsAgo.setDate(1);
+        const endDate = threeMonthsAgo.toISOString().split('T')[0];
+        const data = await getAttendance(userName, endDate, today);
+        setTableData(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch latest attendance:', error);
+    }
+
+    // 관리자일 경우 사용자 리스트 가져오기
+    if (isAdmin) {
+      getUserList().then((data) => setUserList(data.data));
+    }
+  }, [isAdmin, userName]);
+
+  useEffect(() => {
+    fetchLatestAttendance().then((r) => r);
+  }, [fetchLatestAttendance]);
+
+  useEffect(() => {
+    if (userInfo?.id) {
+      setUserName(userInfo.id);
+    }
+  }, [userInfo]);
 
   return (
-    <Stack spacing={3} sx={{ maxWidth: 800, mx: 'auto', mt: 5 }}>
-      <Typography variant="h4" align="center">
-        근태 관리
-      </Typography>
+    <DashboardContent>
+      <CustomBreadcrumbs
+        heading="Attendance List"
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Attendance', href: paths.root.attendance },
+          { name: 'List' },
+        ]}
+        sx={{ mb: { xs: 3, md: 5 } }}
+      />
 
-      {/* ✅ 출퇴근 버튼 */}
-      <Stack direction="row" justifyContent="center" spacing={2}>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleCheckIn}
-          disabled={!!currentCheckIn}
-        >
-          출근
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleCheckOut}
-          disabled={!currentCheckIn}
-        >
-          퇴근
-        </Button>
-      </Stack>
-
-      {/* ✅ 근태 테이블 */}
-      <Card>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">날짜</TableCell>
-                <TableCell align="center">출근 시간</TableCell>
-                <TableCell align="center">퇴근 시간</TableCell>
-                <TableCell align="center">상태</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {attendanceData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell align="center">{row.date}</TableCell>
-                  <TableCell align="center">{row.checkIn}</TableCell>
-                  <TableCell align="center">{row.checkOut}</TableCell>
-                  <TableCell align="center">{row.status}</TableCell>
-                </TableRow>
+      {/* 관리자의 경우 사용자 리스트 노출 */}
+      {isAdmin && (
+        <Grid xs={12} md={12}>
+          <FormControl size="small">
+            <Select
+              value={userName}
+              onChange={(newValue) => {
+                const targetUser = userList.find((item) => newValue.target.value === item.id);
+                setUserName(targetUser?.id ?? (userInfo?.id || ''));
+              }}
+              variant="outlined"
+            >
+              {userList.map((item) => (
+                <MenuItem key={item.id} value={item.id}>
+                  {`${item.realName}(${item.id})`}
+                </MenuItem>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </Select>
+          </FormControl>
+        </Grid>
+      )}
+
+      <Card>
+        <Tabs
+          value={filters.state.workType}
+          onChange={handleFilterStatus}
+          sx={{
+            px: 2.5,
+            boxShadow: (theme) =>
+              `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+          }}
+        >
+          {STATUS_OPTIONS.map((tab) => (
+            <Tab
+              key={tab.value}
+              iconPosition="end"
+              value={tab.value}
+              label={tab.label}
+              icon={
+                <Label
+                  variant={
+                    ((tab.value === 'all' || tab.value === filters.state.workType) && 'filled') ||
+                    'soft'
+                  }
+                  color={
+                    (tab.value === 'OFFICE' && 'success') ||
+                    (tab.value === 'REMOTE' && 'warning') ||
+                    (tab.value === 'FIELD' && 'error') ||
+                    'default'
+                  }
+                >
+                  {['OFFICE', 'REMOTE', 'FIELD'].includes(tab.value)
+                    ? (tableData || []).filter((work) => work.workType === tab.value).length
+                    : (tableData || []).length}
+                </Label>
+              }
+            />
+          ))}
+        </Tabs>
+
+        <AttendanceTableToolbar
+          filters={filters}
+          onResetPage={table.onResetPage}
+          dateError={dateError}
+        />
+
+        {canReset && (
+          <AttendanceTableFiltersResult
+            filters={filters}
+            totalResults={dataFiltered.length}
+            onResetPage={table.onResetPage}
+            sx={{ p: 2.5, pt: 0 }}
+          />
+        )}
+
+        <Box sx={{ position: 'relative' }}>
+          <Scrollbar sx={{ minHeight: 444 }}>
+            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <TableHeadCustom
+                order={table.order}
+                orderBy={table.orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={dataFiltered.length}
+                numSelected={table.selected.length}
+                onSort={table.onSort}
+              />
+
+              <TableBody>
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row) => (
+                    <AttendanceTableRow key={row.workId} row={row} />
+                  ))}
+
+                <TableEmptyRows
+                  height={table.dense ? 56 : 56 + 20}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                />
+
+                <TableNoData notFound={notFound} />
+              </TableBody>
+            </Table>
+          </Scrollbar>
+        </Box>
+
+        <TablePaginationCustom
+          page={table.page}
+          dense={table.dense}
+          count={dataFiltered.length}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          onChangeDense={table.onChangeDense}
+          onRowsPerPageChange={table.onChangeRowsPerPage}
+        />
       </Card>
-    </Stack>
+    </DashboardContent>
   );
+}
+
+// ----------------------------------------------------------------------
+
+type ApplyFilterProps = {
+  dateError: boolean;
+  inputData: IAttendanceItem[];
+  filters: IAttendanceTableFilters;
+  comparator: (a: any, b: any) => number;
+};
+
+function applyFilter({ inputData, comparator, filters, dateError }: ApplyFilterProps) {
+  const { workType, name, workStartDate, workEndDate } = filters;
+
+  const stabilizedThis = inputData.map((el, index) => [el, index] as const);
+
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+
+  inputData = stabilizedThis.map((el) => el[0]);
+
+  if (name) {
+    inputData = inputData.filter((attendance) => {
+      const searchName = attendance.managerName?.toLowerCase().includes(name.trim().toLowerCase());
+      const searchDescription = attendance.taskDescription
+        ?.toLowerCase()
+        .includes(name.trim().toLowerCase());
+      const searchLocation = attendance.location?.toLowerCase().includes(name.trim().toLowerCase());
+
+      return Boolean(searchName || searchDescription || searchLocation);
+    });
+  }
+
+  if (workType !== 'all') {
+    inputData = inputData.filter((order) => order.workType === workType);
+  }
+
+  if (!dateError) {
+    if (workStartDate && workEndDate) {
+      inputData = inputData.filter((attendance) =>
+        fIsBetween(attendance.workDate, workStartDate, workEndDate)
+      );
+    }
+  }
+
+  return inputData;
 }

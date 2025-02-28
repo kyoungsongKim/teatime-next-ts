@@ -1,4 +1,4 @@
-import type { IAttendance, IAttendanceRequest } from 'src/types/attendance';
+import type { IAttendanceItem, IAttendanceRequest } from 'src/types/attendance';
 
 import { toast } from 'sonner';
 import { z as zod } from 'zod';
@@ -37,7 +37,7 @@ type Props = {
   onClose: () => void;
   onUpdate: () => void;
   workType: 'REMOTE' | 'FIELD';
-  attendance: IAttendance | undefined;
+  attendance: IAttendanceItem | undefined;
 };
 
 export function DashboardWorkDialog({
@@ -188,7 +188,6 @@ export function DashboardWorkDialog({
         </DialogContent>
 
         <DialogActions sx={{ justifyContent: 'center' }}>
-          {/* ✅ 시작 버튼 */}
           <LoadingButton
             type="submit"
             variant="soft"
@@ -204,7 +203,6 @@ export function DashboardWorkDialog({
             {loading ? '처리 중...' : workType === 'REMOTE' ? '재택 시작' : '외근 시작'}
           </LoadingButton>
 
-          {/* ✅ 종료 버튼 */}
           <LoadingButton
             type="submit"
             variant="soft"
@@ -220,7 +218,6 @@ export function DashboardWorkDialog({
             {loading ? '처리 중...' : workType === 'REMOTE' ? '재택 종료' : '외근 종료'}
           </LoadingButton>
 
-          {/* ✅ 종료 버튼 */}
           <LoadingButton
             type="submit"
             variant="soft"

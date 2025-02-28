@@ -1,8 +1,8 @@
 'use client';
 
 import type { CUserItem } from 'src/types/user';
-import type { IAttendance } from 'src/types/attendance';
 import type { StatisticsSalesItem } from 'src/types/sales';
+import type { IAttendanceItem } from 'src/types/attendance';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
@@ -37,7 +37,7 @@ export function DashboardView() {
   const workDialog = useBoolean();
   const [timeType, setCheckType] = useState<'startTime' | 'endTime'>('startTime');
   const [workedType, setWorkType] = useState<'REMOTE' | 'FIELD'>('REMOTE');
-  const [latestAttendance, setLatestAttendance] = useState<IAttendance[]>([]);
+  const [latestAttendance, setLatestAttendance] = useState<IAttendanceItem[]>([]);
 
   const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear())); // 현재 연도 상태
   const currentMonth = new Date().getMonth() + 1; // 현재 월 (1월은 1, 12월은 12)
@@ -178,7 +178,7 @@ export function DashboardView() {
   const fetchLatestAttendance = useCallback(async () => {
     try {
       if (userInfo?.id) {
-        const data = await getAttendance(userInfo.id, new Date().toISOString().split('T')[0]);
+        const data = await getAttendance(userInfo.id, new Date().toISOString().split('T')[0], null);
         setLatestAttendance(data);
       }
     } catch (error) {

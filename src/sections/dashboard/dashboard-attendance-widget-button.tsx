@@ -1,6 +1,6 @@
 import type { CardProps } from '@mui/material/Card';
 import type { ColorType } from 'src/theme/core/palette';
-import type { IAttendance } from 'src/types/attendance';
+import type { IAttendanceItem } from 'src/types/attendance';
 
 import { useMemo } from 'react';
 
@@ -8,6 +8,8 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+
+import { fTimeForString } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
 
@@ -19,7 +21,7 @@ type Props = CardProps & {
   icon: string;
   title: string;
   timeType: 'startTime' | 'endTime' | '';
-  attendance?: IAttendance; // ✅ `undefined` 허용
+  attendance?: IAttendanceItem;
   tooltip: string;
   color?: ColorType;
   onClick?: () => void;
@@ -43,18 +45,24 @@ export function DashboardAttendanceWidgetButton({
   }, [attendance, timeType]);
 
   const getAttendanceTime = () => {
-    if (!attendance) return '--:--:--';
+    if (!attendance) return '--:--';
 
     switch (attendance.workType) {
       case 'OFFICE':
         return timeType === 'startTime'
-          ? attendance.workStartTime || '--:--:--'
-          : attendance.workEndTime || '--:--:--';
+          ? attendance?.workStartTime
+            ? fTimeForString(attendance.workStartTime)
+            : '--:--'
+          : attendance?.workEndTime
+            ? fTimeForString(attendance.workEndTime)
+            : '--:--';
       case 'REMOTE':
       case 'FIELD':
-        return `${attendance.workStartTime || '--:--:--'} - ${attendance.workEndTime || '--:--:--'}`;
+        return `${
+          attendance?.workStartTime ? fTimeForString(attendance.workStartTime) : '--:--'
+        } - ${attendance?.workEndTime ? fTimeForString(attendance.workEndTime) : '--:--'}`;
       default:
-        return '--:--:--';
+        return '--:--';
     }
   };
 
@@ -88,7 +96,6 @@ export function DashboardAttendanceWidgetButton({
           </Typography>
         </Box>
 
-        {/* ✅ 아이콘에도 툴팁 추가 */}
         <Tooltip title={title} arrow>
           <Box>
             <SvgColor

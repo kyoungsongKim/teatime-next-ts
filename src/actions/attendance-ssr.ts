@@ -1,12 +1,16 @@
 import axios, { endpoints } from 'src/utils/axios';
 
-import type { IAttendance, IAttendanceRequest } from '../types/attendance';
+import type { IAttendanceItem, IAttendanceRequest } from '../types/attendance';
 
-export const getAttendance = async (userId: string, workDate: string): Promise<IAttendance[]> => {
+export const getAttendance = async (
+  userId: string,
+  workDate: string,
+  endDate: string | null
+): Promise<IAttendanceItem[]> => {
   const URL = `${endpoints.attendance.root}`;
   try {
-    const response = await axios.get<IAttendance[]>(URL, {
-      params: { userId, workDate },
+    const response = await axios.get<IAttendanceItem[]>(URL, {
+      params: { userId, workDate, endDate },
     });
     return response.data;
   } catch (error) {
