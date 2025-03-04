@@ -39,7 +39,8 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { useUser } from '../../auth/context/user-context';
+import { useUser } from 'src/auth/context/user-context';
+
 import { PointListTableRow } from './point-list-table-row';
 import { PointDonateDialog } from './dialog/point-donate-dialog';
 import { PointCreateDialog } from './dialog/point-create-dialog';

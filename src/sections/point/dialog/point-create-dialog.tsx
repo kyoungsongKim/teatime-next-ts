@@ -3,8 +3,8 @@ import type { CreatePointItem } from 'src/types/point';
 
 import * as zod from 'zod';
 import { toast } from 'sonner';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Stack from '@mui/material/Stack';
@@ -48,6 +48,7 @@ type Props = {
 export function PointCreateDialog({ id, open, userList, onClose }: Props) {
   const confirm = useBoolean();
   const [publishCode, setPublishCode] = useState('');
+  const [point, setSavedPoint] = useState(0);
 
   const defaultPointValue: CreatePointItem = {
     sender: id,
@@ -67,6 +68,17 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
     formState: { isSubmitting },
   } = methods;
 
+  useEffect(() => {
+    if (open) {
+      reset({
+        sender: id,
+        receiver: null,
+        memo: '',
+        point: 0,
+      });
+    }
+  }, [open, reset, id]);
+
   const onCreate = handleSubmit(async (data) => {
     const receiver = data.receiver ?? { id: '' };
     try {
@@ -74,6 +86,7 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
         if (r.status !== 200) {
           toast.error(r.data);
         } else {
+          setSavedPoint(data.point);
           setPublishCode(r.data);
           confirm.onTrue();
           reset();
@@ -89,22 +102,24 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
   const handleCopy = async () => {
     if (!publishCode) return;
 
+    const textToCopy = `포인트 기부용 코드가 발급되었습니다.\n${publishCode}\n${point} 포인트 기부 기회코드 전달드립니다.\n비춰보기 서비스를 이용해주셔서 감사드립니다!\n기부 꼭 부탁드리겠습니다!`;
+
     try {
       // 1. navigator.clipboard API 사용
-      await navigator.clipboard.writeText(publishCode);
-      toast.success('Copied!');
+      await navigator.clipboard.writeText(textToCopy);
+      toast.success('복사되었습니다!');
     } catch (error) {
       console.warn('Navigator clipboard failed, falling back to textarea method.', error);
 
       // 2. textarea를 사용한 백업 복사 방법
       const textarea = document.createElement('textarea');
-      textarea.value = publishCode;
+      textarea.value = textToCopy;
       textarea.style.position = 'fixed'; // 화면에서 보이지 않게 설정
       textarea.style.opacity = '0';
       document.body.appendChild(textarea);
       textarea.select();
       try {
-        toast.success('Copied!');
+        toast.success('복사되었습니다!');
       } catch (fallbackError) {
         toast.error('복사 실패!');
       } finally {
