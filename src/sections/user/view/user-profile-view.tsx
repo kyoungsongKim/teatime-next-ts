@@ -1,5 +1,7 @@
 'use client';
 
+import type { IAgreementDetailItem } from 'src/types/agreement';
+
 import { useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
@@ -10,21 +12,20 @@ import Grid from '@mui/material/Unstable_Grid2';
 
 import { useTabs } from 'src/hooks/use-tabs';
 
+import { getUserInfo } from 'src/utils/user-info';
+
 import { _userAbout } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetUserAgreementData } from 'src/actions/agreement';
+import { getUserAgreementDetail } from 'src/actions/agreement-ssr';
 
 import { Iconify } from 'src/components/iconify';
 
 import { useAuthContext } from 'src/auth/hooks';
+import { useUser } from 'src/auth/context/user-context';
 
 import { ProfileCover } from '../profile-cover';
-import { getUserInfo } from '../../../utils/user-info';
-import { useUser } from '../../../auth/context/user-context';
-import { useGetUserAgreementData } from '../../../actions/agreement';
 import { AgreementProfile } from '../../agreement/agreement-profile';
-import { getUserAgreementDetail } from '../../../actions/agreement-ssr';
-
-import type { IAgreementDetailItem } from '../../../types/agreement';
 
 // ----------------------------------------------------------------------
 

@@ -66,7 +66,7 @@ export function UserTableToolbar({ filters, options, onResetPage }: Props) {
             value={filters.state.role}
             onChange={handleFilterRole}
             input={<OutlinedInput label="Role" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
+            renderValue={(selected) => selected.map((value) => value).join(',')}
             inputProps={{ id: 'user-filter-role-select-label' }}
             MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
           >

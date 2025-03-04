@@ -3,7 +3,7 @@
 import type { CUserItem } from 'src/types/user';
 import type { ReportItem } from 'src/types/report';
 import type { StatisticsSalesItem } from 'src/types/sales';
-import type { IAttendanceItem } from 'src/types/attendance';
+import type { IAttendanceItem, IAttendanceRequest } from 'src/types/attendance';
 
 import { toast } from 'sonner';
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
@@ -38,7 +38,7 @@ export function DashboardView() {
 
   const checkInOutDialog = useBoolean();
   const workDialog = useBoolean();
-  const [timeType, setCheckType] = useState<'startTime' | 'endTime'>('startTime');
+  const [timeType, setCheckType] = useState<'startTime' | 'endTime' | 'update'>('startTime');
   const [workedType, setWorkType] = useState<'REMOTE' | 'FIELD'>('REMOTE');
   const [latestAttendance, setLatestAttendance] = useState<IAttendanceItem[]>([]);
 
@@ -205,7 +205,7 @@ export function DashboardView() {
     [latestAttendance]
   );
 
-  const sendAttendanceReport = async (attendance: IAttendanceItem) => {
+  const sendAttendanceReport = async (attendanceRequest: IAttendanceRequest) => {
     try {
       if (!userInfo) {
         toast.error('로그인 정보가 없습니다.');
@@ -214,29 +214,58 @@ export function DashboardView() {
 
       const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 형식
       const workTypeLabel =
-        attendance.workType === 'OFFICE'
+        attendanceRequest.workType === 'OFFICE'
           ? '출퇴근'
-          : attendance.workType === 'REMOTE'
+          : attendanceRequest.workType === 'REMOTE'
             ? '재택'
             : '외근';
 
       const title = `[${workTypeLabel} 보고] ${today} ${workTypeLabel} 보고 입니다`;
 
-      let contents = '';
-      if (attendance.workType === 'OFFICE') {
-        if (timeType === 'startTime') {
-          contents = '사내에 출근 했습니다.';
-        } else {
-          contents = '업무 종료 합니다.';
-        }
-      } else if (attendance.workType === 'REMOTE') {
-        contents = `재택 근무 시작합니다.\n승인자: ${attendance.managerName || '없음'}\n업무 내용: ${attendance.taskDescription || '없음'}`;
-      } else if (attendance.workType === 'FIELD') {
-        contents = `외근 요청자: ${attendance.managerName || '없음'}\n외근 위치: ${attendance.location || '없음'}\n업무 내용: ${attendance.taskDescription || '없음'}`;
+      const messages = {
+        OFFICE: {
+          start: '사내에 출근하여 업무를 시작합니다.',
+          end: '사내에서 업무를 종료합니다.',
+          update: '사내에서 업무 내용을 수정합니다.',
+        },
+        REMOTE: {
+          start: '재택 근무를 시작합니다.',
+          end: '재택 근무를 종료합니다.',
+          update: '재택 근무 내용을 수정합니다.',
+        },
+        FIELD: {
+          start: '외근 업무를 시작합니다.',
+          end: '외근 업무를 종료합니다.',
+          update: '외근 업무 내용을 수정합니다.',
+        },
+      };
+
+      const timeKey =
+        attendanceRequest.timeType === 'startTime'
+          ? 'start'
+          : attendanceRequest.timeType === 'endTime'
+            ? 'end'
+            : 'update';
+
+      const actionText = messages[attendanceRequest.workType][timeKey];
+
+      let extraInfo = '';
+      if (attendanceRequest.workType === 'REMOTE') {
+        extraInfo = `승인자: ${attendanceRequest.managerName || '없음'}
+업무 내용: ${attendanceRequest.taskDescription || '없음'}`;
+      } else if (attendanceRequest.workType === 'FIELD') {
+        extraInfo = `외근 요청자: ${attendanceRequest.managerName || '없음'}
+외근 위치: ${attendanceRequest.location || '없음'}
+업무 내용: ${attendanceRequest.taskDescription || '없음'}`;
       }
 
-      const receiveEmailList = userInfo.dailyReportList ? userInfo.dailyReportList.split(',') : [];
+      const contents = `${actionText}\n${extraInfo}`;
+
+      const receiveEmailList = attendanceRequest.dailyReportList
+        ? attendanceRequest.dailyReportList
+        : [];
       if (receiveEmailList.length === 0) {
+        console.error('업무 보고 대상자가 없습니다.');
         toast.error('업무 보고 대상자가 없습니다.');
         return;
       }
@@ -252,13 +281,13 @@ export function DashboardView() {
 
       if (response.status !== 200) {
         console.error('이메일 전송 실패:', response.data);
-        toast.error(`업무 보고 전송 실패: ${response.data}`);
+        toast.error(`이메일 전송 실패: ${response.data}`);
       } else {
         toast.success('담당자에게 메일이 전송되었습니다.');
       }
     } catch (error) {
       console.error('이메일 전송 중 오류 발생:', error);
-      toast.error('담당자에게 메일 전송이 실패 했습니다.');
+      toast.error('담당자에게 메일 전송이 실패했습니다.');
     }
   };
 
@@ -414,27 +443,30 @@ export function DashboardView() {
       <DashboardCheckInOutDialog
         userId={userInfo?.id || ''}
         open={checkInOutDialog.value}
-        onClose={() => {
+        onClose={(payload, isSuccess) => {
           checkInOutDialog.onFalse();
-          const attendance = getTimeForType('OFFICE');
-          sendAttendanceReport(attendance as IAttendanceItem).then((r) => r);
+          if (isSuccess) {
+            sendAttendanceReport(payload).then((r) => r);
+          }
         }}
         timeType={timeType}
         onUpdate={updateAttendance}
+        dailyReportList={userInfo?.dailyReportList ? userInfo.dailyReportList.split(',') : []}
       />
 
       <DashboardWorkDialog
         userId={userInfo?.id || ''}
         open={workDialog.value}
-        onClose={() => {
+        onClose={(payload, isSuccess) => {
           workDialog.onFalse();
-          workDialog.onFalse();
-          const attendance = getTimeForType(workedType);
-          sendAttendanceReport(attendance as IAttendanceItem).then((r) => r);
+          if (isSuccess) {
+            sendAttendanceReport(payload).then((r) => r);
+          }
         }}
         onUpdate={updateAttendance}
         attendance={getTimeForType(workedType)}
         workType={workedType}
+        dailyReportList={userInfo?.dailyReportList ? userInfo.dailyReportList.split(',') : []}
       />
     </>
   );

@@ -1,12 +1,18 @@
+import type { IAttendanceRequest } from 'src/types/attendance';
+
+import { z as zod } from 'zod';
 import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
 import React, { useState, useEffect } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Marker, GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
+import Chip from '@mui/material/Chip';
+import LoadingButton from '@mui/lab/LoadingButton';
 import {
   Box,
   Stack,
   Dialog,
-  Button,
   IconButton,
   Typography,
   DialogTitle,
@@ -17,13 +23,19 @@ import {
 import { postAssistance } from 'src/actions/attendance-ssr';
 
 import { Iconify } from 'src/components/iconify';
+import { Form, Field } from 'src/components/hook-form';
+
+export const UpdateWorkAttendanceSchema = zod.object({
+  dailyReportList: zod.array(zod.string().email({ message: 'Invalid email format!' })).optional(),
+});
 
 type Props = {
   userId: string;
   open: boolean;
-  onClose: () => void;
-  timeType: 'startTime' | 'endTime';
+  onClose: (payload: IAttendanceRequest, success: boolean) => void;
+  timeType: 'startTime' | 'endTime' | 'update';
   onUpdate: () => void;
+  dailyReportList: string[];
 };
 
 const OFFICE_LOCATION = { lat: 37.477207, lng: 126.963869 };
@@ -40,15 +52,43 @@ function getDistanceFromLatLon(lat1: number, lon1: number, lat2: number, lon2: n
   return R * c;
 }
 
-export function DashboardCheckInOutDialog({ userId, open, onClose, timeType, onUpdate }: Props) {
+export function DashboardCheckInOutDialog({
+  userId,
+  open,
+  onClose,
+  timeType,
+  onUpdate,
+  dailyReportList,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [isCheckAllowed, setIsCheckAllowed] = useState(false);
   const [distanceMessage, setDistanceMessage] = useState('');
 
+  const methods = useForm<IAttendanceRequest>({
+    mode: 'all',
+    resolver: zodResolver(UpdateWorkAttendanceSchema),
+    defaultValues: {
+      dailyReportList: dailyReportList || [],
+    },
+  });
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
   });
+
+  const {
+    reset,
+    formState: { isSubmitting },
+  } = methods;
+
+  useEffect(() => {
+    if (open) {
+      reset({
+        dailyReportList: dailyReportList || [],
+      });
+    }
+  }, [open, reset, dailyReportList]);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -84,98 +124,140 @@ export function DashboardCheckInOutDialog({ userId, open, onClose, timeType, onU
     );
   }, [timeType]);
 
-  const handleCheckInOut = async () => {
+  const onHandleSubmit = methods.handleSubmit(async (data) => {
     if (!isCheckAllowed) return;
 
     setLoading(true);
 
-    try {
-      const payload = {
-        userId,
-        workType: 'OFFICE' as const,
-        location: 'Office',
-        timeType,
-      };
+    const payload: IAttendanceRequest = {
+      userId,
+      workType: 'OFFICE' as const,
+      location: 'Office',
+      timeType,
+      dailyReportList: data.dailyReportList,
+    };
 
-      await postAssistance(payload).then((r) => {
-        if (r.status === 200) {
-          toast.info(`${timeType === 'startTime' ? '출근' : '퇴근'} 체크 완료`);
-        } else {
-          toast.error(r.data);
-        }
-      });
+    try {
+      const response = await postAssistance(payload);
+
+      if (response.status === 200) {
+        toast.info(`${timeType === 'startTime' ? '출근' : '퇴근'} 체크 완료`);
+        onUpdate();
+        onClose(payload, true);
+      } else {
+        toast.error(response.data);
+        onClose(payload, false);
+      }
     } catch (error) {
-      toast.error(`${timeType === 'startTime' ? '출근' : '퇴근'} 체크중 오류가 발생했습니다.`);
+      toast.error(`${timeType === 'startTime' ? '출근' : '퇴근'} 체크 중 오류가 발생했습니다.`);
       console.error(error);
+      onClose(payload, false);
     } finally {
-      onUpdate();
       setLoading(false);
-      onClose();
     }
-  };
+  });
 
   return (
-    <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
+    <Dialog
+      fullWidth
+      maxWidth="sm"
+      open={open}
+      onClose={() => onClose({} as IAttendanceRequest, false)}
+    >
       <DialogTitle>
         {timeType === 'startTime' ? '출근' : '퇴근'} 체크
-        <IconButton onClick={onClose} sx={{ position: 'absolute', right: 16, top: 16 }}>
+        <IconButton
+          onClick={() => onClose({} as IAttendanceRequest, false)}
+          sx={{ position: 'absolute', right: 16, top: 16 }}
+        >
           <Iconify icon="eva:close-fill" />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ bgcolor: 'grey.200', borderRadius: 2 }}>
-        <Stack spacing={2} sx={{ pt: 1, pb: 1 }}>
-          <Stack spacing={1}>
-            <Typography variant="body2">📍본사 100m 이내에서 체크 가능합니다.</Typography>
-            <Typography
-              variant="h6"
-              color={isCheckAllowed ? 'success.main' : 'error.main'}
-              sx={{ fontWeight: 'bold' }}
-            >
-              {distanceMessage}
-            </Typography>
-          </Stack>
-
-          {/* 구글 지도 표시 */}
-          {isLoaded && (
-            <Box
-              sx={{
-                width: '100%',
-                height: 350,
-                borderRadius: 2,
-                boxShadow: 2,
-                overflow: 'hidden',
-              }}
-            >
-              <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '100%' }}
-                center={currentPosition || OFFICE_LOCATION}
-                zoom={17}
+      <Form methods={methods} onSubmit={onHandleSubmit}>
+        <DialogContent sx={{ bgcolor: 'grey.200', borderRadius: 2 }}>
+          <Stack spacing={2} sx={{ pt: 1, pb: 1 }}>
+            <Stack spacing={1}>
+              <Typography variant="body2">📍본사 100m 이내에서 체크 가능합니다.</Typography>
+              <Typography
+                variant="h6"
+                color={isCheckAllowed ? 'success.main' : 'error.main'}
+                sx={{ fontWeight: 'bold' }}
               >
-                {currentPosition && <Marker position={currentPosition} />}
-                <Marker position={OFFICE_LOCATION} label="회사" />
-              </GoogleMap>
-            </Box>
-          )}
-        </Stack>
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center' }}>
-        <Button
-          variant="soft"
-          color={isCheckAllowed ? 'info' : 'warning'}
-          disabled={!isCheckAllowed}
-          sx={{
-            fontSize: '1.2rem',
-            px: 4,
-            py: 1,
-            fontWeight: 'bold',
-            width: '50%',
-          }}
-          onClick={handleCheckInOut}
-        >
-          {loading ? '처리 중...' : timeType === 'startTime' ? '출근' : '퇴근'}
-        </Button>
-      </DialogActions>
+                {distanceMessage}
+              </Typography>
+            </Stack>
+
+            {/* 구글 지도 표시 */}
+            {isLoaded && (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: 350,
+                  borderRadius: 2,
+                  boxShadow: 2,
+                  overflow: 'hidden',
+                }}
+              >
+                <GoogleMap
+                  mapContainerStyle={{ width: '100%', height: '100%' }}
+                  center={currentPosition || OFFICE_LOCATION}
+                  zoom={17}
+                >
+                  {currentPosition && <Marker position={currentPosition} />}
+                  <Marker position={OFFICE_LOCATION} label="회사" />
+                </GoogleMap>
+              </Box>
+            )}
+
+            <Field.Autocomplete
+              name="dailyReportList"
+              label="업무 보고 Email"
+              multiple
+              freeSolo
+              disableCloseOnSelect
+              options={[]}
+              getOptionLabel={(option) => option}
+              renderOption={(props, option) => (
+                <li {...props} key={option}>
+                  {option}
+                </li>
+              )}
+              renderTags={(selected, getDailyReportProps) =>
+                selected.map((option, index) => (
+                  <Chip
+                    {...getDailyReportProps({ index })}
+                    key={option}
+                    label={option}
+                    size="small"
+                    color="info"
+                    variant="soft"
+                  />
+                ))
+              }
+            />
+          </Stack>
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <LoadingButton
+            type="submit"
+            variant="soft"
+            color={isCheckAllowed ? 'info' : 'warning'}
+            sx={{
+              fontSize: '1.2rem',
+              px: 4,
+              py: 1,
+              fontWeight: 'bold',
+              width: '50%',
+            }}
+            disabled={!isCheckAllowed}
+            loading={isSubmitting}
+          >
+            {loading ? '처리 중...' : timeType === 'startTime' ? '출근' : '퇴근'}
+          </LoadingButton>
+        </DialogActions>
+      </Form>
     </Dialog>
   );
 }

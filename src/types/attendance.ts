@@ -20,6 +20,7 @@ export type IAttendanceRequest = {
   location?: string; // 근무 위치 (사무실, 집, 고객사 등)
   managerName?: string; // 승인한 관리자
   taskDescription?: string; // 업무 내용
+  dailyReportList?: string[]; // 일일 보고 대상자
 };
 
 export type IAttendanceTableFilters = {

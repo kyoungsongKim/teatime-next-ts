@@ -146,7 +146,7 @@ export function AppliedServiceAdminTable({ item, onUpdate, detailOpen, onReviewO
                       (value) =>
                         statusItems.find((selectedItem) => selectedItem.value === value)?.label
                     )
-                    .join(', ')
+                    .join(',')
                 : '필터 선택'
             }
             sx={{ minWidth: { xs: '100%', sm: '50%', md: '30%' }, textAlign: 'start' }}

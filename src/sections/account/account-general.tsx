@@ -154,11 +154,11 @@ export function AccountGeneral({ userInfo }: Props) {
       }
 
       // @ts-ignore
-      data.dailyReportList = data.dailyReportList.length > 0 ? data.dailyReportList.join(', ') : '';
+      data.dailyReportList = data.dailyReportList.length > 0 ? data.dailyReportList.join(',') : '';
       // @ts-ignore
       data.vacationReportList =
         // @ts-ignore
-        data.vacationReportList.length > 0 ? data.vacationReportList.join(', ') : '';
+        data.vacationReportList.length > 0 ? data.vacationReportList.join(',') : '';
       data.userId = userInfo?.id as string;
 
       const response = await updateUserDetail(data);

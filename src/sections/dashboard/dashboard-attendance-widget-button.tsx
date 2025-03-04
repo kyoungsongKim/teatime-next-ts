@@ -60,7 +60,7 @@ export function DashboardAttendanceWidgetButton({
       case 'FIELD':
         return `${
           attendance?.workStartTime ? fTimeForString(attendance.workStartTime) : '--:--'
-        } - ${attendance?.workEndTime ? fTimeForString(attendance.workEndTime) : '--:--'}`;
+        } ~ ${attendance?.workEndTime ? fTimeForString(attendance.workEndTime) : '--:--'}`;
       default:
         return '--:--';
     }

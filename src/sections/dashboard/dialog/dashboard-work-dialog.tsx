@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import { LoadingButton } from '@mui/lab';
 import {
   Stack,
@@ -26,18 +27,20 @@ import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
 export const UpdateWorkAttendanceSchema = zod.object({
-  managerName: zod.string().optional(),
-  location: zod.string().optional(),
-  taskDescription: zod.string().optional(),
+  managerName: zod.string().min(1, { message: '승인자 또는 요청자를 입력해주세요.' }),
+  location: zod.string().min(1, { message: '업무 위치를 입력해주세요.' }),
+  taskDescription: zod.string().min(1, { message: '업무 내용을 입력해주세요.' }),
+  dailyReportList: zod.array(zod.string().email({ message: 'Invalid email format!' })).optional(),
 });
 
 type Props = {
   userId: string;
   open: boolean;
-  onClose: () => void;
+  onClose: (payload: IAttendanceRequest, success: boolean) => void;
   onUpdate: () => void;
   workType: 'REMOTE' | 'FIELD';
   attendance: IAttendanceItem | undefined;
+  dailyReportList: string[];
 };
 
 export function DashboardWorkDialog({
@@ -47,6 +50,7 @@ export function DashboardWorkDialog({
   onUpdate,
   workType,
   attendance,
+  dailyReportList,
 }: Props) {
   const [loading, setLoading] = useState(false);
 
@@ -57,6 +61,7 @@ export function DashboardWorkDialog({
       managerName: attendance?.managerName || '',
       location: attendance?.location || '',
       taskDescription: attendance?.taskDescription || '',
+      dailyReportList: dailyReportList || [],
     },
   });
 
@@ -72,60 +77,78 @@ export function DashboardWorkDialog({
         managerName: attendance?.managerName || '',
         location: attendance?.location || '',
         taskDescription: attendance?.taskDescription || '',
+        dailyReportList: dailyReportList || [],
       });
     }
-  }, [open, reset, attendance]);
+  }, [open, reset, attendance, dailyReportList]);
 
   const onHandleSubmit = handleSubmit(async (data, event?: React.BaseSyntheticEvent) => {
-    event?.preventDefault();
+    if (event) event.preventDefault();
+
     const formEvent = event?.nativeEvent as SubmitEvent;
     const submitter = formEvent?.submitter as HTMLButtonElement | null;
-    const isStart = submitter?.name === 'start';
+    let isTypeStr;
 
-    const timeType =
-      submitter?.name === 'update'
-        ? ('update' as const)
-        : submitter?.name === 'start'
-          ? ('startTime' as const)
-          : ('endTime' as const);
+    let timeType: 'update' | 'startTime' | 'endTime';
+    switch (submitter?.name) {
+      case 'update':
+        timeType = 'update';
+        isTypeStr = '내용 수정';
+        break;
+      case 'start':
+        timeType = 'startTime';
+        isTypeStr = '시작';
+        break;
+      default:
+        timeType = 'endTime';
+        isTypeStr = '종료';
+    }
 
     setLoading(true);
-    try {
-      const payload = {
-        userId,
-        workType,
-        timeType,
-        location: workType === 'FIELD' ? data.location : 'Home',
-        managerName: data.managerName,
-        taskDescription: data.taskDescription,
-      };
 
-      await postAssistance(payload).then((r) => {
-        if (r.status === 200) {
-          toast.info(
-            `${workType === 'REMOTE' ? '재택' : '외근'} ${isStart ? '시작' : '종료'} 완료`
-          );
-        } else {
-          toast.error(r.data);
-        }
-      });
+    const payload = {
+      userId,
+      workType,
+      timeType,
+      location: workType === 'FIELD' ? data.location : 'Home',
+      managerName: data.managerName,
+      taskDescription: data.taskDescription,
+      dailyReportList: data.dailyReportList,
+    };
+
+    try {
+      const response = await postAssistance(payload);
+
+      if (response.status === 200) {
+        toast.info(`${workType === 'REMOTE' ? '재택' : '외근'} ${isTypeStr} 완료`);
+        onUpdate();
+        onClose(payload, true);
+      } else {
+        toast.error(response.data);
+        onClose(payload, false);
+      }
     } catch (error) {
-      toast.error(
-        `${workType === 'REMOTE' ? '재택' : '외근'} ${isStart ? '시작' : '종료'} 중 오류 발생`
-      );
-      console.error(error);
+      console.error('출퇴근 체크 중 오류 발생:', error);
+      toast.error(`${workType === 'REMOTE' ? '재택' : '외근'} ${isTypeStr} 중 오류 발생`);
+      onClose(payload, false);
     } finally {
-      onUpdate();
       setLoading(false);
-      onClose();
     }
   });
 
   return (
-    <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
+    <Dialog
+      fullWidth
+      maxWidth="sm"
+      open={open}
+      onClose={() => onClose({} as IAttendanceRequest, false)}
+    >
       <DialogTitle>
         {workType === 'REMOTE' ? '재택' : '외근'} 체크
-        <IconButton onClick={onClose} sx={{ position: 'absolute', right: 16, top: 16 }}>
+        <IconButton
+          onClick={() => onClose({} as IAttendanceRequest, false)}
+          sx={{ position: 'absolute', right: 16, top: 16 }}
+        >
           <Iconify icon="eva:close-fill" />
         </IconButton>
       </DialogTitle>
@@ -143,6 +166,33 @@ export function DashboardWorkDialog({
               {workType === 'FIELD' && <Field.Text name="location" fullWidth label="외근 지역" />}
 
               <Field.Text name="taskDescription" fullWidth label="업무 내용" multiline rows={3} />
+
+              <Field.Autocomplete
+                name="dailyReportList"
+                label="업무 보고 Email"
+                multiple
+                freeSolo
+                disableCloseOnSelect
+                options={[]}
+                getOptionLabel={(option) => option}
+                renderOption={(props, option) => (
+                  <li {...props} key={option}>
+                    {option}
+                  </li>
+                )}
+                renderTags={(selected, getDailyReportProps) =>
+                  selected.map((option, index) => (
+                    <Chip
+                      {...getDailyReportProps({ index })}
+                      key={option}
+                      label={option}
+                      size="small"
+                      color="info"
+                      variant="soft"
+                    />
+                  ))
+                }
+              />
 
               <Box
                 sx={{

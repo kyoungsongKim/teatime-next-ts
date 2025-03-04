@@ -77,7 +77,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
           {data.map((option) => {
             const rootLabel = pathname.includes('/dashboard') ? 'Home' : 'Dashboard';
 
-            const rootHref = pathname.includes('/dashboard') ? '/' : paths.dashboard.root;
+            const rootHref = pathname.includes('/dashboard') ? '/' : paths.root.dashboard;
 
             return (
               <MenuItem

@@ -93,10 +93,10 @@ export function JwtSignUpView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       // @ts-ignore
-      const reportEmail = data.dailyReportList.length > 0 ? data.dailyReportList.join(', ') : '';
+      const reportEmail = data.dailyReportList.length > 0 ? data.dailyReportList.join(',') : '';
       const vacationReportList =
         // @ts-ignore
-        data.vacationReportList.length > 0 ? data.vacationReportList.join(', ') : '';
+        data.vacationReportList.length > 0 ? data.vacationReportList.join(',') : '';
 
       await signUp({
         id: data.userId,
