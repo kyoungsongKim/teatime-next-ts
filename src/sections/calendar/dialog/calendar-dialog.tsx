@@ -58,9 +58,9 @@ const TicketFormSchema = zod.object({
       zod.number().min(0, { message: 'CAS를 입력해주세요.' }),
       zod
         .string()
-        .min(1, { message: 'CAS를 입력해주세요.' }) // 빈 문자열 체크
+        .min(0, { message: 'CAS를 입력해주세요.' }) // 빈 문자열 체크
         .transform((val) => Number(val)) // 숫자로 변환
-        .refine((val) => !Number.isNaN(val) && val >= 1, { message: 'CAS는 1 이상이어야 합니다.' }),
+        .refine((val) => !Number.isNaN(val) && val >= 0, { message: 'CAS는 0 이상이어야 합니다.' }),
     ])
     .optional(), // 선택사항으로 변경
   eventStartDate: zod.string().min(1, { message: '시작일을 입력해주세요.' }),
@@ -103,7 +103,7 @@ export function CalendarDialog({
       project: '',
       site: '',
       content: '',
-      md: '',
+      md: 0,
       eventStartDate: makeDateString(new Date(defaultStartDate), 7),
       eventEndDate: makeDateString(new Date(defaultEndDate), 7),
     }),
@@ -184,6 +184,10 @@ export function CalendarDialog({
   );
 
   const isFieldDisabled = useMemo(() => !!item && !isFutureDate, [item, isFutureDate]);
+  const isModify = useMemo(
+    () => JSON.stringify(methods.formState.defaultValues) !== JSON.stringify(values),
+    [methods.formState.defaultValues, values]
+  );
 
   const deleteTicket = () => {
     try {
@@ -301,7 +305,13 @@ export function CalendarDialog({
                 </Grid>
               </Grid>
               <Typography variant="body2">CAS</Typography>
-              <Field.Text name="md" size="small" type="number" disabled={isFieldDisabled} />
+              <Field.Text
+                name="md"
+                size="small"
+                type="number"
+                placeholder="0"
+                disabled={isFieldDisabled}
+              />
               <Grid container spacing={1}>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
                   <Grid xs={12} sm={6} md={6}>
@@ -418,7 +428,7 @@ export function CalendarDialog({
                   }
                 }}
               >
-                {!item ? '일일 보고 후 저장' : '일일 보고'}
+                {!item || isModify ? '일일 보고 후 저장' : '일일 보고'}
               </Button>
             </Stack>
           </DialogActions>
@@ -450,7 +460,7 @@ export function CalendarDialog({
         project={values.project}
         md={Number(values.md) ?? 0}
         content={values.content}
-        justReport={!!item}
+        justReport={!isModify}
         parentSubmit={onSubmit}
         parentClose={() => {
           onClose();
