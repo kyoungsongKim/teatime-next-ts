@@ -267,7 +267,7 @@ export function AccountGeneral({ userInfo }: Props) {
                       key={option}
                       label={option}
                       size="small"
-                      color="info"
+                      color="primary"
                       variant="soft"
                     />
                   ))
