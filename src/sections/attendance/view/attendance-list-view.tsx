@@ -27,7 +27,6 @@ import { getAttendance } from 'src/actions/attendance-ssr';
 
 import { Label } from 'src/components/label';
 import { Scrollbar } from 'src/components/scrollbar';
-
 import {
   useTable,
   emptyRows,
