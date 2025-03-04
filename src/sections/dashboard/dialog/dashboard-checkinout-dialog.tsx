@@ -230,7 +230,7 @@ export function DashboardCheckInOutDialog({
                     key={option}
                     label={option}
                     size="small"
-                    color="info"
+                    color="primary"
                     variant="soft"
                   />
                 ))
@@ -243,7 +243,7 @@ export function DashboardCheckInOutDialog({
           <LoadingButton
             type="submit"
             variant="soft"
-            color={isCheckAllowed ? 'info' : 'warning'}
+            color={isCheckAllowed ? 'primary' : 'warning'}
             sx={{
               fontSize: '1.2rem',
               px: 4,
