@@ -209,7 +209,7 @@ export function JwtSignUpView() {
               key={option}
               label={option}
               size="small"
-              color="info"
+              color="primary"
               variant="soft"
             />
           ))
