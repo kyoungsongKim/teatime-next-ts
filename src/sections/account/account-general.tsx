@@ -103,22 +103,24 @@ export function AccountGeneral({ userInfo }: Props) {
         educationLevel: userInfo.userDetails?.educationLevel ?? '',
         skillLevel: userInfo.userDetails?.skillLevel ?? '',
         dailyReportList: userInfo.userDetails?.dailyReportList
-          ? userInfo.userDetails.dailyReportList.split(',')
+          ? userInfo.userDetails.dailyReportList.trim().split(',')
           : [],
         vacationReportList: userInfo.userDetails?.dailyReportList
-          ? userInfo.userDetails.vacationReportList.split(',')
+          ? userInfo.userDetails.vacationReportList.trim().split(',')
           : [],
         description: userInfo.description ?? '',
       });
 
       setValue(
         'dailyReportList',
-        userInfo.userDetails?.dailyReportList ? userInfo.userDetails.dailyReportList.split(',') : []
+        userInfo.userDetails?.dailyReportList
+          ? userInfo.userDetails.dailyReportList.trim().split(',')
+          : []
       );
       setValue(
         'vacationReportList',
         userInfo.userDetails?.vacationReportList
-          ? userInfo.userDetails.vacationReportList.split(',')
+          ? userInfo.userDetails.vacationReportList.trim().split(',')
           : []
       );
     }

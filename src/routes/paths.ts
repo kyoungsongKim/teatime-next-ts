@@ -63,7 +63,10 @@ export const paths = {
   root: {
     dashboard: '/',
     calendar: ROOTS.CALENDAR,
-    attendance: ROOTS.ATTENDANCE,
+    attendance: {
+      root: ROOTS.ATTENDANCE,
+      monthSummary: `${ROOTS.ATTENDANCE}/monthSummary`,
+    },
     agreement: {
       root: ROOTS.AGREEMENT,
       details: (id: string) => `${ROOTS.AGREEMENT}/${id}`,

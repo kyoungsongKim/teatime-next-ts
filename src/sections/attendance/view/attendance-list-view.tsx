@@ -9,12 +9,19 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
+import { Stack } from '@mui/material';
 import Table from '@mui/material/Table';
-import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
 import TableBody from '@mui/material/TableBody';
 import Grid from '@mui/material/Unstable_Grid2';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
+import Autocomplete from '@mui/material/Autocomplete';
+
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 import { useSetState } from 'src/hooks/use-set-state';
 
@@ -26,7 +33,9 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { getAttendance } from 'src/actions/attendance-ssr';
 
 import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import {
   useTable,
   emptyRows,
@@ -71,10 +80,14 @@ export function AttendanceListView() {
   const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
   const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
 
+  const popover = usePopover();
+  const router = useRouter();
+
   const table = useTable({
     defaultOrderBy: 'workDate',
     defaultOrder: 'desc',
     defaultRowsPerPage: 10,
+    rowsPerPageOptions: [10, 50, 100],
   });
 
   const [tableData, setTableData] = useState<IAttendanceItem[]>();
@@ -146,24 +159,27 @@ export function AttendanceListView() {
       <Grid container spacing={3}>
         {/* 관리자의 경우 사용자 리스트 노출 */}
         {isAdmin && (
-          <Grid xs={12} md={12}>
-            <FormControl size="small">
-              <Select
-                value={userName}
-                onChange={(newValue) => {
-                  const targetUser = userList.find((item) => newValue.target.value === item.id);
-                  setUserName(targetUser?.id ?? (userInfo?.id || ''));
-                }}
-                variant="outlined"
-              >
-                {userList.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {`${item.realName}(${item.id})`}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%' }}>
+            <Grid xs={12} md={12} flexGrow={1}>
+              <FormControl size="small" fullWidth>
+                <Autocomplete
+                  options={userList} // 사용자 목록
+                  getOptionLabel={(option) => `${option.realName} (${option.id})`} // 항목 표시 형식
+                  value={userList.find((item) => item.id === userName) || null} // 현재 선택된 값
+                  onChange={(_, newValue) => {
+                    setUserName(newValue?.id || userInfo?.id || '');
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="사용자 선택" variant="outlined" />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+
+            <IconButton onClick={popover.onOpen} sx={{ alignSelf: 'center' }}>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </Stack>
         )}
         <Grid xs={12} md={12}>
           <Card>
@@ -261,10 +277,24 @@ export function AttendanceListView() {
               onPageChange={table.onChangePage}
               onChangeDense={table.onChangeDense}
               onRowsPerPageChange={table.onChangeRowsPerPage}
+              rowsPerPageOptions={table.rowsPerPageOptions}
             />
           </Card>
         </Grid>
       </Grid>
+
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+        slotProps={{ arrow: { placement: 'right-top' } }}
+      >
+        <MenuList>
+          <MenuItem onClick={() => router.push(paths.root.attendance.monthSummary)}>
+            Total Attendance
+          </MenuItem>
+        </MenuList>
+      </CustomPopover>
     </DashboardContent>
   );
 }

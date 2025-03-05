@@ -12,10 +12,10 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
+import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { fDate } from 'src/utils/format-time';
 
@@ -99,24 +99,21 @@ export function CalendarView() {
         <Grid container sx={{ mb: { xs: 1, md: 2 } }}>
           <Grid xs={12} sm={6} md={6}>
             {isAdmin && (
-              <FormControl size="small" sx={{ paddingRight: { xs: 1, sm: 1, md: 1.5 } }}>
-                <Select
-                  value={userName}
-                  onChange={(newValue) => {
-                    const targetUser = userList.find(
-                      (userItem) => newValue.target.value === userItem.id
-                    );
-                    setUserName(targetUser?.id ?? (userInfo?.id || ''));
-                  }}
-                  variant="outlined"
-                >
-                  {userList.map((userItem) => (
-                    <MenuItem key={userItem.id} value={userItem.id}>
-                      {`${userItem.realName}(${userItem.id})`}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Grid xs={12} md={12} flexGrow={1}>
+                <FormControl size="small" fullWidth>
+                  <Autocomplete
+                    options={userList} // 사용자 목록
+                    getOptionLabel={(option) => `${option.realName} (${option.id})`} // 항목 표시 형식
+                    value={userList.find((item1) => item1.id === userName) || null} // 현재 선택된 값
+                    onChange={(_, newValue) => {
+                      setUserName(newValue?.id || userInfo?.id || '');
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="사용자 선택" variant="outlined" />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
             )}
           </Grid>
           <Grid xs={12} sm={6} md={6} textAlign="right">

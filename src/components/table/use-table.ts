@@ -4,7 +4,9 @@ import type { TableProps } from './types';
 
 // ----------------------------------------------------------------------
 
-type UseTableReturn = TableProps;
+type UseTableReturn = TableProps & {
+  rowsPerPageOptions: number[];
+};
 
 export type UseTableProps = {
   defaultDense?: boolean;
@@ -13,20 +15,17 @@ export type UseTableProps = {
   defaultSelected?: string[];
   defaultRowsPerPage?: number;
   defaultCurrentPage?: number;
+  rowsPerPageOptions?: number[];
 };
 
 export function useTable(props?: UseTableProps): UseTableReturn {
   const [dense, setDense] = useState(!!props?.defaultDense);
-
   const [page, setPage] = useState(props?.defaultCurrentPage || 0);
-
   const [orderBy, setOrderBy] = useState(props?.defaultOrderBy || 'name');
-
   const [rowsPerPage, setRowsPerPage] = useState(props?.defaultRowsPerPage || 5);
-
   const [order, setOrder] = useState<'asc' | 'desc'>(props?.defaultOrder || 'asc');
-
   const [selected, setSelected] = useState<string[]>(props?.defaultSelected || []);
+  const [rowsPerPageOptions] = useState(props?.rowsPerPageOptions || [5, 10, 25]);
 
   const onSort = useCallback(
     (id: string) => {
@@ -120,6 +119,7 @@ export function useTable(props?: UseTableProps): UseTableReturn {
     page,
     orderBy,
     rowsPerPage,
+    rowsPerPageOptions,
     //
     selected,
     onSelectRow,

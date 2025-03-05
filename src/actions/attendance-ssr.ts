@@ -1,6 +1,10 @@
 import axios, { endpoints } from 'src/utils/axios';
 
-import type { IAttendanceItem, IAttendanceRequest } from '../types/attendance';
+import type {
+  IAttendanceItem,
+  IAttendanceRequest,
+  IAttendanceSummaryItem,
+} from '../types/attendance';
 
 export const getAttendance = async (
   userId: string,
@@ -15,6 +19,23 @@ export const getAttendance = async (
     return response.data;
   } catch (error) {
     console.error('Error fetching attendance:', error);
+    return [];
+  }
+};
+
+export const getAttendanceSummary = async (
+  year: number,
+  month: number,
+  userId?: string
+): Promise<IAttendanceSummaryItem[]> => {
+  const URL = `${endpoints.attendance.root}/summary`;
+  try {
+    const response = await axios.get<IAttendanceSummaryItem[]>(URL, {
+      params: { year, month, userId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching attendance summary:', error);
     return [];
   }
 };

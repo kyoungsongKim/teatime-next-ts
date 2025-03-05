@@ -1,5 +1,7 @@
 'use client';
 
+import type { ITeamItem } from 'src/types/team';
+
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
@@ -29,8 +31,6 @@ import { signUp } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
-
-import type { ITeamItem } from '../../../types/team';
 
 // ----------------------------------------------------------------------
 

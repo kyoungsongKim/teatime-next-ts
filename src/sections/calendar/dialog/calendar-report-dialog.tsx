@@ -74,7 +74,7 @@ export function CalendarReportDialog({
     () => ({
       sendUserName: userInfo ? userInfo.id : '',
       title: defaultTitle,
-      receiveEmail: userInfo ? userInfo?.dailyReportList.split(',') : [],
+      receiveEmail: userInfo ? userInfo?.userDetails.dailyReportList.trim().split(',') : [],
       contents: defaultContents,
     }),
     [defaultContents, defaultTitle, userInfo]

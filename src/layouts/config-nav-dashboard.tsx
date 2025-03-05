@@ -64,7 +64,7 @@ export const navData = [
       },
       {
         title: 'Attendance',
-        path: paths.root.attendance,
+        path: paths.root.attendance.root,
         icon: ICONS.attendance,
         roles: ['USER', 'USER_VIP', 'USER_SILVER', 'USER_GOLD', 'ADMIN', 'SUPER_ADMIN'],
       },

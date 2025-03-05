@@ -8,8 +8,6 @@ import type { IAttendanceItem, IAttendanceRequest } from 'src/types/attendance';
 import { toast } from 'sonner';
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import FormControl from '@mui/material/FormControl';
 
@@ -27,11 +25,13 @@ import { DashboardWorkDialog } from 'src/sections/dashboard/dialog/dashboard-wor
 
 import { useUser } from 'src/auth/context/user-context';
 
+import TextField from '@mui/material/TextField';
 import { DashboardSummaryWidget } from './dashboard-summary-widget';
 import { DashboardCheckInOutDialog } from './dialog/dashboard-checkinout-dialog';
 import { DashboardSalesLineChartWidget } from './dashboard-sales-line-chart-widget';
 import { DashboardAttendanceWidgetButton } from './dashboard-attendance-widget-button';
 import { DashboardSalesRadialChartWidget } from './dashboard-sales-radialbar-chart-widget';
+import Autocomplete from '@mui/material/Autocomplete';
 
 export function DashboardView() {
   const { userInfo, isAdmin } = useUser();
@@ -297,22 +297,19 @@ export function DashboardView() {
         <Grid container spacing={3}>
           {/* 관리자의 경우 사용자 리스트 노출 */}
           {isAdmin && (
-            <Grid xs={12} md={12}>
-              <FormControl size="small">
-                <Select
-                  value={userName}
-                  onChange={(newValue) => {
-                    const targetUser = userList.find((item) => newValue.target.value === item.id);
-                    setUserName(targetUser?.id ?? (userInfo?.id || ''));
+            <Grid xs={12} md={12} flexGrow={1}>
+              <FormControl size="small" fullWidth>
+                <Autocomplete
+                  options={userList} // 사용자 목록
+                  getOptionLabel={(option) => `${option.realName} (${option.id})`} // 항목 표시 형식
+                  value={userList.find((item) => item.id === userName) || null} // 현재 선택된 값
+                  onChange={(_, newValue) => {
+                    setUserName(newValue?.id || userInfo?.id || '');
                   }}
-                  variant="outlined"
-                >
-                  {userList.map((item) => (
-                    <MenuItem key={item.id} value={item.id}>
-                      {`${item.realName}(${item.id})`}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  renderInput={(params) => (
+                    <TextField {...params} label="사용자 선택" variant="outlined" />
+                  )}
+                />
               </FormControl>
             </Grid>
           )}
@@ -451,7 +448,11 @@ export function DashboardView() {
         }}
         timeType={timeType}
         onUpdate={updateAttendance}
-        dailyReportList={userInfo?.dailyReportList ? userInfo.dailyReportList.split(',') : []}
+        dailyReportList={
+          userInfo?.userDetails.dailyReportList
+            ? userInfo.userDetails.dailyReportList.trim().split(',')
+            : []
+        }
       />
 
       <DashboardWorkDialog
@@ -466,7 +467,11 @@ export function DashboardView() {
         onUpdate={updateAttendance}
         attendance={getTimeForType(workedType)}
         workType={workedType}
-        dailyReportList={userInfo?.dailyReportList ? userInfo.dailyReportList.split(',') : []}
+        dailyReportList={
+          userInfo?.userDetails.dailyReportList
+            ? userInfo.userDetails.dailyReportList.trim().split(',')
+            : []
+        }
       />
     </>
   );

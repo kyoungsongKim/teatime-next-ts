@@ -9,6 +9,7 @@ import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -16,8 +17,10 @@ import TableRow from '@mui/material/TableRow';
 import Grid from '@mui/material/Unstable_Grid2';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -43,7 +46,7 @@ import { VacationTableRow } from 'src/sections/vacation/VacationTableRow';
 import { VacationSummaryWidget } from 'src/sections/vacation/vacation-summary-widget';
 import { VacationFormDialog } from 'src/sections/vacation/dialog/vacation-form-dialog';
 
-import { useUser } from '../../auth/context/user-context';
+import { useUser } from 'src/auth/context/user-context';
 
 const VACATION_TABLE_HEAD = [
   { id: 'eventStartDate', label: '기간' },
@@ -192,40 +195,47 @@ export function VacationView() {
       <DashboardContent maxWidth="xl">
         <Grid container spacing={3}>
           {isAdmin && (
-            <Grid xs={12} sm={12} md={12} sx={{ textAlign: { xs: 'end', sm: 'end', md: 'start' } }}>
-              {/* 사용자 리스트 및 연차 리스트 노출 */}
-              <FormControl size="small" sx={{ paddingRight: { xs: 1, sm: 1, md: 1.5 } }}>
-                <Select
-                  value={userName}
-                  onChange={(newValue) => {
-                    const targetUser = userList.find((item) => newValue.target.value === item.id);
-                    setUserName(targetUser?.id ?? (userInfo?.id || ''));
-                  }}
-                  variant="outlined"
-                >
-                  {userList.map((item) => (
-                    <MenuItem key={item.id} value={item.id}>
-                      {`${item.realName}(${item.id})`}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl size="small">
-                <Select
-                  value={workedYear}
-                  onChange={(newValue) => {
-                    setWorkedYear(newValue.target.value as number);
-                    getVacationListByWorkedYear(newValue.target.value as number);
-                  }}
-                  variant="outlined"
-                >
-                  {workedYearList.map((year, index) => (
-                    <MenuItem key={index} value={year}>
-                      {year}년차 ({getYearsOfServiceRange(year)})
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid
+              container
+              xs={12}
+              sm={12}
+              md={12}
+              sx={{ textAlign: { xs: 'end', sm: 'end', md: 'start' } }}
+            >
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
+                {/* 사용자 리스트 */}
+                <FormControl size="small" sx={{ flex: 1 }}>
+                  <Autocomplete
+                    options={userList} // 사용자 목록
+                    getOptionLabel={(option) => `${option.realName} (${option.id})`} // 항목 표시 형식
+                    value={userList.find((item) => item.id === userName) || null} // 현재 선택된 값
+                    onChange={(_, newValue) => {
+                      setUserName(newValue?.id || userInfo?.id || '');
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="사용자 선택" variant="outlined" />
+                    )}
+                  />
+                </FormControl>
+
+                {/* 연차 선택 */}
+                <FormControl size="small" sx={{ width: 200 }}>
+                  <Select
+                    value={workedYear}
+                    onChange={(newValue) => {
+                      setWorkedYear(newValue.target.value as number);
+                      getVacationListByWorkedYear(newValue.target.value as number);
+                    }}
+                    variant="outlined"
+                  >
+                    {workedYearList.map((year, index) => (
+                      <MenuItem key={index} value={year}>
+                        {year}년차 ({getYearsOfServiceRange(year)})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Stack>
             </Grid>
           )}
 
