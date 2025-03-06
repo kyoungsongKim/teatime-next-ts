@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/user';
+import type { IUserItemOld } from 'src/types/user';
 
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
@@ -50,7 +50,7 @@ export const UserQuickEditSchema = zod.object({
 type Props = {
   open: boolean;
   onClose: () => void;
-  currentUser?: IUserItem;
+  currentUser?: IUserItemOld;
 };
 
 export function UserQuickEditForm({ currentUser, open, onClose }: Props) {

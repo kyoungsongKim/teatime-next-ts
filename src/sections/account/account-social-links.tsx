@@ -1,3 +1,5 @@
+import type { IUserItem } from 'src/types/user';
+
 import React from 'react';
 import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
@@ -6,20 +8,18 @@ import Card from '@mui/material/Card';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import { updateUserDetailSocial } from 'src/actions/user-ssr';
 import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 
-import { useUser } from '../../auth/context/user-context';
-import { updateUserDetailSocial } from '../../actions/user-ssr';
-
-import type { IUser } from '../../types/agreement';
+import { useUser } from 'src/auth/context/user-context';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  userInfo: IUser | null;
+  userInfo: IUserItem | null;
 };
 
 const socialLinks = [

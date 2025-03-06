@@ -1,5 +1,5 @@
 import type { ITeamItem } from 'src/types/team';
-import type { IUser } from 'src/types/agreement';
+import type { IUserItem } from 'src/types/user';
 
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -56,7 +56,7 @@ export const UpdateUserSchema = zod.object({
 });
 
 type Props = {
-  userInfo: IUser | null;
+  userInfo: IUserItem | null;
 };
 
 export function AccountGeneral({ userInfo }: Props) {

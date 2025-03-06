@@ -1,6 +1,6 @@
 'use client';
 
-import type { CUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 import type { PointItem } from 'src/types/point';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
@@ -90,7 +90,7 @@ export function PointView() {
     );
   }, []);
 
-  const [userList, setUserList] = useState<CUserItem[]>([]);
+  const [userList, setUserList] = useState<IUserItem[]>([]);
 
   const fetchPointList = useCallback(() => {
     getPointList(userInfo?.id || '', selectedYear).then((r) => {
@@ -110,7 +110,7 @@ export function PointView() {
         }
       });
     } catch (error) {
-      setUserList([] as CUserItem[]);
+      setUserList([] as IUserItem[]);
       console.error(error);
     }
   }, [userInfo?.id]);

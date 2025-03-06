@@ -1,3 +1,5 @@
+import type { IUserItem } from 'src/types/user';
+
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,18 +12,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { updateUserPassword } from 'src/actions/user-ssr';
+
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
-import { updateUserPassword } from '../../actions/user-ssr';
-
-import type { IUser } from '../../types/agreement';
-
 // ----------------------------------------------------------------------
 
 type Props = {
-  userInfo: IUser | null;
+  userInfo: IUserItem | null;
 };
 
 export type ChangePassWordSchemaType = zod.infer<typeof ChangePassWordSchema>;

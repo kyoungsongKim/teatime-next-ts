@@ -1,4 +1,4 @@
-import type { CUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 import type { CreatePointItem } from 'src/types/point';
 
 import * as zod from 'zod';
@@ -41,7 +41,7 @@ export const CreatePointSchema = zod.object({
 type Props = {
   id: string;
   open: boolean;
-  userList: CUserItem[];
+  userList: IUserItem[];
   onClose: () => void;
 };
 

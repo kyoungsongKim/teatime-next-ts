@@ -1,6 +1,6 @@
 'use client';
 
-import type { CUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 import type { VacationItem, VacationHistoryItem } from 'src/types/vacation';
 
 import { toast } from 'sonner';
@@ -73,7 +73,7 @@ export function VacationView() {
   const confirm = useBoolean();
 
   const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
-  const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
+  const [userList, setUserList] = useState<IUserItem[]>([]); // 사용자 리스트 상태
 
   const [workedYear, setWorkedYear] = useState(1); // 근속년수 상태
   const [workedYearList, setWorkedYearList] = useState<number[]>([]); // 근속년수 리스트 상태

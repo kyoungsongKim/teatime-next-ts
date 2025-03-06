@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/user';
+import type { IUserItemOld } from 'src/types/user';
 
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
@@ -54,7 +54,7 @@ export const NewUserSchema = zod.object({
 // ----------------------------------------------------------------------
 
 type Props = {
-  currentUser?: IUserItem;
+  currentUser?: IUserItemOld;
 };
 
 export function UserNewEditForm({ currentUser }: Props) {

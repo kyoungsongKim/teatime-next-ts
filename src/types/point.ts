@@ -1,4 +1,4 @@
-import type { CUserItem } from './user';
+import type { IUserItem } from './user';
 
 export type PointItem = {
   code: string;
@@ -28,7 +28,7 @@ export type DonatePointItem = {
 
 export type CreatePointItem = {
   sender: string;
-  receiver: CUserItem | null;
+  receiver: IUserItem | null;
   point: number;
   memo: string;
 };
@@ -49,7 +49,7 @@ export type ChangePointExpAllItem = {
 };
 
 export type ChangePointExpItem = {
-  receiver: CUserItem | null;
+  receiver: IUserItem | null;
   sender: string;
   memo: string;
   exp: number;

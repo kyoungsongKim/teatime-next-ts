@@ -1,6 +1,6 @@
 'use client';
 
-import type { IUserItem, IUserTableFilters } from 'src/types/user';
+import type { IUserItemOld, IUserTableFilters } from 'src/types/user';
 
 import { useState, useCallback } from 'react';
 
@@ -69,7 +69,7 @@ export function UserListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState<IUserItem[]>(_userList);
+  const [tableData, setTableData] = useState<IUserItemOld[]>(_userList);
 
   const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
 
@@ -309,7 +309,7 @@ export function UserListView() {
 // ----------------------------------------------------------------------
 
 type ApplyFilterProps = {
-  inputData: IUserItem[];
+  inputData: IUserItemOld[];
   filters: IUserTableFilters;
   comparator: (a: any, b: any) => number;
 };

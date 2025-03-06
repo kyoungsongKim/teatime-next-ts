@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/user';
+import type { IUserItemOld } from 'src/types/user';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -25,7 +25,7 @@ import { UserQuickEditForm } from './user-quick-edit-form';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IUserItem;
+  row: IUserItemOld;
   selected: boolean;
   onEditRow: () => void;
   onSelectRow: () => void;

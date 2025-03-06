@@ -1,10 +1,10 @@
-import type { CUserItem } from './user';
+import type { IUserItem } from './user';
 
 export type SalesItem = {
   id: number;
   salesAmount: number;
   summaryDate: string;
-  user: CUserItem;
+  user: IUserItem;
 };
 
 export type StatisticsSalesItem = {

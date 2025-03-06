@@ -1,6 +1,6 @@
 'use client';
 
-import type { CUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 import type { SummaryPointItem } from 'src/types/point';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
@@ -50,7 +50,7 @@ export function PointCheckView() {
   const { user } = useAuthContext();
   const { id } = useMemo(() => getUserInfo(user), [user]);
 
-  const [userList, setUserList] = useState<CUserItem[]>([]);
+  const [userList, setUserList] = useState<IUserItem[]>([]);
 
   // change point to exp dialog open/close
   const changeDialog = useBoolean();
@@ -103,11 +103,11 @@ export function PointCheckView() {
         if (r.status === 200) {
           setUserList(r.data);
         } else {
-          setUserList([] as CUserItem[]);
+          setUserList([] as IUserItem[]);
         }
       });
     } catch (e) {
-      setUserList([] as CUserItem[]);
+      setUserList([] as IUserItem[]);
       console.error(e);
     }
   }, [id]);

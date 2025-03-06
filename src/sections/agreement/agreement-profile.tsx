@@ -1,5 +1,6 @@
+import type { IUserItem } from 'src/types/user';
 import type { LabelColor } from 'src/components/label';
-import type { IUser, IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
+import type { IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
 
 import React from 'react';
 import { Icon } from '@iconify/react';
@@ -32,7 +33,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 type Props = {
   agreementInfos: IAgreementItem[];
   detailData: IAgreementDetailItem[];
-  userData: IUser;
+  userData: IUserItem;
   isProfile: boolean;
 };
 

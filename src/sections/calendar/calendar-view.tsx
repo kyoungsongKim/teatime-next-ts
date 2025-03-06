@@ -1,7 +1,7 @@
 'use client';
 
 import Calendar from '@fullcalendar/react'; // => request placed at the top
-import type { CUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -41,7 +41,7 @@ export function CalendarView() {
   const { userInfo, isAdmin } = useUser();
 
   const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
-  const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
+  const [userList, setUserList] = useState<IUserItem[]>([]); // 사용자 리스트 상태
 
   const {
     calendarRef,

@@ -1,6 +1,6 @@
 'use client';
 
-import type { CUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 import type { StatisticsSalesItem } from 'src/types/sales';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
@@ -29,7 +29,7 @@ export function DashboardView() {
   const [currentSales, setCurrentSales] = useState<number>(0); // 현재 월 매출 상태
 
   const [userName, setUserName] = useState<string>(userInfo?.id || ''); // 사용자 이름 상태
-  const [userList, setUserList] = useState<CUserItem[]>([]); // 사용자 리스트 상태
+  const [userList, setUserList] = useState<IUserItem[]>([]); // 사용자 리스트 상태
 
   const [salesData, setSalesData] = useState<StatisticsSalesItem>({
     salesList: [],

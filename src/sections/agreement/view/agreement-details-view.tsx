@@ -1,6 +1,7 @@
 'use client';
 
-import type { IUser, IAgreementDetailItem } from 'src/types/agreement';
+import type { IUserItem } from 'src/types/user';
+import type { IAgreementDetailItem } from 'src/types/agreement';
 
 import { useState, useEffect } from 'react';
 
@@ -36,18 +37,13 @@ class Props {
 
 export function AgreementDetailsView({ id }: Props) {
   const { agreementInfos } = useGetUserAgreementData(id || '', false);
-  const [userData, setUserData] = useState<IUser>({
-    cellphone: '',
-    dailyReportList: '',
+  const [userData, setUserData] = useState<IUserItem>({
     description: '',
-    email: '',
     id: '',
     position: '',
     realName: '',
-    renewalDate: '',
     teamName: '',
     userName: '',
-    vacationReportList: '',
     userDetails: {
       address: '',
       birthDate: '',

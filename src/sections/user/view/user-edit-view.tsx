@@ -1,6 +1,6 @@
 'use client';
 
-import type { IUserItem } from 'src/types/user';
+import type { IUserItemOld } from 'src/types/user';
 
 import { paths } from 'src/routes/paths';
 
@@ -13,7 +13,7 @@ import { UserNewEditForm } from '../user-new-edit-form';
 // ----------------------------------------------------------------------
 
 type Props = {
-  user?: IUserItem;
+  user?: IUserItemOld;
 };
 
 export function UserEditView({ user: currentUser }: Props) {

@@ -1,6 +1,6 @@
 'use client';
 
-import type { IUser } from 'src/types/agreement';
+import type { IUserItem } from 'src/types/user';
 
 import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 
@@ -11,10 +11,10 @@ import { getUserInfos } from 'src/actions/user-ssr';
 import { useAuthContext } from '../hooks';
 
 interface UserContextType {
-  userInfo: IUser | null;
+  userInfo: IUserItem | null;
   isAdmin: boolean | null;
   auth: string | null;
-  setUserInfo: (user: IUser | null) => void;
+  setUserInfo: (user: IUserItem | null) => void;
   refreshUserInfo: () => Promise<void>;
 }
 
@@ -25,7 +25,7 @@ const ADMIN_ROLES = ['ADMIN', 'SUPER_ADMIN'];
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuthContext();
   const { id, auth } = useMemo(() => getUserInfo(user), [user]);
-  const [userInfo, setUserInfo] = useState<IUser | null>(null);
+  const [userInfo, setUserInfo] = useState<IUserItem | null>(null);
 
   const isAdmin = useMemo(() => userInfo && ADMIN_ROLES.includes(auth), [auth, userInfo]);
 

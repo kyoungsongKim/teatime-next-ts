@@ -1,4 +1,4 @@
-import type { CUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 import type { ChangePointExpItem } from 'src/types/point';
 
 import { z as zod } from 'zod';
@@ -36,7 +36,7 @@ export const ChangePointExpSchema = zod.object({
 type Props = {
   id: string;
   open: boolean;
-  userList: CUserItem[];
+  userList: IUserItem[];
   onClose: () => void;
   onUpdate: () => void;
 };

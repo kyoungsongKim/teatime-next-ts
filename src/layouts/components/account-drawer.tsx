@@ -141,7 +141,7 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
               </Typography>
             </Stack>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }} noWrap>
-              {userInfo?.email}
+              {userInfo?.userDetails?.email}
             </Typography>
           </Stack>
 

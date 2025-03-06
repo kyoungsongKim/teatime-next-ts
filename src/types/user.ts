@@ -74,23 +74,6 @@ export type IUserCard = {
   totalFollowing: number;
 };
 
-export type IUserItem = {
-  id: string;
-  name: string;
-  city: string;
-  role: string;
-  email: string;
-  state: string;
-  status: string;
-  address: string;
-  country: string;
-  zipCode: string;
-  company: string;
-  avatarUrl: string;
-  phoneNumber: string;
-  isVerified: boolean;
-};
-
 export type IUserAccount = {
   city: string;
   email: string;
@@ -112,19 +95,52 @@ export type IUserAccountBillingHistory = {
   createdAt: IDateValue;
 };
 
-export type CUserItem = {
+interface IUserDetailsItem {
+  address: string;
+  birthDate: string;
+  avatarImg: string;
   cbankAccount: string;
   cbankId: string;
   cellphone: string;
   dailyReportList: string;
+  educationLevel: string;
   email: string;
-  id: string;
+  facebookUrl: string;
+  instagramUrl: string;
   joinDate: string;
-  password: string;
-  position: string;
-  realName: string;
+  linkedinUrl: string;
   renewalDate: string;
-  teamName: string;
-  userName: string;
+  skillLevel: string;
+  twitterUrl: string;
+  homepageUrl: string;
+  userId: string;
   vacationReportList: string;
+}
+
+export type IUserItem = {
+  id: string;
+  userName: string;
+  realName: string;
+  description: string;
+  teamName: string;
+  position: string;
+  userDetails: IUserDetailsItem;
+};
+
+// 템플릿 코드
+export type IUserItemOld = {
+  id: string;
+  name: string;
+  city: string;
+  role: string;
+  email: string;
+  state: string;
+  status: string;
+  address: string;
+  country: string;
+  zipCode: string;
+  company: string;
+  avatarUrl: string;
+  phoneNumber: string;
+  isVerified: boolean;
 };
