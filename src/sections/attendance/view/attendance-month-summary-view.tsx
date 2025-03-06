@@ -119,6 +119,7 @@ export function AttendanceMonthSummaryView() {
 
     return {
       id: index + 1,
+      key: index + 1,
       realName: user.realName,
       totalWork: Object.values(user.attendanceStatus).filter(
         (status) => status === 'PRESENT' || status === 'REMOTE' || status === 'FIELD'

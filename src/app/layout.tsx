@@ -55,7 +55,6 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html lang={lang ?? 'en'} suppressHydrationWarning>
       <body>
-        <TrackNavigation />
         <InitColorSchemeScript
           defaultMode={schemeConfig.defaultMode}
           modeStorageKey={schemeConfig.modeStorageKey}
@@ -65,6 +64,7 @@ export default async function RootLayout({ children }: Props) {
           <LocalizationProvider>
             <AuthProvider>
               <UserProvider>
+                <TrackNavigation />
                 <SettingsProvider settings={defaultSettings}>
                   <ThemeProvider>
                     <MotionLazy>

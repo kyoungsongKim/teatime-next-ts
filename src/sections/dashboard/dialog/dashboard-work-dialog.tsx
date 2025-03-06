@@ -28,7 +28,7 @@ import { Form, Field } from 'src/components/hook-form';
 
 export const UpdateWorkAttendanceSchema = zod.object({
   managerName: zod.string().min(1, { message: '승인자 또는 요청자를 입력해주세요.' }),
-  location: zod.string().min(1, { message: '업무 위치를 입력해주세요.' }),
+  location: zod.string().optional(),
   taskDescription: zod.string().min(1, { message: '업무 내용을 입력해주세요.' }),
   dailyReportList: zod.array(zod.string().email({ message: 'Invalid email format!' })).optional(),
 });

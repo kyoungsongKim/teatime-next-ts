@@ -449,7 +449,10 @@ export function AttendanceListView() {
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
                         .map((row) => (
-                          <AttendanceTableRow key={row.workId} row={row} />
+                          <AttendanceTableRow
+                            key={row.workId || `${row.userId}-${row.workDate}-${row.workType}`}
+                            row={row}
+                          />
                         ))}
 
                       <TableEmptyRows

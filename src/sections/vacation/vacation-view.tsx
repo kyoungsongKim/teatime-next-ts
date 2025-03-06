@@ -165,6 +165,7 @@ export function VacationView() {
   };
 
   useEffect(() => {
+    if (!userName) return;
     setWorkedYear(1);
     getVacationList(userName).then((r) => {
       if (r.status === 200) {
