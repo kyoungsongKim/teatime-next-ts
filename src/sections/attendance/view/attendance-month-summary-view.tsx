@@ -35,11 +35,20 @@ export function AttendanceMonthSummaryView() {
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
+  const [holidaysMap, setHolidays] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     async function fetchData() {
       const data = await getAttendanceSummary(year, month);
-      setAttendanceData(data);
+      const formattedHolidays = new Map(
+        data.holidays.map((holiday) => {
+          const dateStr = holiday.date;
+          const formattedDate = `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`;
+          return [formattedDate, holiday.name];
+        })
+      );
+      setAttendanceData(data.attendanceData);
+      setHolidays(formattedHolidays);
     }
     fetchData();
   }, [year, month]);
@@ -47,23 +56,36 @@ export function AttendanceMonthSummaryView() {
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
 
   const dayColumns: GridColDef[] = days.map((day) => {
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const date = new Date(year, month - 1, day);
     const dayOfWeek = date.getDay(); // 0: 일요일, 6: 토요일
     const weekday = date.toLocaleDateString('ko-KR', { weekday: 'short' });
-
     return {
       field: `day${day}`,
       headerName: `${day} (${weekday})`,
       width: 60,
-      headerClassName:
-        dayOfWeek === 0
-          ? 'sunday-header' // 일요일 (빨간색)
+      headerClassName: holidaysMap.has(dateStr)
+        ? 'holiday-header' // 법정 공휴일
+        : dayOfWeek === 0
+          ? 'sunday-header' // 일요일
           : dayOfWeek === 6
-            ? 'saturday-header' // 토요일 (파란색)
+            ? 'saturday-header' // 토요일
             : '',
-      cellClassName: () => (dayOfWeek === 0 ? 'sunday-row' : dayOfWeek === 6 ? 'saturday-row' : ''),
+      cellClassName: () =>
+        holidaysMap.has(dateStr)
+          ? 'holiday-row' // 법정 공휴일
+          : dayOfWeek === 0
+            ? 'sunday-row'
+            : dayOfWeek === 6
+              ? 'saturday-row'
+              : '',
       renderCell: (params) => {
         const status = params.value as AttendanceStatusType;
+        const holidayName = holidaysMap.get(dateStr);
+
+        if (holidayName && (!status || status === 'HOLIDAY')) {
+          return <Chip label={holidayName} color="default" size="small" variant="soft" />;
+        }
         if (!status || (status === 'ABSENT' && (dayOfWeek === 0 || dayOfWeek === 6))) {
           return ''; // 주말이면서 ABSENT(결근)일 경우, 빈칸 유지
         }
@@ -179,6 +201,10 @@ export function AttendanceMonthSummaryView() {
             borderTop: '2px solid rgba(224, 224, 224, 1)',
           },
           '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' },
+          '& .holiday-header, & .holiday-row': {
+            backgroundColor: 'rgba(255, 0, 0, 0.1)',
+            color: 'red',
+          },
           '& .sunday-header': { backgroundColor: 'rgba(255, 0, 0, 0.1)', color: 'red' },
           '& .saturday-header': { backgroundColor: 'rgba(0, 0, 255, 0.1)', color: 'blue' },
           '& .sunday-row': { backgroundColor: 'rgba(255, 0, 0, 0.05)' },

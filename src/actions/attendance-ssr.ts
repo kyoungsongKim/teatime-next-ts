@@ -3,7 +3,7 @@ import axios, { endpoints } from 'src/utils/axios';
 import type {
   IAttendanceItem,
   IAttendanceRequest,
-  IAttendanceSummaryItem,
+  IAttendanceApiResponse,
 } from '../types/attendance';
 
 export const getAttendance = async (
@@ -27,16 +27,20 @@ export const getAttendanceSummary = async (
   year: number,
   month: number,
   userId?: string
-): Promise<IAttendanceSummaryItem[]> => {
+): Promise<IAttendanceApiResponse> => {
   const URL = `${endpoints.attendance.root}/summary`;
   try {
-    const response = await axios.get<IAttendanceSummaryItem[]>(URL, {
+    const response = await axios.get<IAttendanceApiResponse>(URL, {
       params: { year, month, userId },
     });
-    return response.data;
+
+    return {
+      attendanceData: response.data.attendanceData,
+      holidays: response.data.holidays,
+    };
   } catch (error) {
     console.error('Error fetching attendance summary:', error);
-    return [];
+    return { attendanceData: [], holidays: [] };
   }
 };
 

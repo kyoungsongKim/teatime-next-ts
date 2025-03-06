@@ -31,6 +31,16 @@ export interface IAttendanceSummaryItem {
   attendanceStatus: Record<string, AttendanceStatusType>; // 날짜별 근태 상태
 }
 
+export interface IHolidayItem {
+  name: string;
+  date: string;
+}
+
+export interface IAttendanceApiResponse {
+  attendanceData: IAttendanceSummaryItem[];
+  holidays: IHolidayItem[];
+}
+
 export type IAttendanceRequest = {
   userId: string; // 사용자 ID
   workType: 'OFFICE' | 'REMOTE' | 'FIELD'; // 근무 유형 (사무실, 재택, 외근)
