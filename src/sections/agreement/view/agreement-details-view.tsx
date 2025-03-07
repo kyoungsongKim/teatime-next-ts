@@ -127,7 +127,6 @@ export function AgreementDetailsView({ id }: Props) {
           <AgreementProfile
             agreementInfos={agreementInfos || []}
             detailData={detailData || []}
-            userData={userData || {}}
             isProfile
           />
         )}

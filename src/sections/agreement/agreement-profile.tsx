@@ -2,8 +2,8 @@ import type { IUserItem } from 'src/types/user';
 import type { LabelColor } from 'src/components/label';
 import type { IAgreementItem, IAgreementDetailItem } from 'src/types/agreement';
 
-import React from 'react';
 import { Icon } from '@iconify/react';
+import React, { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -23,6 +23,7 @@ import { download } from 'src/utils/file';
 import { fNumber } from 'src/utils/format-number';
 import { makeDateString } from 'src/utils/format-date';
 
+import { getUserInfos } from 'src/actions/user-ssr';
 import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
 
 import { Label } from 'src/components/label';
@@ -33,7 +34,6 @@ import { Scrollbar } from 'src/components/scrollbar';
 type Props = {
   agreementInfos: IAgreementItem[];
   detailData: IAgreementDetailItem[];
-  userData: IUserItem;
   isProfile: boolean;
 };
 
@@ -49,7 +49,17 @@ const socialLinks = [
   },
 ];
 
-export function AgreementProfile({ agreementInfos, detailData, userData, isProfile }: Props) {
+export function AgreementProfile({ agreementInfos, detailData, isProfile }: Props) {
+  const [userData, setUserData] = useState<IUserItem | null>(null);
+
+  useEffect(() => {
+    if (agreementInfos[0]?.userId) {
+      getUserInfos(agreementInfos[0].userId)
+        .then((ret) => setUserData(ret.data))
+        .catch((error) => console.error('Failed to fetch user info:', error));
+    }
+  }, [agreementInfos]);
+
   const renderAmountCas = (
     <Card sx={{ py: 3, textAlign: 'center', typography: 'h4' }}>
       <Stack

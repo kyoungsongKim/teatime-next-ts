@@ -1,7 +1,13 @@
 import axios, { endpoints } from '../utils/axios';
 
-export async function getUserList(except?: string) {
-  const URL = `${endpoints.user.list}${except ? `?except=${except}` : ''}`;
+export async function getUserExceptList(userId: string) {
+  const URL = `${endpoints.user.root}/except?userId=${userId}`;
+  const res = await axios.get(URL);
+  return res;
+}
+
+export async function getUserList() {
+  const URL = `${endpoints.user.list}`;
   const res = await axios.get(URL);
   return res;
 }

@@ -22,8 +22,8 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { getUserList } from 'src/actions/user-ssr';
 import { getPointList } from 'src/actions/point-ssr';
+import { getUserExceptList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
@@ -93,9 +93,11 @@ export function PointView() {
   const [userList, setUserList] = useState<IUserItem[]>([]);
 
   const fetchPointList = useCallback(() => {
-    getPointList(userInfo?.id || '', selectedYear).then((r) => {
-      setPointData(r);
-    });
+    if (userInfo?.id) {
+      getPointList(userInfo?.id, selectedYear).then((r) => {
+        setPointData(r);
+      });
+    }
   }, [userInfo?.id, selectedYear]);
 
   useEffect(() => {
@@ -104,16 +106,18 @@ export function PointView() {
 
   useEffect(() => {
     try {
-      getUserList(userInfo?.id || '').then((r) => {
-        if (r.status === 200) {
-          setUserList(r.data);
-        }
-      });
+      if (isAdmin && userInfo?.id) {
+        getUserExceptList(userInfo?.id).then((r) => {
+          if (r.status === 200) {
+            setUserList(r.data);
+          }
+        });
+      }
     } catch (error) {
       setUserList([] as IUserItem[]);
       console.error(error);
     }
-  }, [userInfo?.id]);
+  }, [isAdmin, userInfo?.id]);
 
   return (
     <>

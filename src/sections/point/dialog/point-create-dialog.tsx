@@ -152,12 +152,12 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
                   isOptionEqualToValue={(option, value) => option.id === value.id}
                   getOptionLabel={(option) =>
                     option && option.id && option.realName
-                      ? `${option.id} (${option.realName})`
+                      ? `${option.realName} (${option.id})`
                       : ''
                   }
                   renderOption={(props, option) => (
                     <li {...props} key={option.id}>
-                      {option.id} ({option.realName})
+                      {option.realName} ({option.id})
                     </li>
                   )}
                 />

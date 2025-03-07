@@ -95,8 +95,6 @@ export function UserProfileView() {
           <AgreementProfile
             agreementInfos={agreementInfos || []}
             detailData={detailData || []}
-            // @ts-ignore
-            userData={userInfo || {}}
             isProfile={false}
           />
         )}
