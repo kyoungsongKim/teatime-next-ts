@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 import { useUser } from 'src/auth/context/user-context';
+
 import { postNavigationHistory } from '../actions/user-navigation-history';
 
 const TrackNavigation = () => {
@@ -20,7 +21,7 @@ const TrackNavigation = () => {
     if (pathname) {
       logNavigation();
     }
-  }, [pathname]);
+  }, [pathname, userInfo]);
 
   return null;
 };

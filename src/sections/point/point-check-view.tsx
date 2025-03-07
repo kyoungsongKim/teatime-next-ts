@@ -18,8 +18,8 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { getUserInfo } from 'src/utils/user-info';
 
-import { getUserList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getUserExceptList } from 'src/actions/user-ssr';
 import { getSummaryPointList } from 'src/actions/point-ssr';
 
 import { Scrollbar } from 'src/components/scrollbar';
@@ -99,7 +99,7 @@ export function PointCheckView() {
 
   useEffect(() => {
     try {
-      getUserList(id).then((r) => {
+      getUserExceptList(id).then((r) => {
         if (r.status === 200) {
           setUserList(r.data);
         } else {
