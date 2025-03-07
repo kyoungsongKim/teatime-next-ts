@@ -3,20 +3,18 @@
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
-import { paths } from 'src/routes/paths';
-
 import { useTabs } from 'src/hooks/use-tabs';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { _userPlans, _userPayment, _userInvoices, _userAddressBook } from 'src/_mock';
 
 import { Iconify } from 'src/components/iconify';
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
+import { useUser } from 'src/auth/context/user-context';
 
 import { AccountGeneral } from '../account-general';
 import { AccountBilling } from '../account-billing';
 import { AccountSocialLinks } from '../account-social-links';
-import { useUser } from '../../../auth/context/user-context';
 import { AccountNotifications } from '../account-notifications';
 import { AccountChangePassword } from '../account-change-password';
 
