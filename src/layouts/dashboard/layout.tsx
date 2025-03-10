@@ -1,5 +1,6 @@
 'use client';
 
+import type { UserPointItem } from 'src/types/point';
 import type { NavSectionProps } from 'src/components/nav-section';
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
@@ -12,11 +13,16 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { getUserInfo } from 'src/utils/user-info';
+
 import { allLangs } from 'src/locales';
 import { _notifications } from 'src/_mock';
+import { getUserPoint } from 'src/actions/point-ssr';
 
 import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
+
+import { useAuthContext } from 'src/auth/hooks';
 
 import { Main } from './main';
 import { NavMobile } from './nav-mobile';
@@ -24,12 +30,9 @@ import { layoutClasses } from '../classes';
 import { NavVertical } from './nav-vertical';
 import { NavHorizontal } from './nav-horizontal';
 import { _account } from '../config-nav-account';
-import { useAuthContext } from '../../auth/hooks';
-import { getUserInfo } from '../../utils/user-info';
 import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
-import { getUserPoint } from '../../actions/point-ssr';
 import { StyledDivider, useNavColorVars } from './styles';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
@@ -37,8 +40,6 @@ import { LanguagePopover } from '../components/language-popover';
 import { WorkspacesPopover } from '../components/workspaces-popover';
 import { navData as dashboardNavData } from '../config-nav-dashboard';
 import { NotificationsDrawer } from '../components/notifications-drawer';
-
-import type { UserPointItem } from '../../types/point';
 
 // ----------------------------------------------------------------------
 

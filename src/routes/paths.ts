@@ -20,6 +20,7 @@ const ROOTS = {
   DAILY_REPORT: '/dailyReport',
   POINT: '/point',
   FAQ: '/faqs',
+  AICHATBOT: '/ai-chat-bot',
 };
 
 // ----------------------------------------------------------------------
@@ -90,6 +91,7 @@ export const paths = {
       edit: (id: string) => `/user/${id}/edit`,
       demo: { edit: `/user/${MOCK_ID}/edit` },
     },
+    aichatbot: ROOTS.AICHATBOT,
   },
   // DASHBOARD
   dashboard: {
