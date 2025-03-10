@@ -1,9 +1,9 @@
+import { useRef, useEffect } from 'react';
+
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 
 import { Scrollbar } from 'src/components/scrollbar';
-
-import { useMessagesScroll } from './hooks/use-messages-scroll';
 
 type Props = {
   loading: boolean;
@@ -11,7 +11,11 @@ type Props = {
 };
 
 export function ChatRoom({ messages, loading }: Props) {
-  const { messagesEndRef } = useMessagesScroll(messages);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   return (
     <>
