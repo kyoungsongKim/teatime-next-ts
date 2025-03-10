@@ -13,6 +13,8 @@ import { Layout } from '../layout';
 import { ChatRoom } from '../chat-room';
 import { ChatMessageInput } from '../chat-message-input';
 
+const chatBotUrl = process.env.NEXT_PUBLIC_AI_CHAT_BOT;
+
 export function AiChatBotView() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const botResponseRef = useRef('');
@@ -50,7 +52,7 @@ export function AiChatBotView() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://172.16.48.203:5000/chat', {
+      const response = await fetch(chatBotUrl!, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
