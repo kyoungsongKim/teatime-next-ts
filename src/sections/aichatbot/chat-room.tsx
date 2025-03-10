@@ -2,6 +2,7 @@ import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 
 import { Scrollbar } from 'src/components/scrollbar';
+
 import { useMessagesScroll } from './hooks/use-messages-scroll';
 
 type Props = {
