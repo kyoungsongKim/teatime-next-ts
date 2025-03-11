@@ -73,20 +73,8 @@ export function ChatMessageInput({ disabled, onNewMessage }: Props) {
         onChange={handleChangeMessage}
         placeholder="Type a message..."
         disabled={disabled}
-        startAdornment={<IconButton>{/*<Iconify icon="eva:smiling-face-fill" />*/}</IconButton>}
-        endAdornment={
-          <Stack direction="row">
-            {/*<IconButton onClick={handleAttach}>*/}
-            {/*  <Iconify icon="solar:gallery-add-bold" />*/}
-            {/*</IconButton>*/}
-            {/*<IconButton onClick={handleAttach}>*/}
-            {/*  <Iconify icon="eva:attach-2-fill" />*/}
-            {/*</IconButton>*/}
-            {/*<IconButton>*/}
-            {/*  <Iconify icon="solar:microphone-bold" />*/}
-            {/*</IconButton>*/}
-          </Stack>
-        }
+        startAdornment={<IconButton />}
+        endAdornment={<Stack direction="row" />}
         sx={{
           px: 1,
           height: 56,

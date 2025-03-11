@@ -44,35 +44,6 @@ export function ChatMessageItem({ message }: Props) {
     </Stack>
   );
 
-  const renderActions = (
-    <Stack
-      direction="row"
-      className="message-actions"
-      sx={{
-        pt: 0.5,
-        left: 0,
-        opacity: 0,
-        top: '100%',
-        position: 'absolute',
-        transition: (theme) =>
-          theme.transitions.create(['opacity'], { duration: theme.transitions.duration.shorter }),
-        ...(me && { right: 0, left: 'unset' }),
-      }}
-    >
-      <IconButton size="small">
-        <Iconify icon="solar:reply-bold" width={16} />
-      </IconButton>
-
-      <IconButton size="small">
-        <Iconify icon="eva:smiling-face-fill" width={16} />
-      </IconButton>
-
-      <IconButton size="small">
-        <Iconify icon="solar:trash-bin-trash-bold" width={16} />
-      </IconButton>
-    </Stack>
-  );
-
   if (!messageText) {
     return null;
   }
@@ -96,7 +67,6 @@ export function ChatMessageItem({ message }: Props) {
           sx={{ position: 'relative', '&:hover': { '& .message-actions': { opacity: 1 } } }}
         >
           {renderBody}
-          {/*{renderActions}*/}
         </Stack>
       </Stack>
     </Stack>
