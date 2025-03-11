@@ -1,3 +1,5 @@
+import type { IAIChatMessage } from 'src/types/chat';
+
 import { useRef, useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -6,13 +8,16 @@ import IconButton from '@mui/material/IconButton';
 
 import { Iconify } from 'src/components/iconify';
 
+import { useUser } from 'src/auth/context/user-context';
+
 type Props = {
   disabled: boolean;
-  onNewMessage: (message: { sender: string; text: string }) => void;
+  onNewMessage: (message: IAIChatMessage) => void;
   inputRef: React.RefObject<HTMLInputElement>;
 };
 
 export function ChatMessageInput({ disabled, onNewMessage, inputRef }: Props) {
+  const { userInfo } = useUser();
   const fileRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
 
@@ -30,7 +35,14 @@ export function ChatMessageInput({ disabled, onNewMessage, inputRef }: Props) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       if (!message.trim()) return;
-      onNewMessage({ sender: 'user', text: message });
+      const sendInfo: IAIChatMessage = {
+        senderId: userInfo?.id,
+        senderName: userInfo?.realName,
+        avatarUrl: userInfo?.userDetails?.avatarImg,
+        text: message,
+      };
+
+      onNewMessage(sendInfo);
       setMessage('');
     }
   };
@@ -38,6 +50,8 @@ export function ChatMessageInput({ disabled, onNewMessage, inputRef }: Props) {
   return (
     <>
       <InputBase
+        name="chat-message"
+        id="chat-message-input"
         inputRef={inputRef}
         value={message}
         onKeyUp={handleSendMessage}
@@ -65,6 +79,7 @@ export function ChatMessageInput({ disabled, onNewMessage, inputRef }: Props) {
         sx={{
           px: 1,
           height: 56,
+          flexShrink: 0,
           borderTop: (theme) => `solid 1px ${theme.vars.palette.divider}`,
         }}
       />

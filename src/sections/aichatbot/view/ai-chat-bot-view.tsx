@@ -1,16 +1,18 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import type { IAIChatMessage } from 'src/types/chat';
 
-import Typography from '@mui/material/Typography';
+import { useRef, useState, useEffect } from 'react';
 
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { postAiSupportHistory } from 'src/actions/ai-support-ssr';
 
 import { EmptyContent } from 'src/components/empty-content';
 
+import { ChatMessageList } from 'src/sections/aichatbot/chat-message-list';
+
 import { Layout } from '../layout';
-import { ChatRoom } from '../chat-room';
 import { ChatMessageInput } from '../chat-message-input';
 
 const chatBotUrl = process.env.NEXT_PUBLIC_AI_CHAT_BOT;
@@ -19,8 +21,15 @@ export function AiChatBotView() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const botResponseRef = useRef('');
 
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+  const [messages, setMessages] = useState<IAIChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const sendInfo: IAIChatMessage = {
+    senderId: 'bot',
+    senderName: 'AI Bot',
+    avatarUrl: '',
+    text: '',
+  };
 
   const readStream = async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     const decoder = new TextDecoder('utf-8');
@@ -32,10 +41,12 @@ export function AiChatBotView() {
       const chunk = decoder.decode(value, { stream: true });
       botResponseRef.current += chunk;
 
+      sendInfo.text = botResponseRef.current;
+
       requestAnimationFrame(() => {
         setMessages((prev) => [
           ...prev.slice(0, prev.length - 1), // 기존 마지막 bot 메시지 제거
-          { sender: 'bot', text: botResponseRef.current }, // 업데이트된 bot 메시지 추가
+          sendInfo, // 업데이트된 bot 메시지 추가
         ]);
       });
 
@@ -45,10 +56,10 @@ export function AiChatBotView() {
     await processChunk();
   };
 
-  const handleSendMessage = async ({ sender, text }: { sender: string; text: string }) => {
-    if (!text.trim()) return;
+  const handleSendMessage = async (message: IAIChatMessage) => {
+    if (!message.text) return;
 
-    setMessages((prev) => [...prev, { sender, text }]);
+    setMessages((prev) => [...prev, message]);
     setLoading(true);
 
     try {
@@ -56,18 +67,22 @@ export function AiChatBotView() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ message: message.text }),
       });
 
       const reader = response.body?.getReader();
       if (reader) {
         botResponseRef.current = '';
-        setMessages((prev) => [...prev, { sender: 'bot', text: '' }]); // 새로운 bot 메시지 추가
+
+        setMessages((prev) => [...prev, sendInfo]); // 새로운 bot 메시지 추가
         await readStream(reader);
       }
+
+      await postAiSupportHistory(message.senderId || 'unknown', message.text, sendInfo.text);
     } catch (error) {
+      sendInfo.text = 'Error: Unable to connect to AI';
       console.error('Error fetching AI response:', error);
-      setMessages((prev) => [...prev, { sender: 'bot', text: 'Error: Unable to connect to AI' }]);
+      setMessages((prev) => [...prev, sendInfo]);
     } finally {
       setLoading(false);
     }
@@ -84,9 +99,6 @@ export function AiChatBotView() {
       maxWidth={false}
       sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column' }}
     >
-      <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-        AI Chat Bot
-      </Typography>
       <Layout
         sx={{
           minHeight: 0,
@@ -106,7 +118,7 @@ export function AiChatBotView() {
                   description="Write something awesome..."
                 />
               ) : (
-                <ChatRoom messages={messages} loading={loading} />
+                <ChatMessageList messages={messages ?? []} />
               )}
               <ChatMessageInput
                 disabled={loading}

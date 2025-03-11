@@ -45,3 +45,10 @@ export type IChatConversations = {
   byId: Record<string, IChatConversation>;
   allIds: string[];
 };
+
+export type IAIChatMessage = {
+  senderId?: string;
+  senderName?: string;
+  avatarUrl?: string;
+  text: string;
+};

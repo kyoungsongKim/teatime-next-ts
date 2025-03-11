@@ -99,8 +99,8 @@ export const navData = [
         roles: ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
       },
       {
-        title: 'Ai Chat Bot',
-        path: paths.root.aichatbot,
+        title: 'AI Support',
+        path: paths.root.aiSupport,
         icon: ICONS.chat,
       },
       {

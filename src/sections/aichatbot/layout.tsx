@@ -15,8 +15,10 @@ export function Layout({ slots, sx, ...other }: Props) {
 
   return (
     <Stack direction="row" sx={sx} {...other}>
-      <Stack direction="row" sx={{ flex: '1 1 auto', minHeight: 0 }}>
-        {renderMain}
+      <Stack sx={{ flex: '1 1 auto', minWidth: 0 }}>
+        <Stack direction="row" sx={{ flex: '1 1 auto', minHeight: 0 }}>
+          {renderMain}
+        </Stack>
       </Stack>
     </Stack>
   );
