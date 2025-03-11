@@ -1,6 +1,6 @@
 import type { IAIChatMessage } from 'src/types/chat';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import InputBase from '@mui/material/InputBase';
@@ -13,13 +13,21 @@ import { useUser } from 'src/auth/context/user-context';
 type Props = {
   disabled: boolean;
   onNewMessage: (message: IAIChatMessage) => void;
-  inputRef: React.RefObject<HTMLInputElement>;
 };
 
-export function ChatMessageInput({ disabled, onNewMessage, inputRef }: Props) {
+export function ChatMessageInput({ disabled, onNewMessage }: Props) {
   const { userInfo } = useUser();
   const fileRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (document.activeElement !== inputRef.current) {
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+    }
+  }, [onNewMessage]);
 
   const handleAttach = useCallback(() => {
     if (fileRef.current) {
@@ -31,49 +39,52 @@ export function ChatMessageInput({ disabled, onNewMessage, inputRef }: Props) {
     setMessage(event.target.value);
   }, []);
 
-  const handleSendMessage = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      if (!message.trim()) return;
-      const sendInfo: IAIChatMessage = {
-        senderId: userInfo?.id,
-        senderName: userInfo?.realName,
-        avatarUrl: userInfo?.userDetails?.avatarImg,
-        text: message,
-      };
+  const handleSendMessage = useCallback(
+    async (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== 'Enter' || !message) return;
+      try {
+        event.preventDefault();
+        if (!message.trim()) return;
+        const sendInfo: IAIChatMessage = {
+          senderId: userInfo?.id,
+          senderName: userInfo?.realName,
+          avatarUrl: userInfo?.userDetails?.avatarImg,
+          text: message,
+        };
 
-      onNewMessage(sendInfo);
-      setMessage('');
-    }
-  };
+        onNewMessage(sendInfo);
+      } catch (error) {
+        console.error('Failed to send message:', error);
+      } finally {
+        setMessage('');
+      }
+    },
+    [message, onNewMessage, userInfo?.id, userInfo?.realName, userInfo?.userDetails?.avatarImg]
+  );
 
   return (
     <>
       <InputBase
+        inputProps={{ ref: inputRef }}
         name="chat-message"
         id="chat-message-input"
-        inputRef={inputRef}
         value={message}
         onKeyUp={handleSendMessage}
         onChange={handleChangeMessage}
         placeholder="Type a message..."
         disabled={disabled}
-        startAdornment={
-          <IconButton>
-            <Iconify icon="eva:smiling-face-fill" />
-          </IconButton>
-        }
+        startAdornment={<IconButton>{/*<Iconify icon="eva:smiling-face-fill" />*/}</IconButton>}
         endAdornment={
           <Stack direction="row">
-            <IconButton onClick={handleAttach}>
-              <Iconify icon="solar:gallery-add-bold" />
-            </IconButton>
-            <IconButton onClick={handleAttach}>
-              <Iconify icon="eva:attach-2-fill" />
-            </IconButton>
-            <IconButton>
-              <Iconify icon="solar:microphone-bold" />
-            </IconButton>
+            {/*<IconButton onClick={handleAttach}>*/}
+            {/*  <Iconify icon="solar:gallery-add-bold" />*/}
+            {/*</IconButton>*/}
+            {/*<IconButton onClick={handleAttach}>*/}
+            {/*  <Iconify icon="eva:attach-2-fill" />*/}
+            {/*</IconButton>*/}
+            {/*<IconButton>*/}
+            {/*  <Iconify icon="solar:microphone-bold" />*/}
+            {/*</IconButton>*/}
           </Stack>
         }
         sx={{

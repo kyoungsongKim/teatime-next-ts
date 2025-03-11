@@ -2,7 +2,7 @@
 
 import type { IAIChatMessage } from 'src/types/chat';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -18,7 +18,6 @@ import { ChatMessageInput } from '../chat-message-input';
 const chatBotUrl = process.env.NEXT_PUBLIC_AI_CHAT_BOT;
 
 export function AiChatBotView() {
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const botResponseRef = useRef('');
 
   const [messages, setMessages] = useState<IAIChatMessage[]>([]);
@@ -88,12 +87,6 @@ export function AiChatBotView() {
     }
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 50);
-  }, [messages]);
-
   return (
     <DashboardContent
       maxWidth={false}
@@ -120,11 +113,7 @@ export function AiChatBotView() {
               ) : (
                 <ChatMessageList messages={messages ?? []} />
               )}
-              <ChatMessageInput
-                disabled={loading}
-                onNewMessage={handleSendMessage}
-                inputRef={inputRef}
-              />
+              <ChatMessageInput disabled={loading} onNewMessage={handleSendMessage} />
             </>
           ),
         }}

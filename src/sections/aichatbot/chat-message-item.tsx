@@ -96,7 +96,7 @@ export function ChatMessageItem({ message }: Props) {
           sx={{ position: 'relative', '&:hover': { '& .message-actions': { opacity: 1 } } }}
         >
           {renderBody}
-          {renderActions}
+          {/*{renderActions}*/}
         </Stack>
       </Stack>
     </Stack>
