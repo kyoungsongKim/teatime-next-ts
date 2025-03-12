@@ -66,7 +66,7 @@ export function AiChatBotView() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
-        body: JSON.stringify({ text: message.text }),
+        body: JSON.stringify({ user_id: message.senderId, text: message.text }),
       });
 
       const reader = response.body?.getReader();

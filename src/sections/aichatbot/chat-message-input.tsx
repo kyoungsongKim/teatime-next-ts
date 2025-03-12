@@ -6,8 +6,6 @@ import Stack from '@mui/material/Stack';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 
-import { Iconify } from 'src/components/iconify';
-
 import { useUser } from 'src/auth/context/user-context';
 
 type Props = {
@@ -28,12 +26,6 @@ export function ChatMessageInput({ disabled, onNewMessage }: Props) {
       });
     }
   }, [onNewMessage]);
-
-  const handleAttach = useCallback(() => {
-    if (fileRef.current) {
-      fileRef.current.click();
-    }
-  }, []);
 
   const handleChangeMessage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
