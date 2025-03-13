@@ -49,6 +49,7 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
   const confirm = useBoolean();
   const [publishCode, setPublishCode] = useState('');
   const [point, setSavedPoint] = useState(0);
+  const [memo, setMemo] = useState('');
 
   const defaultPointValue: CreatePointItem = {
     sender: id,
@@ -86,6 +87,7 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
         if (r.status !== 200) {
           toast.error(r.data);
         } else {
+          setMemo(data.memo);
           setSavedPoint(data.point);
           setPublishCode(r.data);
           confirm.onTrue();
@@ -102,7 +104,7 @@ export function PointCreateDialog({ id, open, userList, onClose }: Props) {
   const handleCopy = async () => {
     if (!publishCode) return;
 
-    const textToCopy = `${publishCode}\n\n${point} 포인트 기부 기회코드 전달드립니다.\n비춰보기 서비스를 이용해주셔서 감사드립니다!\n서비스에 만족하셨다면 기부 꼭 부탁드리겠습니다!`;
+    const textToCopy = `${publishCode}\n\n${memo} (${point} CAS) 기부 기회코드 전달드립니다.\n비춰보기 서비스를 이용해주셔서 감사드립니다!\n서비스에 만족하셨다면 기부 꼭 부탁드리겠습니다!`;
 
     try {
       // 1. navigator.clipboard API 사용
