@@ -49,8 +49,8 @@ export function JwtSignInView() {
   const password = useBoolean();
 
   const defaultValues = {
-    userId: 'test',
-    password: '1234',
+    userId: '',
+    password: '',
   };
 
   const methods = useForm<SignInSchemaType>({
@@ -77,19 +77,9 @@ export function JwtSignInView() {
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Field.Text name="userId" label="userId address" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="userId" label="User ID" InputLabelProps={{ shrink: true }} />
 
       <Box gap={1.5} display="flex" flexDirection="column">
-        <Link
-          component={RouterLink}
-          href="#"
-          variant="body2"
-          color="inherit"
-          sx={{ alignSelf: 'flex-end' }}
-        >
-          Forgot password?
-        </Link>
-
         <Field.Text
           name="password"
           label="Password"
@@ -136,12 +126,6 @@ export function JwtSignInView() {
         }
         sx={{ textAlign: { xs: 'center', md: 'left' } }}
       />
-
-      <Alert severity="info" sx={{ mb: 3 }}>
-        Use <strong>{defaultValues.userId}</strong>
-        {' with password '}
-        <strong>{defaultValues.password}</strong>
-      </Alert>
 
       {!!errorMsg && (
         <Alert severity="error" sx={{ mb: 3 }}>
