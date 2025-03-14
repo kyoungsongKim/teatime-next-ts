@@ -188,7 +188,7 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
                 {/* -- Language popover -- */}
                 <LanguagePopover data={allLangs} />
                 {/* -- Notifications popover -- */}
-                <NotificationsDrawer data={_notifications} />
+                {/* <NotificationsDrawer data={_notifications} /> */}
                 {/* -- Settings button -- */}
                 <SettingsButton />
                 {/* -- Account drawer -- */}
