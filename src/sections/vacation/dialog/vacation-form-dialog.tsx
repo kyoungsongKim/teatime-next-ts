@@ -395,7 +395,7 @@ export function VacationFormDialog({
         </Stack>
       </DialogTitle>
       <Form methods={methods} onSubmit={onSubmit}>
-        <Scrollbar ref={scrollBarRef} sx={{ maxHeight: 400 }}>
+        <Scrollbar ref={scrollBarRef} sx={{ maxHeight: 410 }}>
           <DialogContent>
             <Stack spacing={1}>
               {/* 휴가 기간 */}
