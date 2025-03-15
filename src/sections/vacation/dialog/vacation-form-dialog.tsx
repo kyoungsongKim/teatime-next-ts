@@ -401,12 +401,12 @@ export function VacationFormDialog({
               {/* 휴가 기간 */}
               <Stack spacing={1}>
                 <Typography variant="subtitle2">휴가 기간</Typography>
-                <Typography variant="caption">
-                  시작일 설정 후, 휴가 사용일에 맞춰 종료일(주말 제외)이 자동으로 계산됩니다.
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'error.main' }}>
-                  당일 휴가는 추가 기안이 필요해 담당 에이전트 문의바랍니다
-                </Typography>
+                <Typography variant="caption" sx={{ lineHeight: 1.2 }}>
+      시작일 설정 후, 휴가 사용일에 맞춰 종료일(주말 제외)이 자동으로 계산됩니다.
+    </Typography>
+    <Typography variant="overline" sx={{ color: 'error.main', fontWeight: 'bold', lineHeight: 1.2 }}>
+      당일 휴가는 추가 기안이 필요해 담당 에이전트 문의바랍니다
+    </Typography>
               </Stack>
               <Stack spacing={1} direction={{ xs: 'column', sm: 'column', md: 'row' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
