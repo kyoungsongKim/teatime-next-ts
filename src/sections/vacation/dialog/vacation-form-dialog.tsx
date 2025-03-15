@@ -404,7 +404,7 @@ export function VacationFormDialog({
                 <Typography variant="caption" sx={{ lineHeight: 1.2 }}>
                   시작일 설정 후, 휴가 사용일에 맞춰 종료일(주말 제외)이 자동으로 계산됩니다.
                 </Typography>
-                <Typography variant="overline" sx={{ color: 'error.main', fontWeight: 'bold', lineHeight: 1.2 }}>
+                <Typography variant="caption" sx={{ color: 'error.main', fontWeight: 'bold', fontSize: '0.7rem', lineHeight: 1.1 }}>
                   당일 휴가는 추가 기안이 필요해 담당 에이전트 문의바랍니다.
                 </Typography>
               </Stack>
