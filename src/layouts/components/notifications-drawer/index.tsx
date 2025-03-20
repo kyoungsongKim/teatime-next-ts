@@ -1,9 +1,9 @@
 'use client';
 
-import type { IconButtonProps } from '@mui/material/IconButton';
+import type { INotificationUserItem } from 'src/types/notification';
 
 import { m } from 'framer-motion';
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -18,45 +18,74 @@ import IconButton from '@mui/material/IconButton';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { getAllNotificationsByUser } from 'src/actions/notification-ssr';
+
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
 import { Scrollbar } from 'src/components/scrollbar';
 import { CustomTabs } from 'src/components/custom-tabs';
 
+import { useUser } from 'src/auth/context/user-context';
+
 import { NotificationItem } from './notification-item';
 
-import type { NotificationItemProps } from './notification-item';
-
 // ----------------------------------------------------------------------
 
-const TABS = [
-  { value: 'all', label: 'All', count: 22 },
-  { value: 'unread', label: 'Unread', count: 12 },
-  { value: 'archived', label: 'Archived', count: 10 },
-];
+export function NotificationsDrawer({ ...other }) {
+  const { userInfo } = useUser();
 
-// ----------------------------------------------------------------------
+  const [notifications, setNotifications] = useState<INotificationUserItem[]>();
+  const [filteredNotifications, setFilteredNotifications] = useState<INotificationUserItem[]>([]);
 
-export type NotificationsDrawerProps = IconButtonProps & {
-  data?: NotificationItemProps[];
-};
-
-export function NotificationsDrawer({ data = [], sx, ...other }: NotificationsDrawerProps) {
   const drawer = useBoolean();
 
   const [currentTab, setCurrentTab] = useState('all');
+
+  const totalUnRead = notifications?.filter((item) => item.isRead).length || 0;
+  const readCount = notifications?.filter((item) => item.isRead).length || 0;
+  const unreadCount = notifications?.filter((item) => !item.isRead).length || 0;
+
+  const TABS = [
+    { value: 'all', label: 'All', count: totalUnRead },
+    { value: 'true', label: 'Read', count: readCount },
+    { value: 'false', label: 'Unread', count: unreadCount },
+  ];
 
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
   }, []);
 
-  const [notifications, setNotifications] = useState(data);
+  useEffect(() => {
+    if (!notifications) return;
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead).length;
+    let filteredData = [...notifications];
+
+    if (currentTab === 'true') {
+      filteredData = notifications.filter((notification) => notification.isRead);
+    } else if (currentTab === 'false') {
+      filteredData = notifications.filter((notification) => !notification.isRead);
+    }
+
+    setFilteredNotifications(filteredData);
+  }, [notifications, currentTab]);
+
+  const fetchGetNotification = useCallback(async () => {
+    if (!userInfo) return;
+    try {
+      const data = await getAllNotificationsByUser(userInfo?.id);
+      setNotifications(data);
+    } catch (error) {
+      console.error('Failed to fetch latest attendance:', error);
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+    fetchGetNotification().then((r) => r);
+  }, [fetchGetNotification]);
 
   const handleMarkAllAsRead = () => {
-    setNotifications(notifications.map((notification) => ({ ...notification, isUnRead: false })));
+    setNotifications(notifications?.map((notification) => ({ ...notification, isRead: false })));
   };
 
   const renderHead = (
@@ -95,8 +124,8 @@ export function NotificationsDrawer({ data = [], sx, ...other }: NotificationsDr
             <Label
               variant={((tab.value === 'all' || tab.value === currentTab) && 'filled') || 'soft'}
               color={
-                (tab.value === 'unread' && 'info') ||
-                (tab.value === 'archived' && 'success') ||
+                (tab.value === 'true' && 'success') ||
+                (tab.value === 'false' && 'info') ||
                 'default'
               }
             >
@@ -111,7 +140,7 @@ export function NotificationsDrawer({ data = [], sx, ...other }: NotificationsDr
   const renderList = (
     <Scrollbar>
       <Box component="ul">
-        {notifications?.map((notification) => (
+        {filteredNotifications.map((notification) => (
           <Box component="li" key={notification.id} sx={{ display: 'flex' }}>
             <NotificationItem notification={notification} />
           </Box>
@@ -128,7 +157,6 @@ export function NotificationsDrawer({ data = [], sx, ...other }: NotificationsDr
         whileHover="hover"
         variants={varHover(1.05)}
         onClick={drawer.onTrue}
-        sx={sx}
         {...other}
       >
         <Badge badgeContent={totalUnRead} color="error">

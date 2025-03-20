@@ -1,3 +1,5 @@
+import type { INotificationUserItem } from 'src/types/notification';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -16,21 +18,11 @@ import { FileThumbnail } from 'src/components/file-thumbnail';
 
 // ----------------------------------------------------------------------
 
-export type NotificationItemProps = {
-  id: string;
-  type: string;
-  title: string;
-  category: string;
-  isUnRead: boolean;
-  avatarUrl: string | null;
-  createdAt: string | number | null;
-};
-
-export function NotificationItem({ notification }: { notification: NotificationItemProps }) {
+export function NotificationItem({ notification }: { notification: INotificationUserItem }) {
   const renderAvatar = (
     <ListItemAvatar>
-      {notification.avatarUrl ? (
-        <Avatar src={notification.avatarUrl} sx={{ bgcolor: 'background.neutral' }} />
+      {notification.avatarImg ? (
+        <Avatar src={notification.avatarImg} sx={{ bgcolor: 'background.neutral' }} />
       ) : (
         <Stack
           alignItems="center"
@@ -39,7 +31,12 @@ export function NotificationItem({ notification }: { notification: NotificationI
         >
           <Box
             component="img"
-            src={`${CONFIG.assetsDir}/assets/icons/notification/${(notification.type === 'order' && 'ic-order') || (notification.type === 'chat' && 'ic-chat') || (notification.type === 'mail' && 'ic-mail') || (notification.type === 'delivery' && 'ic-delivery')}.svg`}
+            src={`${CONFIG.assetsDir}/assets/icons/notification/${
+              (notification.notification.notificationType === 'trueOrFalse' && 'ic-order') ||
+              (notification.notification.notificationType === 'chat' && 'ic-chat') ||
+              (notification.notification.notificationType === 'mail' && 'ic-mail') ||
+              (notification.notification.notificationType === 'delivery' && 'ic-delivery')
+            }.svg`}
             sx={{ width: 24, height: 24 }}
           />
         </Stack>
@@ -50,32 +47,40 @@ export function NotificationItem({ notification }: { notification: NotificationI
   const renderText = (
     <ListItemText
       disableTypography
-      primary={reader(notification.title)}
+      primary={reader(notification.notification.title)}
       secondary={
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{ typography: 'caption', color: 'text.disabled' }}
-          divider={
-            <Box
-              sx={{
-                width: 2,
-                height: 2,
-                bgcolor: 'currentColor',
-                mx: 0.5,
-                borderRadius: '50%',
-              }}
-            />
-          }
-        >
-          {fToNow(notification.createdAt)}
-          {notification.category}
-        </Stack>
+        <>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{ typography: 'caption', color: 'text.primary' }}
+          >
+            {notification.notification.content}
+          </Stack>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{ typography: 'caption', color: 'text.disabled' }}
+            divider={
+              <Box
+                sx={{
+                  width: 2,
+                  height: 2,
+                  bgcolor: 'currentColor',
+                  mx: 0.5,
+                  borderRadius: '50%',
+                }}
+              />
+            }
+          >
+            {fToNow(notification.createdAt)}
+          </Stack>
+        </>
       }
     />
   );
 
-  const renderUnReadBadge = notification.isUnRead && (
+  const renderUnReadBadge = notification.isRead && (
     <Box
       sx={{
         top: 26,
@@ -89,7 +94,7 @@ export function NotificationItem({ notification }: { notification: NotificationI
     />
   );
 
-  const friendAction = (
+  const trueOrFalseAction = (
     <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
       <Button size="small" variant="contained">
         Accept
@@ -212,11 +217,11 @@ export function NotificationItem({ notification }: { notification: NotificationI
 
       <Stack sx={{ flexGrow: 1 }}>
         {renderText}
-        {notification.type === 'friend' && friendAction}
-        {notification.type === 'project' && projectAction}
-        {notification.type === 'file' && fileAction}
-        {notification.type === 'tags' && tagsAction}
-        {notification.type === 'payment' && paymentAction}
+        {notification.notification.notificationType === 'trueOrFalse' && trueOrFalseAction}
+        {notification.notification.notificationType === 'project' && projectAction}
+        {notification.notification.notificationType === 'file' && fileAction}
+        {notification.notification.notificationType === 'tags' && tagsAction}
+        {notification.notification.notificationType === 'payment' && paymentAction}
       </Stack>
     </ListItemButton>
   );

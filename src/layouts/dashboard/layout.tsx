@@ -16,7 +16,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { getUserInfo } from 'src/utils/user-info';
 
 import { allLangs } from 'src/locales';
-import { _notifications } from 'src/_mock';
 import { getUserPoint } from 'src/actions/point-ssr';
 
 import { Logo } from 'src/components/logo';
@@ -188,7 +187,7 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
                 {/* -- Language popover -- */}
                 <LanguagePopover data={allLangs} />
                 {/* -- Notifications popover -- */}
-                {/* <NotificationsDrawer data={_notifications} /> */}
+                <NotificationsDrawer />
                 {/* -- Settings button -- */}
                 <SettingsButton />
                 {/* -- Account drawer -- */}

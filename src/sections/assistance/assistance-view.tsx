@@ -21,7 +21,7 @@ import { AppliedServiceAdminTable } from 'src/sections/assistance/applied-servic
 import { AssistanceReviewDialog } from 'src/sections/assistance/dialog/assistance-review-dialog';
 import { AssistanceSuggestionDialog } from 'src/sections/assistance/dialog/assistance-suggestion-dialog';
 
-import { useUser } from '../../auth/context/user-context';
+import { useUser } from 'src/auth/context/user-context';
 
 export function AssistanceView() {
   const { userInfo, isAdmin } = useUser();

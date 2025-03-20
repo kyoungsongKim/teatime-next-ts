@@ -107,8 +107,8 @@ export function AiChatBotView() {
               {messages.length === 0 ? (
                 <EmptyContent
                   imgUrl={`${CONFIG.assetsDir}/assets/icons/empty/ic-chat-active.svg`}
-                  title="Good morning!"
-                  description="Write something awesome..."
+                  title="웹사이트 이용 중 불편한 점이 있으면 ‘송송이’에게 말씀해주세요."
+                  description="대화 내용은 사이트 개선을 위해 저장·전송될 수 있습니다."
                 />
               ) : (
                 <ChatMessageList messages={messages ?? []} />

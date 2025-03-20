@@ -180,6 +180,17 @@ export function DashboardCheckInOutDialog({
             <Stack spacing={1}>
               <Typography variant="body2">📍본사 100m 이내에서 체크 가능합니다.</Typography>
               <Typography
+                variant="caption"
+                sx={{
+                  color: 'error.main',
+                  fontWeight: 'bold',
+                  fontSize: '0.6rem',
+                  lineHeight: 1,
+                }}
+              >
+                * 무선 네트워크 환경(LTE, Wifi)에서 체크 가능합니다.
+              </Typography>
+              <Typography
                 variant="h6"
                 color={isCheckAllowed ? 'success.main' : 'error.main'}
                 sx={{ fontWeight: 'bold' }}

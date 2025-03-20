@@ -52,7 +52,7 @@ export type IAttendanceRequest = {
 };
 
 export type IAttendanceTableFilters = {
-  name: string;
+  keyword: string;
   workType: string;
   workStartDate: IDatePickerControl;
   workEndDate: IDatePickerControl;
@@ -62,4 +62,9 @@ export const workTypeLabels: Record<string, string> = {
   OFFICE: '정상근무',
   REMOTE: '재택',
   FIELD: '외근',
+};
+
+export const locationLabels: Record<string, string> = {
+  Home: '집',
+  Office: '회사',
 };

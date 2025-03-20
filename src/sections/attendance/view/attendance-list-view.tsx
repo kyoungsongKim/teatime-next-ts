@@ -61,6 +61,8 @@ import { DashboardAttendanceWidgetButton } from 'src/sections/dashboard/dashboar
 
 import { useUser } from 'src/auth/context/user-context';
 
+import { locationLabels } from 'src/types/attendance';
+
 import { AttendanceTableRow } from '../attendance-table-row';
 import { AttendanceTableToolbar } from '../attendance-table-toolbar';
 import { AttendanceTableFiltersResult } from '../attendance-table-filters-result';
@@ -111,7 +113,7 @@ export function AttendanceListView() {
   const [tableData, setTableData] = useState<IAttendanceItem[]>();
 
   const filters = useSetState<IAttendanceTableFilters>({
-    name: '',
+    keyword: '',
     workType: 'all',
     workStartDate: null,
     workEndDate: null,
@@ -127,7 +129,7 @@ export function AttendanceListView() {
   });
 
   const canReset =
-    !!filters.state.name ||
+    !!filters.state.keyword ||
     filters.state.workType !== 'all' ||
     (!!filters.state.workStartDate && !!filters.state.workEndDate);
 
@@ -189,7 +191,8 @@ export function AttendanceListView() {
 
   const updateAttendance = useCallback(() => {
     fetchLatestAttendance().then((r) => r);
-  }, [fetchLatestAttendance]);
+    fetchLatestAttendanceMonth().then((r) => r);
+  }, [fetchLatestAttendance, fetchLatestAttendanceMonth]);
 
   const getTimeForType = useMemo(
     () => (workType: 'OFFICE' | 'REMOTE' | 'FIELD') => {
@@ -543,7 +546,7 @@ type ApplyFilterProps = {
 };
 
 function applyFilter({ inputData, comparator, filters, dateError }: ApplyFilterProps) {
-  const { workType, name, workStartDate, workEndDate } = filters;
+  const { workType, keyword, workStartDate, workEndDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -555,15 +558,22 @@ function applyFilter({ inputData, comparator, filters, dateError }: ApplyFilterP
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (name) {
+  if (keyword) {
     inputData = inputData.filter((attendance) => {
-      const searchName = attendance.managerName?.toLowerCase().includes(name.trim().toLowerCase());
+      const searchName = attendance.managerName
+        ?.toLowerCase()
+        .includes(keyword.trim().toLowerCase());
       const searchDescription = attendance.taskDescription
         ?.toLowerCase()
-        .includes(name.trim().toLowerCase());
-      const searchLocation = attendance.location?.toLowerCase().includes(name.trim().toLowerCase());
+        .includes(keyword.trim().toLowerCase());
+      const searchLocation = attendance.location
+        ?.toLowerCase()
+        .includes(keyword.trim().toLowerCase());
+      const searchLocationConvert = locationLabels[attendance.location || '']
+        ?.toLowerCase()
+        .includes(keyword.trim().toLowerCase());
 
-      return Boolean(searchName || searchDescription || searchLocation);
+      return Boolean(searchName || searchDescription || searchLocation || searchLocationConvert);
     });
   }
 

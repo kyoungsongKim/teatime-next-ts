@@ -1,6 +1,5 @@
-import type { IDatePickerControl } from 'src/types/common';
 import type { UseSetStateReturn } from 'src/hooks/use-set-state';
-import type { IAttendanceTableFilters } from 'src/types/attendance';
+import type { INotificationTableFilters } from 'src/types/notification';
 
 import { useCallback } from 'react';
 
@@ -10,8 +9,6 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
@@ -19,34 +16,17 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 type Props = {
-  dateError: boolean;
   onResetPage: () => void;
-  filters: UseSetStateReturn<IAttendanceTableFilters>;
+  filters: UseSetStateReturn<INotificationTableFilters>;
 };
 
-export function AttendanceTableToolbar({ filters, onResetPage, dateError }: Props) {
+export function AccountNotificationsTableToolbar({ filters, onResetPage }: Props) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onResetPage();
       filters.setState({ keyword: event.target.value });
-    },
-    [filters, onResetPage]
-  );
-
-  const handleFilterStartDate = useCallback(
-    (newValue: IDatePickerControl) => {
-      onResetPage();
-      filters.setState({ workStartDate: newValue });
-    },
-    [filters, onResetPage]
-  );
-
-  const handleFilterEndDate = useCallback(
-    (newValue: IDatePickerControl) => {
-      onResetPage();
-      filters.setState({ workEndDate: newValue });
     },
     [filters, onResetPage]
   );
@@ -59,34 +39,6 @@ export function AttendanceTableToolbar({ filters, onResetPage, dateError }: Prop
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-        <DatePicker
-          label="Start date"
-          value={filters.state.workStartDate}
-          onChange={handleFilterStartDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{ maxWidth: { md: 200 } }}
-        />
-
-        <DatePicker
-          label="End date"
-          value={filters.state.workEndDate}
-          onChange={handleFilterEndDate}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              error: dateError,
-              helperText: dateError ? 'End date must be later than start date' : null,
-            },
-          }}
-          sx={{
-            maxWidth: { md: 200 },
-            [`& .${formHelperTextClasses.root}`]: {
-              position: { md: 'absolute' },
-              bottom: { md: -40 },
-            },
-          }}
-        />
-
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth

@@ -24,7 +24,7 @@ type Props = {
 export function AttendanceTableFiltersResult({ filters, totalResults, onResetPage, sx }: Props) {
   const handleRemoveKeyword = useCallback(() => {
     onResetPage();
-    filters.setState({ name: '' });
+    filters.setState({ keyword: '' });
   }, [filters, onResetPage]);
 
   const handleRemoveStatus = useCallback(() => {
@@ -64,8 +64,8 @@ export function AttendanceTableFiltersResult({ filters, totalResults, onResetPag
         />
       </FiltersBlock>
 
-      <FiltersBlock label="Keyword:" isShow={!!filters.state.name}>
-        <Chip {...chipProps} label={filters.state.name} onDelete={handleRemoveKeyword} />
+      <FiltersBlock label="Keyword:" isShow={!!filters.state.keyword}>
+        <Chip {...chipProps} label={filters.state.keyword} onDelete={handleRemoveKeyword} />
       </FiltersBlock>
     </FiltersResult>
   );

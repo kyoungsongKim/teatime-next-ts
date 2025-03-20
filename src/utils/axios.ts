@@ -93,6 +93,9 @@ export const endpoints = {
     info: '/api/agreement/info',
     detail: '/api/agreement/detail',
   },
+  notification: {
+    root: '/api/notifications',
+  },
   attendance: {
     root: '/api/attendance',
   },
