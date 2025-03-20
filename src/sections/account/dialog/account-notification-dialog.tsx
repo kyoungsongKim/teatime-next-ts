@@ -97,6 +97,7 @@ export function AccountNotificationDialog({
           title: '',
           content: '',
           isGlobal: true,
+          notificationType: 'trueOrFalse',
         });
         setSelectedUsers([]);
       }
