@@ -41,7 +41,7 @@ type Props = {
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID' },
-  { id: 'category', label: '카테고리' },
+  { id: 'notificationType', label: '알람 종류' },
   { id: 'title', label: '제목' },
   { id: 'content', label: '내용' },
   { id: 'isGlobal', label: '공지 타입' },

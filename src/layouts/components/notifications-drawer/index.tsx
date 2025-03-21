@@ -10,7 +10,6 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
@@ -44,16 +43,16 @@ export function NotificationsDrawer({ ...other }) {
 
   const drawer = useBoolean();
 
-  const [currentTab, setCurrentTab] = useState('all');
+  const [currentTab, setCurrentTab] = useState('false');
 
   const totalNotification = notifications?.length || 0;
   const readCount = notifications?.filter((item) => item.isRead).length || 0;
   const unreadCount = notifications?.filter((item) => !item.isRead).length || 0;
 
   const TABS = [
-    { value: 'all', label: 'All', count: totalNotification },
+    { value: 'false', label: 'New', count: unreadCount },
     { value: 'true', label: 'Read', count: readCount },
-    { value: 'false', label: 'Unread', count: unreadCount },
+    { value: 'all', label: 'All', count: totalNotification },
   ];
 
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
@@ -116,10 +115,6 @@ export function NotificationsDrawer({ ...other }) {
 
       <IconButton onClick={drawer.onFalse} sx={{ display: { xs: 'inline-flex', sm: 'none' } }}>
         <Iconify icon="mingcute:close-line" />
-      </IconButton>
-
-      <IconButton>
-        <Iconify icon="solar:settings-bold-duotone" />
       </IconButton>
     </Stack>
   );
@@ -202,12 +197,6 @@ export function NotificationsDrawer({ ...other }) {
         {renderTabs}
 
         {renderList}
-
-        <Box sx={{ p: 1 }}>
-          <Button fullWidth size="large">
-            View all
-          </Button>
-        </Box>
       </Drawer>
     </>
   );

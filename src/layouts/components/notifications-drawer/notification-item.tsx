@@ -1,3 +1,4 @@
+import type { ButtonProps } from '@mui/material/Button';
 import type { INotificationUserItem } from 'src/types/notification';
 
 import Box from '@mui/material/Box';
@@ -38,7 +39,7 @@ export function NotificationItem({
           <Box
             component="img"
             src={`${CONFIG.assetsDir}/assets/icons/notification/${
-              (notification.notification.notificationType === 'trueOrFalse' && 'ic-order') ||
+              (notification.notification.notificationType === 'yesOrNo' && 'ic-order') ||
               (notification.notification.notificationType === 'chat' && 'ic-chat') ||
               (notification.notification.notificationType === 'mail' && 'ic-mail') ||
               (notification.notification.notificationType === 'delivery' && 'ic-delivery')
@@ -100,14 +101,58 @@ export function NotificationItem({
     />
   );
 
-  const trueOrFalseAction = (
+  const yesOrNoAction = (
     <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
-      <Button size="small" variant="contained" onClick={() => onUpdate('accept', notification.id)}>
-        Accept
+      <Button
+        size="small"
+        variant="soft"
+        color="success"
+        onClick={() => onUpdate('Yes', notification.id)}
+        sx={{
+          px: 1.5,
+          py: 0.5,
+          minWidth: 'auto',
+          fontSize: '0.75rem',
+        }}
+      >
+        Yes
       </Button>
-      <Button size="small" variant="outlined" onClick={() => onUpdate('decline', notification.id)}>
-        Decline
+      <Button
+        size="small"
+        variant="soft"
+        color="info"
+        onClick={() => onUpdate('No', notification.id)}
+        sx={{
+          px: 1.5,
+          py: 0.5,
+          minWidth: 'auto',
+          fontSize: '0.75rem',
+        }}
+      >
+        No
       </Button>
+    </Stack>
+  );
+
+  const renderColoredOptions = (options: string[], colors: ButtonProps['color'][]) => (
+    <Stack spacing={1} direction="row" sx={{ mt: 1, flexWrap: 'wrap' }}>
+      {options.map((option, index) => (
+        <Button
+          key={option}
+          size="small"
+          variant="soft"
+          color={colors[index % colors.length]}
+          onClick={() => onUpdate(option, notification.id)}
+          sx={{
+            px: 1.5,
+            py: 0.5,
+            minWidth: 'auto',
+            fontSize: '0.75rem',
+          }}
+        >
+          {option}
+        </Button>
+      ))}
     </Stack>
   );
 
@@ -231,11 +276,29 @@ export function NotificationItem({
 
       <Stack sx={{ flexGrow: 1 }}>
         {renderText}
-        {notification.notification.notificationType === 'trueOrFalse' && trueOrFalseAction}
-        {notification.notification.notificationType === 'project' && projectAction}
-        {notification.notification.notificationType === 'file' && fileAction}
-        {notification.notification.notificationType === 'tags' && tagsAction}
-        {notification.notification.notificationType === 'payment' && paymentAction}
+        {!notification.isRead &&
+          (() => {
+            const type = notification.notification.notificationType;
+
+            const optionMap: Record<string, JSX.Element> = {
+              yesOrNo: yesOrNoAction,
+              threeOption: renderColoredOptions(['1', '2', '3'], ['success', 'info', 'warning']),
+              fourOption: renderColoredOptions(
+                ['1', '2', '3', '4'],
+                ['success', 'info', 'warning', 'error']
+              ),
+              fiveOption: renderColoredOptions(
+                ['1', '2', '3', '4', '5'],
+                ['success', 'info', 'warning', 'error', 'secondary']
+              ),
+              project: projectAction,
+              file: fileAction,
+              tags: tagsAction,
+              payment: paymentAction,
+            };
+
+            return optionMap[type] || null;
+          })()}
       </Stack>
     </ListItemButton>
   );

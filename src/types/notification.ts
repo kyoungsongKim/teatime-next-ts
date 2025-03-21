@@ -29,5 +29,8 @@ export type INotificationUserTableFilters = {
 };
 
 export const NotificationLabels: Record<string, string> = {
-  trueOrFalse: '확인또는거절',
+  yesOrNo: '네또는아니오',
+  threeOption: '3지선다',
+  fourOption: '4지선다',
+  fiveOption: '5지선다',
 };

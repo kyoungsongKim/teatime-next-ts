@@ -232,8 +232,9 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
       const searchUser = notification.user.realName
         ?.toLowerCase()
         .includes(keyword.trim().toLowerCase());
+      const searchReply = notification.reply?.toLowerCase().includes(keyword.trim().toLowerCase());
 
-      return Boolean(searchUser);
+      return Boolean(searchUser || searchReply);
     });
   }
 

@@ -80,7 +80,7 @@ export function AssistanceReviewDialog({ id, isAdmin, item, onClose, onUpdate, .
         }
       })
       .catch((e) => {
-        toast.error('리뷰 등록에 싫패했습니다.');
+        toast.error('리뷰 등록에 실패했습니다.');
         console.error(e);
       });
   });
@@ -110,7 +110,7 @@ export function AssistanceReviewDialog({ id, isAdmin, item, onClose, onUpdate, .
           </DialogContent>
         </Scrollbar>
         <DialogActions sx={{ justifyContent: 'center' }}>
-          {!item ? (
+          {!item?.review ? (
             <LoadingButton
               type="submit"
               loading={isSubmitting}

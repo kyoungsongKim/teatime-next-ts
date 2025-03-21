@@ -43,7 +43,12 @@ type Props = {
   onUpdate: () => void;
 };
 
-export const NOTIFICATION_TYPE_STATUS_OPTIONS = [{ value: 'trueOrFalse', label: '확인또는거절' }];
+export const NOTIFICATION_TYPE_STATUS_OPTIONS = [
+  { value: 'yesOrNo', label: '네또는아니오' },
+  { value: 'threeOption', label: '3지선다' },
+  { value: 'fourOption', label: '4지선다' },
+  { value: 'fiveOption', label: '5지선다' },
+];
 
 export function NotificationDialog({ userInfo, open, notification, onClose, onUpdate }: Props) {
   const confirm = useBoolean();
@@ -55,7 +60,7 @@ export function NotificationDialog({ userInfo, open, notification, onClose, onUp
     title: '',
     content: '',
     isGlobal: true,
-    notificationType: 'trueOrFalse',
+    notificationType: 'yesOrNo',
   };
 
   const methods = useForm<INotificationItem>({
@@ -79,7 +84,7 @@ export function NotificationDialog({ userInfo, open, notification, onClose, onUp
           title: notification.title || '',
           content: notification.content || '',
           isGlobal: notification.isGlobal ?? true,
-          notificationType: notification.notificationType ?? 'trueOrFalse',
+          notificationType: notification.notificationType ?? 'yesOrNo',
         });
         getUserNotificationList(notification.id).then((r) => {
           setSelectedUsers(r.map((user) => user.user.id));
@@ -91,7 +96,7 @@ export function NotificationDialog({ userInfo, open, notification, onClose, onUp
           title: '',
           content: '',
           isGlobal: true,
-          notificationType: 'trueOrFalse',
+          notificationType: 'yesOrNo',
         });
         setSelectedUsers([]);
       }
