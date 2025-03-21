@@ -66,9 +66,10 @@ export function NotificationItem({
             direction="row"
             alignItems="center"
             sx={{ typography: 'caption', color: 'text.primary' }}
-          >
-            {notification.notification.content}
-          </Stack>
+            dangerouslySetInnerHTML={{
+              __html: notification.notification.content.replace(/\n/g, '<br />'),
+            }}
+          />
 
           {notification.reply && (
             <Stack

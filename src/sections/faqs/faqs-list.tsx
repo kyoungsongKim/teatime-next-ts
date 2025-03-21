@@ -24,6 +24,7 @@ export function FaqsList({ faqs = [] }: FaqsListProps) {
           </AccordionSummary>
           <AccordionDetails>
             <Typography
+              variant="body2"
               component="div"
               dangerouslySetInnerHTML={{ __html: accordion.description.replace(/\n/g, '<br />') }}
             />
