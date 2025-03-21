@@ -33,6 +33,7 @@ export type AccountDrawerProps = IconButtonProps & {
   data?: {
     label: string;
     href: string;
+    roles?: string[];
     icon?: React.ReactNode;
     info?: React.ReactNode;
   }[];
@@ -153,36 +154,45 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
               borderBottom: `dashed 1px ${theme.vars.palette.divider}`,
             }}
           >
-            {data.map((option) => {
-              const rootLabel = pathname.includes('/dashboard') ? 'Home' : 'Dashboard';
+            {data
+              .filter(
+                (option) =>
+                  !option.roles ||
+                  option.roles.length === 0 ||
+                  option.roles.some((role) => role === auth)
+              )
+              .map((option) => {
+                const rootLabel = pathname.includes('/dashboard') ? 'Home' : 'Dashboard';
 
-              const rootHref = pathname.includes('/dashboard') ? '/' : paths.root.dashboard;
+                const rootHref = pathname.includes('/dashboard') ? '/' : paths.root.dashboard;
 
-              return (
-                <MenuItem
-                  key={option.label}
-                  onClick={() => handleClickItem(option.label === 'Home' ? rootHref : option.href)}
-                  sx={{
-                    py: 1,
-                    color: 'text.secondary',
-                    '& svg': { width: 24, height: 24 },
-                    '&:hover': { color: 'text.primary' },
-                  }}
-                >
-                  {option.icon}
+                return (
+                  <MenuItem
+                    key={option.label}
+                    onClick={() =>
+                      handleClickItem(option.label === 'Home' ? rootHref : option.href)
+                    }
+                    sx={{
+                      py: 1,
+                      color: 'text.secondary',
+                      '& svg': { width: 24, height: 24 },
+                      '&:hover': { color: 'text.primary' },
+                    }}
+                  >
+                    {option.icon}
 
-                  <Box component="span" sx={{ ml: 2 }}>
-                    {option.label === 'Home' ? rootLabel : option.label}
-                  </Box>
+                    <Box component="span" sx={{ ml: 2 }}>
+                      {option.label === 'Home' ? rootLabel : option.label}
+                    </Box>
 
-                  {option.info && (
-                    <Label color="error" sx={{ ml: 1 }}>
-                      {option.info}
-                    </Label>
-                  )}
-                </MenuItem>
-              );
-            })}
+                    {option.info && (
+                      <Label color="error" sx={{ ml: 1 }}>
+                        {option.info}
+                      </Label>
+                    )}
+                  </MenuItem>
+                );
+              })}
           </Stack>
         </Scrollbar>
 

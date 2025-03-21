@@ -18,7 +18,13 @@ import { FileThumbnail } from 'src/components/file-thumbnail';
 
 // ----------------------------------------------------------------------
 
-export function NotificationItem({ notification }: { notification: INotificationUserItem }) {
+export function NotificationItem({
+  notification,
+  onUpdate,
+}: {
+  notification: INotificationUserItem;
+  onUpdate: (reply: string, notificationId: string) => void;
+}) {
   const renderAvatar = (
     <ListItemAvatar>
       {notification.avatarImg ? (
@@ -80,7 +86,7 @@ export function NotificationItem({ notification }: { notification: INotification
     />
   );
 
-  const renderUnReadBadge = notification.isRead && (
+  const renderUnReadBadge = !notification.isRead && (
     <Box
       sx={{
         top: 26,
@@ -96,10 +102,10 @@ export function NotificationItem({ notification }: { notification: INotification
 
   const trueOrFalseAction = (
     <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
-      <Button size="small" variant="contained">
+      <Button size="small" variant="contained" onClick={() => onUpdate('accept', notification.id)}>
         Accept
       </Button>
-      <Button size="small" variant="outlined">
+      <Button size="small" variant="outlined" onClick={() => onUpdate('decline', notification.id)}>
         Decline
       </Button>
     </Stack>
@@ -121,7 +127,7 @@ export function NotificationItem({ notification }: { notification: INotification
         )}
       </Box>
 
-      <Button size="small" variant="contained">
+      <Button size="small" variant="contained" onClick={() => onUpdate('reply', notification.id)}>
         Reply
       </Button>
     </Stack>
@@ -172,7 +178,11 @@ export function NotificationItem({ notification }: { notification: INotification
           }
         />
 
-        <Button size="small" variant="outlined">
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => onUpdate('download', notification.id)}
+        >
           Download
         </Button>
       </Stack>
@@ -193,10 +203,14 @@ export function NotificationItem({ notification }: { notification: INotification
 
   const paymentAction = (
     <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
-      <Button size="small" variant="contained">
+      <Button size="small" variant="contained" onClick={() => onUpdate('pay', notification.id)}>
         Pay
       </Button>
-      <Button size="small" variant="outlined">
+      <Button
+        size="small"
+        variant="outlined"
+        onClick={() => onUpdate('decline_payment', notification.id)}
+      >
         Decline
       </Button>
     </Stack>

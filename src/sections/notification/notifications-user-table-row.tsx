@@ -15,7 +15,7 @@ type Props = {
   row: INotificationUserItem;
 };
 
-export function AccountNotificationsUserTableRow({ row }: Props) {
+export function NotificationsUserTableRow({ row }: Props) {
   return (
     <TableRow hover>
       <TableCell>{row.id}</TableCell>

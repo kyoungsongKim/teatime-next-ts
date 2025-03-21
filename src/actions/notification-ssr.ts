@@ -48,12 +48,13 @@ export async function deleteNotification(notificationId: string) {
   return res;
 }
 
-export async function sendNotificationToUser(receiverId: string, title: string, category: string) {
-  const params: any = {
-    receiverId,
-    title,
-    category,
-  };
-  const res = await axios.post(`${endpoints.notification.root}/send`, params);
+export async function patchReadAll(userId: string | undefined) {
+  const res = await axios.patch(`${endpoints.notification.root}/readAll/${userId}`);
+  return res;
+}
+
+export async function patchReadUser(id: string, reply: string) {
+  const params = { reply };
+  const res = await axios.patch(`${endpoints.notification.root}/readUser/${id}`, params);
   return res;
 }

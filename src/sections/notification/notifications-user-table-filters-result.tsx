@@ -1,6 +1,6 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { UseSetStateReturn } from 'src/hooks/use-set-state';
-import type { INotificationTableFilters } from 'src/types/notification';
+import type { INotificationUserTableFilters } from 'src/types/notification';
 
 import { useCallback } from 'react';
 
@@ -14,10 +14,10 @@ type Props = {
   totalResults: number;
   sx?: SxProps<Theme>;
   onResetPage: () => void;
-  filters: UseSetStateReturn<INotificationTableFilters>;
+  filters: UseSetStateReturn<INotificationUserTableFilters>;
 };
 
-export function AccountNotificationsTableFiltersResult({
+export function NotificationsUserTableFiltersResult({
   filters,
   totalResults,
   onResetPage,
@@ -28,6 +28,11 @@ export function AccountNotificationsTableFiltersResult({
     filters.setState({ keyword: '' });
   }, [filters, onResetPage]);
 
+  const handleRemoveStatus = useCallback(() => {
+    onResetPage();
+    filters.setState({ isRead: 'all' });
+  }, [filters, onResetPage]);
+
   const handleReset = useCallback(() => {
     onResetPage();
     filters.onResetState();
@@ -35,6 +40,15 @@ export function AccountNotificationsTableFiltersResult({
 
   return (
     <FiltersResult totalResults={totalResults} onReset={handleReset} sx={sx}>
+      <FiltersBlock label="읽음 여부:" isShow={filters.state.isRead !== 'all'}>
+        <Chip
+          {...chipProps}
+          label={filters.state.isRead === 'true' ? 'Read' : 'Unread'}
+          onDelete={handleRemoveStatus}
+          sx={{ textTransform: 'capitalize' }}
+        />
+      </FiltersBlock>
+
       <FiltersBlock label="Kerword:" isShow={!!filters.state.keyword}>
         <Chip {...chipProps} label={filters.state.keyword} onDelete={handleKeyword} />
       </FiltersBlock>

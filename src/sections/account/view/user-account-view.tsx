@@ -15,19 +15,12 @@ import { useUser } from 'src/auth/context/user-context';
 import { AccountGeneral } from '../account-general';
 import { AccountBilling } from '../account-billing';
 import { AccountSocialLinks } from '../account-social-links';
-import { AccountNotifications } from '../account-notifications';
 import { AccountChangePassword } from '../account-change-password';
 
 // ----------------------------------------------------------------------
 
 const TABS = [
   { value: 'general', label: 'General', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
-  // { value: 'billing', label: 'Billing', icon: <Iconify icon="solar:bill-list-bold" width={24} /> },
-  {
-    value: 'notifications',
-    label: 'Notifications',
-    icon: <Iconify icon="solar:bell-bing-bold" width={24} />,
-  },
   { value: 'social', label: 'Social links', icon: <Iconify icon="solar:share-bold" width={24} /> },
   { value: 'security', label: 'Security', icon: <Iconify icon="ic:round-vpn-key" width={24} /> },
 ];
@@ -56,8 +49,6 @@ export function AccountView() {
           addressBook={_userAddressBook}
         />
       )}
-
-      {tabs.value === 'notifications' && <AccountNotifications />}
 
       {tabs.value === 'social' && <AccountSocialLinks userInfo={userInfo} />}
 

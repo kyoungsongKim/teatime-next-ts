@@ -69,13 +69,12 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
 
   const filteredNavData = useMemo(() => {
     if (!auth) return [];
-    const ALL_ACCESS_ROLES = ['USER', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'];
 
     return dashboardNavData
       .map((section) => ({
         ...section,
         items: section.items.filter(
-          (item) => !item.roles || item.roles.includes(auth) || ALL_ACCESS_ROLES.includes(auth)
+          (item) => !item.roles || item.roles.some((role) => role === auth)
         ),
       }))
       .filter((section) => section.items.length > 0);

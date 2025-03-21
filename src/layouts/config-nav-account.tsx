@@ -68,4 +68,10 @@ export const _account = [
     href: paths.root.user.account,
     icon: <Iconify icon="solar:settings-bold-duotone" />,
   },
+  {
+    label: 'Notification settings',
+    href: paths.root.notification,
+    icon: <Iconify icon="solar:bell-bing-bold" width={24} />,
+    roles: ['ADMIN', 'SUPER_ADMIN'],
+  },
 ];

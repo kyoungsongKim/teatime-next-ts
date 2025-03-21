@@ -21,6 +21,7 @@ const ROOTS = {
   POINT: '/point',
   FAQ: '/faqs',
   AI_SUPPORT: '/aiSupport',
+  NOTIFICATION: '/notification',
 };
 
 // ----------------------------------------------------------------------
@@ -92,6 +93,7 @@ export const paths = {
       demo: { edit: `/user/${MOCK_ID}/edit` },
     },
     aiSupport: ROOTS.AI_SUPPORT,
+    notification: ROOTS.NOTIFICATION,
   },
   // DASHBOARD
   dashboard: {

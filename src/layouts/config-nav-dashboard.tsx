@@ -90,7 +90,15 @@ export const navData = [
         title: 'My Point',
         path: paths.root.point.root,
         icon: ICONS.invoice,
-        roles: ['USER_BASIC', 'USER_SILVER', 'USER_GOLD', 'USER_VIP', 'ADMIN', 'SUPER_ADMIN'],
+        roles: [
+          'USER',
+          'USER_BASIC',
+          'USER_SILVER',
+          'USER_GOLD',
+          'USER_VIP',
+          'ADMIN',
+          'SUPER_ADMIN',
+        ],
       },
       {
         title: 'FAQ',

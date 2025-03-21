@@ -27,3 +27,7 @@ export type INotificationUserTableFilters = {
   keyword: string;
   isRead: string;
 };
+
+export const NotificationLabels: Record<string, string> = {
+  trueOrFalse: '확인또는거절',
+};

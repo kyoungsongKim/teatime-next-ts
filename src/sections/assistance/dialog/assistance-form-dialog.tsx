@@ -41,7 +41,7 @@ type Props = DialogProps & {
 
 const FormSchema = zod.object({
   content: zod.string().min(1, { message: '내용을 입력해주세요.' }),
-  files: schemaHelper.files({ minFiles: 0 }).optional(),
+  files: schemaHelper.file().optional(),
 });
 
 export function AssistanceFormDialog({ id, item, editable, onUpdate, onClose, ...other }: Props) {

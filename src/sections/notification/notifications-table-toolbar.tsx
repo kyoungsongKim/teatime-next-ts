@@ -20,7 +20,7 @@ type Props = {
   filters: UseSetStateReturn<INotificationTableFilters>;
 };
 
-export function AccountNotificationsTableToolbar({ filters, onResetPage }: Props) {
+export function NotificationsTableToolbar({ filters, onResetPage }: Props) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(

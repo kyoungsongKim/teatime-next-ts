@@ -45,13 +45,7 @@ type Props = {
 
 export const NOTIFICATION_TYPE_STATUS_OPTIONS = [{ value: 'trueOrFalse', label: '확인또는거절' }];
 
-export function AccountNotificationDialog({
-  userInfo,
-  open,
-  notification,
-  onClose,
-  onUpdate,
-}: Props) {
+export function NotificationDialog({ userInfo, open, notification, onClose, onUpdate }: Props) {
   const confirm = useBoolean();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [userTreeList, setUserTreeList] = useState<{}>();

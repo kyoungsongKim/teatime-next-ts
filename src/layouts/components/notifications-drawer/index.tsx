@@ -18,7 +18,11 @@ import IconButton from '@mui/material/IconButton';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { getAllNotificationsByUser } from 'src/actions/notification-ssr';
+import {
+  patchReadAll,
+  patchReadUser,
+  getAllNotificationsByUser,
+} from 'src/actions/notification-ssr';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -42,12 +46,12 @@ export function NotificationsDrawer({ ...other }) {
 
   const [currentTab, setCurrentTab] = useState('all');
 
-  const totalUnRead = notifications?.filter((item) => item.isRead).length || 0;
+  const totalNotification = notifications?.length || 0;
   const readCount = notifications?.filter((item) => item.isRead).length || 0;
   const unreadCount = notifications?.filter((item) => !item.isRead).length || 0;
 
   const TABS = [
-    { value: 'all', label: 'All', count: totalUnRead },
+    { value: 'all', label: 'All', count: totalNotification },
     { value: 'true', label: 'Read', count: readCount },
     { value: 'false', label: 'Unread', count: unreadCount },
   ];
@@ -84,8 +88,16 @@ export function NotificationsDrawer({ ...other }) {
     fetchGetNotification().then((r) => r);
   }, [fetchGetNotification]);
 
-  const handleMarkAllAsRead = () => {
-    setNotifications(notifications?.map((notification) => ({ ...notification, isRead: false })));
+  const handleMarkAllAsRead = async () => {
+    await patchReadAll(userInfo?.id);
+    setNotifications(notifications?.map((notification) => ({ ...notification, isRead: true })));
+  };
+
+  const handleReadUser = async (reply: string, notificationId: string) => {
+    await patchReadUser(notificationId, reply);
+    setNotifications(
+      notifications?.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
+    );
   };
 
   const renderHead = (
@@ -94,7 +106,7 @@ export function NotificationsDrawer({ ...other }) {
         Notifications
       </Typography>
 
-      {!!totalUnRead && (
+      {!!unreadCount && (
         <Tooltip title="Mark all as read">
           <IconButton color="primary" onClick={handleMarkAllAsRead}>
             <Iconify icon="eva:done-all-fill" />
@@ -142,7 +154,10 @@ export function NotificationsDrawer({ ...other }) {
       <Box component="ul">
         {filteredNotifications.map((notification) => (
           <Box component="li" key={notification.id} sx={{ display: 'flex' }}>
-            <NotificationItem notification={notification} />
+            <NotificationItem
+              notification={notification}
+              onUpdate={(reply, notificationId) => handleReadUser(reply, notificationId)}
+            />
           </Box>
         ))}
       </Box>
@@ -159,7 +174,7 @@ export function NotificationsDrawer({ ...other }) {
         onClick={drawer.onTrue}
         {...other}
       >
-        <Badge badgeContent={totalUnRead} color="error">
+        <Badge badgeContent={unreadCount} color="error">
           <SvgIcon>
             {/* https://icon-sets.iconify.design/solar/bell-bing-bold-duotone/ */}
             <path

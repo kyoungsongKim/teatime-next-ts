@@ -1,5 +1,7 @@
 import type { INotificationItem } from 'src/types/notification';
 
+import React from 'react';
+
 import TableRow from '@mui/material/TableRow';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
@@ -11,7 +13,8 @@ import { fTimeForString } from 'src/utils/format-time';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-import React from 'react';
+
+import { NotificationLabels } from 'src/types/notification';
 
 // ----------------------------------------------------------------------
 
@@ -22,13 +25,13 @@ type Props = {
   onDelete: (notification: INotificationItem) => void;
 };
 
-export function AccountNotificationsTableRow({ row, onDetail, onEdit, onDelete }: Props) {
+export function NotificationsTableRow({ row, onDetail, onEdit, onDelete }: Props) {
   const popover = usePopover();
   return (
     <>
       <TableRow hover>
         <TableCell>{row.id}</TableCell>
-        <TableCell>{row.notificationType}</TableCell>
+        <TableCell>{NotificationLabels[row.notificationType]}</TableCell>
         <TableCell>{row.title}</TableCell>
         <TableCell>{row.content}</TableCell>
         <TableCell>

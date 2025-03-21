@@ -32,9 +32,9 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { AccountNotificationsUserTableRow } from 'src/sections/account/account-notifications-user-table-row';
-import { AccountNotificationUserTableToolbar } from 'src/sections/account/account-notifications-user-table-toolbar';
-import { AccountNotificationsUserTableFiltersResult } from 'src/sections/account/account-notifications-user-table-filters-result';
+import { NotificationsUserTableRow } from 'src/sections/notification/notifications-user-table-row';
+import { NotificationUserTableToolbar } from 'src/sections/notification/notifications-user-table-toolbar';
+import { NotificationsUserTableFiltersResult } from 'src/sections/notification/notifications-user-table-filters-result';
 
 type Props = {
   notification: INotificationItem | null;
@@ -56,7 +56,7 @@ export const READ_STATUS_OPTIONS = [
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...READ_STATUS_OPTIONS];
 
-export function AccountNotificationsUserTable({ notification, isAdmin }: Props) {
+export function NotificationsUserTable({ notification, isAdmin }: Props) {
   const table = useTable({
     defaultOrderBy: 'createdAt',
     defaultOrder: 'desc',
@@ -148,10 +148,10 @@ export function AccountNotificationsUserTable({ notification, isAdmin }: Props) 
               />
             ))}
           </Tabs>
-          <AccountNotificationUserTableToolbar filters={filters} onResetPage={table.onResetPage} />
+          <NotificationUserTableToolbar filters={filters} onResetPage={table.onResetPage} />
 
           {canReset && (
-            <AccountNotificationsUserTableFiltersResult
+            <NotificationsUserTableFiltersResult
               filters={filters}
               totalResults={dataFiltered.length}
               onResetPage={table.onResetPage}
@@ -178,7 +178,7 @@ export function AccountNotificationsUserTable({ notification, isAdmin }: Props) 
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <AccountNotificationsUserTableRow key={row.id} row={row} />
+                      <NotificationsUserTableRow key={row.id} row={row} />
                     ))}
 
                   <TableEmptyRows

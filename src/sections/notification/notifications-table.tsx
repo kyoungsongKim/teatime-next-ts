@@ -28,11 +28,11 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { AccountNotificationsTableRow } from 'src/sections/account/account-notifications-table-row';
-import { AccountNotificationDialog } from 'src/sections/account/dialog/account-notification-dialog';
-import { AccountNotificationsUserTable } from 'src/sections/account/account-notifications-user-table';
-import { AccountNotificationsTableToolbar } from 'src/sections/account/account-notifications-table-toolbar';
-import { AccountNotificationsTableFiltersResult } from 'src/sections/account/account-notifications-table-filters-result';
+import { NotificationsTableRow } from 'src/sections/notification/notifications-table-row';
+import { NotificationDialog } from 'src/sections/notification/dialog/notification-dialog';
+import { NotificationsUserTable } from 'src/sections/notification/notifications-user-table';
+import { NotificationsTableToolbar } from 'src/sections/notification/notifications-table-toolbar';
+import { NotificationsTableFiltersResult } from 'src/sections/notification/notifications-table-filters-result';
 
 type Props = {
   userInfo: IUserItem | null;
@@ -49,7 +49,7 @@ const TABLE_HEAD = [
   { id: '', label: '' },
 ];
 
-export function AccountNotificationsTable({ userInfo, isAdmin }: Props) {
+export function NotificationsTable({ userInfo, isAdmin }: Props) {
   const onNotificationOpen = useBoolean();
   const [selectedNotification, setSelectedNotification] = useState<INotificationItem | null>(null);
   const [selectedDetailNotification, setSelectedDetailNotification] =
@@ -139,10 +139,10 @@ export function AccountNotificationsTable({ userInfo, isAdmin }: Props) {
         </Grid>
         <Grid xs={12} sm={12} md={12}>
           <Card>
-            <AccountNotificationsTableToolbar filters={filters} onResetPage={table.onResetPage} />
+            <NotificationsTableToolbar filters={filters} onResetPage={table.onResetPage} />
 
             {canReset && (
-              <AccountNotificationsTableFiltersResult
+              <NotificationsTableFiltersResult
                 filters={filters}
                 totalResults={dataFiltered.length}
                 onResetPage={table.onResetPage}
@@ -151,8 +151,11 @@ export function AccountNotificationsTable({ userInfo, isAdmin }: Props) {
             )}
 
             <Box sx={{ position: 'relative' }}>
-              <Scrollbar sx={{ minHeight: 444 }}>
-                <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <Scrollbar sx={{ minHeight: 300 }}>
+                <Table
+                  size={table.dense ? 'small' : 'medium'}
+                  sx={{ minWidth: 960, width: '100%', tableLayout: 'auto' }}
+                >
                   <TableHeadCustom
                     order={table.order}
                     orderBy={table.orderBy}
@@ -169,7 +172,7 @@ export function AccountNotificationsTable({ userInfo, isAdmin }: Props) {
                         table.page * table.rowsPerPage + table.rowsPerPage
                       )
                       .map((row) => (
-                        <AccountNotificationsTableRow
+                        <NotificationsTableRow
                           key={row.id}
                           row={row}
                           onDetail={handleDetail}
@@ -201,13 +204,10 @@ export function AccountNotificationsTable({ userInfo, isAdmin }: Props) {
             />
           </Card>
         </Grid>
-        <AccountNotificationsUserTable
-          notification={selectedDetailNotification}
-          isAdmin={isAdmin}
-        />
+        <NotificationsUserTable notification={selectedDetailNotification} isAdmin={isAdmin} />
       </Grid>
 
-      <AccountNotificationDialog
+      <NotificationDialog
         userInfo={userInfo || null}
         open={onNotificationOpen.value}
         onClose={onNotificationOpen.onFalse}
