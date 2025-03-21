@@ -99,6 +99,11 @@ export function NotificationsDrawer({ ...other }) {
     );
   };
 
+  const handleNotificationClick = async () => {
+    drawer.onTrue();
+    await fetchGetNotification();
+  };
+
   const renderHead = (
     <Stack direction="row" alignItems="center" sx={{ py: 2, pl: 2.5, pr: 1, minHeight: 68 }}>
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -166,7 +171,7 @@ export function NotificationsDrawer({ ...other }) {
         whileTap="tap"
         whileHover="hover"
         variants={varHover(1.05)}
-        onClick={drawer.onTrue}
+        onClick={handleNotificationClick}
         {...other}
       >
         <Badge badgeContent={unreadCount} color="error">
