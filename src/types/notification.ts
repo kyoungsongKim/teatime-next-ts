@@ -30,6 +30,7 @@ export type INotificationUserTableFilters = {
 
 export const NotificationLabels: Record<string, string> = {
   yesOrNo: '네또는아니오',
+  textInput: '텍스트입력',
   threeOption: '3지선다',
   fourOption: '4지선다',
   fiveOption: '5지선다',

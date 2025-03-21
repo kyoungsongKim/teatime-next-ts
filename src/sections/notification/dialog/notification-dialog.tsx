@@ -45,6 +45,7 @@ type Props = {
 
 export const NOTIFICATION_TYPE_STATUS_OPTIONS = [
   { value: 'yesOrNo', label: '네또는아니오' },
+  { value: 'textInput', label: '텍스트입력' },
   { value: 'threeOption', label: '3지선다' },
   { value: 'fourOption', label: '4지선다' },
   { value: 'fiveOption', label: '5지선다' },

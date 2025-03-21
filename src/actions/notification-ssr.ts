@@ -54,7 +54,9 @@ export async function patchReadAll(userId: string | undefined) {
 }
 
 export async function patchReadUser(id: string, reply: string) {
-  const params = { reply };
+  const params = {
+    reply,
+  };
   const res = await axios.patch(`${endpoints.notification.root}/readUser/${id}`, params);
   return res;
 }

@@ -1,10 +1,13 @@
 import type { ButtonProps } from '@mui/material/Button';
 import type { INotificationUserItem } from 'src/types/notification';
 
+import { useState } from 'react';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
+import { TextField } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -26,6 +29,8 @@ export function NotificationItem({
   notification: INotificationUserItem;
   onUpdate: (reply: string, notificationId: string) => void;
 }) {
+  const [inputText, setInputText] = useState('');
+
   const renderAvatar = (
     <ListItemAvatar>
       {notification.avatarImg ? (
@@ -64,6 +69,17 @@ export function NotificationItem({
           >
             {notification.notification.content}
           </Stack>
+
+          {notification.reply && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{ typography: 'caption', color: 'info.main', mt: 0.5 }}
+            >
+              <Label color="info">{notification.reply}</Label>
+            </Stack>
+          )}
+
           <Stack
             direction="row"
             alignItems="center"
@@ -130,6 +146,45 @@ export function NotificationItem({
         }}
       >
         No
+      </Button>
+    </Stack>
+  );
+
+  const textInputAction = (
+    <Stack spacing={1} direction="row" alignItems="center" sx={{ mt: 1.5 }}>
+      <TextField
+        size="small"
+        placeholder="Type your response"
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+        inputProps={{ maxLength: 50 }}
+        sx={{
+          flexGrow: 1,
+          minWidth: 0,
+          '.MuiInputBase-root': {
+            height: 30,
+          },
+        }}
+      />
+
+      <Button
+        size="medium"
+        variant="soft"
+        color="info"
+        onClick={() => {
+          if (inputText.trim()) {
+            onUpdate(inputText.trim(), notification.id);
+            setInputText('');
+          }
+        }}
+        sx={{
+          height: 30,
+          minWidth: 70,
+          px: 2,
+          fontSize: '0.875rem',
+        }}
+      >
+        확인
       </Button>
     </Stack>
   );
@@ -282,6 +337,7 @@ export function NotificationItem({
 
             const optionMap: Record<string, JSX.Element> = {
               yesOrNo: yesOrNoAction,
+              textInput: textInputAction,
               threeOption: renderColoredOptions(['1', '2', '3'], ['success', 'info', 'warning']),
               fourOption: renderColoredOptions(
                 ['1', '2', '3', '4'],
