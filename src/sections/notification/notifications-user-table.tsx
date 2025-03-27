@@ -58,7 +58,7 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...READ_STATUS_OPTIONS];
 
 export function NotificationsUserTable({ notification, isAdmin }: Props) {
   const table = useTable({
-    defaultOrderBy: 'createdAt',
+    defaultOrderBy: 'id',
     defaultOrder: 'desc',
     defaultRowsPerPage: 10,
     rowsPerPageOptions: [10, 50, 100],

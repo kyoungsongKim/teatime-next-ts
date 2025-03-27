@@ -6,6 +6,7 @@ import { useId, forwardRef } from 'react';
 
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
 
@@ -373,25 +374,42 @@ z"
       }),
     };
 
+    const logoLabel = process.env.NEXT_PUBLIC_LOGO_LABEL;
+
     return (
-      <Box
-        ref={ref}
-        component={RouterLink}
-        href={href}
-        className={logoClasses.root.concat(className ? ` ${className}` : '')}
-        aria-label="Logo"
-        sx={{
-          ...baseSize,
-          flexShrink: 0,
-          display: 'inline-flex',
-          verticalAlign: 'middle',
-          ...(disableLink && { pointerEvents: 'none' }),
-          ...sx,
-        }}
-        {...other}
-      >
-        {isSingle ? singleLogo : fullLogo}
-      </Box>
+      <>
+        <Box
+          ref={ref}
+          component={RouterLink}
+          href={href}
+          className={logoClasses.root.concat(className ? ` ${className}` : '')}
+          aria-label="Logo"
+          sx={{
+            ...baseSize,
+            flexShrink: 0,
+            display: 'inline-flex',
+            verticalAlign: 'middle',
+            ...(disableLink && { pointerEvents: 'none' }),
+            ...sx,
+          }}
+          {...other}
+        >
+          {isSingle ? singleLogo : fullLogo}
+        </Box>
+        <Typography
+          variant="h5"
+          sx={{
+            ml: 1.5, // 왼쪽 마진
+            color: 'primary.main',
+            fontWeight: 700,
+            display: 'inline-flex',
+            alignItems: 'center',
+            verticalAlign: 'middle',
+          }}
+        >
+          {logoLabel}
+        </Typography>
+      </>
     );
   }
 );

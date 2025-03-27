@@ -8,6 +8,7 @@ import type {
   IAttendanceTableFilters,
 } from 'src/types/attendance';
 
+import dayjs from 'dayjs';
 import { toast } from 'sonner';
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
@@ -146,19 +147,16 @@ export function AttendanceListView() {
   const fetchLatestAttendanceMonth = useCallback(async () => {
     try {
       if (userName) {
-        const today = new Date().toISOString().split('T')[0];
-        const threeMonthsAgo = new Date();
-        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 12);
-        threeMonthsAgo.setDate(1);
-        const endDate = threeMonthsAgo.toISOString().split('T')[0];
-        const data = await getAttendance(userName, endDate, today);
+        const todayKST = dayjs().format('YYYY-MM-DD');
+        const threeMonthsAgo = dayjs().subtract(12, 'month').startOf('month').format('YYYY-MM-DD');
+
+        const data = await getAttendance(userName, threeMonthsAgo, todayKST);
         setTableData(data);
       }
     } catch (error) {
       console.error('Failed to fetch latest attendance:', error);
     }
 
-    // 관리자일 경우 사용자 리스트 가져오기
     if (isAdmin) {
       getUserList().then((data) => setUserList(data.data));
     }
@@ -177,7 +175,7 @@ export function AttendanceListView() {
   const fetchLatestAttendance = useCallback(async () => {
     try {
       if (userInfo?.id) {
-        const data = await getAttendance(userInfo.id, new Date().toISOString().split('T')[0], null);
+        const data = await getAttendance(userInfo.id, dayjs().format('YYYY-MM-DD'), null);
         setLatestAttendance(data);
       }
     } catch (error) {
@@ -209,7 +207,7 @@ export function AttendanceListView() {
         return;
       }
 
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 형식
+      const today = dayjs().format('YYYY-MM-DD'); // YYYY-MM-DD 형식
       const workTypeLabel =
         attendanceRequest.workType === 'OFFICE'
           ? '출퇴근'

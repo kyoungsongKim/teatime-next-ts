@@ -3,9 +3,14 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import type { AttendanceStatusType } from 'src/types/attendance';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as XLSX from 'xlsx';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { saveAs } from 'file-saver';
 import React, { useMemo, useState, useEffect } from 'react';
 
 import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Grid, Stack, Select, MenuItem, Typography, FormControl } from '@mui/material';
 
@@ -37,6 +42,68 @@ export function AttendanceMonthSummaryView() {
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
   const [holidaysMap, setHolidays] = useState<Map<string, string>>(new Map());
 
+  const exportToExcel = () => {
+    const header = [
+      '번호',
+      '이름',
+      '출근',
+      '휴가',
+      '지각',
+      '조퇴',
+      '결근',
+      ...days.map((day) => `${day}일`),
+    ];
+
+    const rows = tableRows.map((row) => [
+      row.id,
+      row.realName,
+      row.totalWork,
+      row.off,
+      row.late,
+      row.earlyLeave,
+      row.absence,
+      ...days.map((day) => {
+        // @ts-ignore
+        const status = row[`day${day}`] as AttendanceStatusType;
+        const label = STATUS_COLORS[status]?.label || status;
+        if (!status) return '';
+        return label || status;
+      }),
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `${year}-${month} 근태`);
+
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(
+      new Blob([wbout], { type: 'application/octet-stream' }),
+      `근태관리_${year}년-${month}월.xlsx`
+    );
+  };
+
+  const measureTextWidth = (text: string, font = '13px "Noto Sans KR"'): number => {
+    if (typeof document === 'undefined') return 80; // SSR 대응
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return 80;
+    ctx.font = font;
+    return ctx.measureText(text).width + 40; // +32 for Chip padding
+  };
+
+  const calcDayColumnWidth = (dateStr: string): number => {
+    const holidayLabel = holidaysMap.get(dateStr) || '';
+
+    const maxLabelWidth = attendanceData.reduce((max, user) => {
+      const status = user.attendanceStatus[dateStr] as AttendanceStatusType;
+      const statusLabel = STATUS_COLORS[status]?.label || '';
+      const width = measureTextWidth(statusLabel);
+      return Math.max(max, width);
+    }, measureTextWidth(holidayLabel)); // 공휴일도 포함!
+
+    return Math.max(maxLabelWidth, 60); // 최소 60px 확보
+  };
+
   useEffect(() => {
     async function fetchData() {
       const data = await getAttendanceSummary(year, month);
@@ -56,14 +123,16 @@ export function AttendanceMonthSummaryView() {
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
 
   const dayColumns: GridColDef[] = days.map((day) => {
-    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const date = new Date(year, month - 1, day);
-    const dayOfWeek = date.getDay(); // 0: 일요일, 6: 토요일
+    const dayOfWeek = date.getDay();
     const weekday = date.toLocaleDateString('ko-KR', { weekday: 'short' });
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const width = calcDayColumnWidth(dateStr);
+
     return {
       field: `day${day}`,
       headerName: `${day} (${weekday})`,
-      width: 60,
+      width,
       headerClassName: holidaysMap.has(dateStr)
         ? 'holiday-header' // 법정 공휴일
         : dayOfWeek === 0
@@ -136,18 +205,20 @@ export function AttendanceMonthSummaryView() {
   });
 
   return (
-    <Box sx={{ height: '700', width: '100%', p: 2 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+      }}
+    >
       {/* 년도 & 월 선택 드롭다운 */}
       <Stack spacing={2} sx={{ mb: { xs: 2, md: 3 } }}>
-        <Stack
-          spacing={3}
-          justifyContent="space-between"
-          alignItems={{ xs: 'flex-end', sm: 'center' }}
-          direction={{ xs: 'row', sm: 'row' }}
-        >
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={6} md={3}>
-              <FormControl fullWidth>
+        <Stack spacing={2} justifyContent="space-between" alignItems="center" direction="row">
+          <Grid container columnSpacing={1} rowSpacing={1.5} alignItems="center" sx={{ px: 1.5 }}>
+            {/* 연도 */}
+            <Grid item xs={6} sm={3} md={2}>
+              <FormControl fullWidth size="small">
                 <Select value={year} onChange={(e) => setYear(Number(e.target.value))}>
                   {Array.from({ length: 5 }, (_, i) => today.getFullYear() - i).map((y) => (
                     <MenuItem key={y} value={y}>
@@ -157,8 +228,10 @@ export function AttendanceMonthSummaryView() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={3}>
-              <FormControl fullWidth>
+
+            {/* 월 */}
+            <Grid item xs={6} sm={3} md={2}>
+              <FormControl fullWidth size="small">
                 <Select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                     <MenuItem key={m} value={m}>
@@ -168,10 +241,29 @@ export function AttendanceMonthSummaryView() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" textAlign="right">
-                {year}년 {month}월 근태 현황
-              </Typography>
+
+            {/* 오른쪽 텍스트 + 버튼 */}
+            <Grid item xs={12} sm={6} md={8}>
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                flexWrap="wrap"
+                gap={1.5}
+              >
+                <Typography variant="h6" sx={{ whiteSpace: 'nowrap', fontSize: '1rem', mr: 1 }}>
+                  {year}년 {month}월 근태 현황
+                </Typography>
+                <Button
+                  size="small"
+                  variant="soft"
+                  color="success"
+                  onClick={exportToExcel}
+                  sx={{ minWidth: 72 }}
+                >
+                  Excel
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </Stack>
