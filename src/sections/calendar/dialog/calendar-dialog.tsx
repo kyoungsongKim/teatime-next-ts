@@ -380,19 +380,13 @@ export function CalendarDialog({
                 </LocalizationProvider>
               </Grid>
               <Typography variant="body2">내용</Typography>
-              <Field.Text
-                name="content"
-                multiline
-                rows={8}
-                size="small"
-                disabled={isFieldDisabled}
-              />
+              <Field.Text name="content" multiline rows={8} size="small" />
             </DialogContent>
           </Scrollbar>
           <DialogActions sx={{ flexShrink: 0, justifyContent: 'space-between' }}>
             <Box flex={1}>
               {!!item && (
-                <IconButton disabled={isFieldDisabled} color="error" onClick={deleteConfirm.onTrue}>
+                <IconButton color="error" onClick={deleteConfirm.onTrue}>
                   <Iconify icon="eva:trash-2-fill" />
                 </IconButton>
               )}
@@ -412,7 +406,7 @@ export function CalendarDialog({
                   loading={isSubmitting}
                   variant="soft"
                   color="primary"
-                  disabled={isSubmitting || isFieldDisabled}
+                  disabled={isSubmitting}
                 >
                   저장
                 </LoadingButton>
