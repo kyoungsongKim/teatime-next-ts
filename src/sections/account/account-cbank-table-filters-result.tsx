@@ -1,4 +1,4 @@
-import { cbankTypeLabels, ICbankTableFilters } from 'src/types/cbank';
+import type { ICbankTableFilters } from 'src/types/cbank';
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { UseSetStateReturn } from 'src/hooks/use-set-state';
 
@@ -10,7 +10,7 @@ import { fDateRangeShortLabel } from 'src/utils/format-time';
 
 import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
 
-import { workTypeLabels } from 'src/types/attendance';
+import { cbankTypeLabels } from 'src/types/cbank';
 
 // ----------------------------------------------------------------------
 
