@@ -75,9 +75,9 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
         <MenuList sx={{ p: 1, my: 1 }}>
           {data.map((option) => {
-            const rootLabel = pathname.includes('/dashboard') ? 'Home' : 'Dashboard';
+            const rootLabel = pathname.includes('/attendance') ? 'Home' : 'Dashboard';
 
-            const rootHref = pathname.includes('/dashboard') ? '/' : paths.root.dashboard;
+            const rootHref = pathname.includes('/attendance') ? '/' : paths.root.attendance.root;
 
             return (
               <MenuItem

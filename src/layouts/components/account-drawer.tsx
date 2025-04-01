@@ -162,9 +162,11 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
                   option.roles.some((role) => role === auth)
               )
               .map((option) => {
-                const rootLabel = pathname.includes('/dashboard') ? 'Home' : 'Dashboard';
+                const rootLabel = pathname.includes('/attendance') ? 'Home' : 'Attendance';
 
-                const rootHref = pathname.includes('/dashboard') ? '/' : paths.root.dashboard;
+                const rootHref = pathname.includes('/attendance')
+                  ? '/'
+                  : paths.root.attendance.root;
 
                 return (
                   <MenuItem

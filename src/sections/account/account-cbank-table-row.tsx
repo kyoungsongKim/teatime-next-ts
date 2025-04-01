@@ -57,7 +57,7 @@ export function AccountCbankTableRow({ row }: Props) {
           >
             <Typography
               variant="caption"
-              color="warning.main"
+              color={isIncome ? 'warning.main' : 'success.main'}
               noWrap
               sx={{
                 overflow: 'hidden',
@@ -71,7 +71,7 @@ export function AccountCbankTableRow({ row }: Props) {
 
             <Typography
               variant="caption"
-              color="success.main"
+              color={isIncome ? 'success.main' : 'warning.main'}
               noWrap
               sx={{
                 overflow: 'hidden',
