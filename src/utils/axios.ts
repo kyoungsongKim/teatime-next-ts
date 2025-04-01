@@ -68,6 +68,7 @@ export const endpoints = {
   },
   monthlySales: {
     current: '/api/monthly-sales/current',
+    history: '/api/monthly-sales/history',
   },
   point: {
     list: '/api/point/list',

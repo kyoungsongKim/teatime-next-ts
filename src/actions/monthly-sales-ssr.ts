@@ -6,3 +6,15 @@ export async function getMonthlySales(id: string) {
 
   return res.data;
 }
+
+export async function getCbankHistory(id: string, startDate: string, endDate: string) {
+  const params = new URLSearchParams({
+    userId: id,
+    startDate,
+    endDate,
+  });
+
+  const URL = `${endpoints.monthlySales.history}?${params.toString()}`;
+  const res = await axios.get(URL);
+  return res.data;
+}
