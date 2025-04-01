@@ -110,7 +110,7 @@ export function JwtSignUpView() {
       });
       await checkUserSession?.();
 
-      router.refresh();
+      router.push(paths.root.attendance.root);
     } catch (error) {
       console.error(error);
       setErrorMsg(typeof error === 'string' ? error : error.msg);

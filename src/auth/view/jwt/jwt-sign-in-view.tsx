@@ -68,7 +68,7 @@ export function JwtSignInView() {
       await signInWithPassword({ userId: data.userId, password: data.password });
       await checkUserSession?.();
 
-      router.push('/attendance');
+      router.push(paths.root.attendance.root);
     } catch (error) {
       console.error(error);
       setErrorMsg(typeof error === 'string' ? error : error.msg);

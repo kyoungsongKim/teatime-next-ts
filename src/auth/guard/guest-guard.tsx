@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 
-import { useRouter, useSearchParams } from 'src/routes/hooks';
-
-import { CONFIG } from 'src/config-global';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
@@ -19,13 +18,9 @@ type Props = {
 export function GuestGuard({ children }: Props) {
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-
   const { loading, authenticated } = useAuthContext();
 
   const [isChecking, setIsChecking] = useState<boolean>(true);
-
-  const returnTo = searchParams.get('returnTo') || CONFIG.auth.redirectPath;
 
   const checkPermissions = async (): Promise<void> => {
     if (loading) {
@@ -33,7 +28,7 @@ export function GuestGuard({ children }: Props) {
     }
 
     if (authenticated) {
-      router.replace(returnTo);
+      router.push(paths.root.attendance.root);
       return;
     }
 
