@@ -23,7 +23,7 @@ export type PointFilter = {
 
 export type DonatePointItem = {
   code: string;
-  recver: string;
+  receiver: string;
 };
 
 export type CreatePointItem = {

@@ -5,10 +5,22 @@ export async function donatePoint(code: string, receiver: string) {
     code,
     recver: receiver,
   };
-  const res = await axios.post(endpoints.point.code, params);
+  try {
+    const res = await axios.post(endpoints.point.code, params);
 
-  return {
-    status: res.status,
-    data: res.data,
-  };
+    console.log(res);
+
+    return {
+      status: res.status,
+      data: res.data,
+    };
+  } catch (error) {
+    console.error('Error donating point:', error);
+    return {
+      status: 500,
+      data: {
+        msg: error.msg,
+      },
+    };
+  }
 }

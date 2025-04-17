@@ -2,6 +2,7 @@ import type { DonatePointItem } from 'src/types/point';
 
 import { z as zod } from 'zod';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -20,9 +21,11 @@ import { donatePoint } from 'src/actions/point';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
+import { useUser } from 'src/auth/context/user-context';
+
 export const DonatePointSchema = zod.object({
   code: zod.string().min(1, { message: 'Please input code' }),
-  recver: zod.string().min(1, { message: 'Please input recver' }),
+  receiver: zod.string().min(1, { message: 'Please input recver' }),
 });
 
 type Props = {
@@ -33,9 +36,10 @@ type Props = {
 };
 
 export function PointDonateDialog({ id, open, onClose, onUpdate }: Props) {
+  const { userInfo } = useUser();
   const defaultPointValue: DonatePointItem = {
     code: '',
-    recver: id,
+    receiver: userInfo?.id || id,
   };
   const methods = useForm<DonatePointItem>({
     mode: 'all',
@@ -48,13 +52,23 @@ export function PointDonateDialog({ id, open, onClose, onUpdate }: Props) {
     formState: { isSubmitting },
   } = methods;
 
+  useEffect(() => {
+    if (userInfo) {
+      reset({
+        code: '',
+        receiver: userInfo.id,
+      });
+      console.log(userInfo);
+    }
+  }, [reset, userInfo]);
+
   const onDonate = handleSubmit(async (data) => {
     // post /api/point/pointCode API 호출
     try {
-      await donatePoint(data.code.toUpperCase(), data.recver)
+      await donatePoint(data.code.toUpperCase(), data.receiver)
         .then((r) => {
           if (r.status !== 200) {
-            toast.error(r.data);
+            toast.error(r.data.msg);
           } else {
             toast.success('기부가 완료되었습니다.');
             reset();
