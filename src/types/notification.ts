@@ -13,6 +13,7 @@ export type INotificationItem = {
 export type INotificationUserItem = {
   id: string;
   notification: INotificationItem;
+  user: IUserItem;
   isRead: boolean;
   reply: string;
   avatarImg: string;

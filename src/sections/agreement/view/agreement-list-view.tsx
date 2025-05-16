@@ -36,7 +36,6 @@ import {
   emptyRows,
   rowInPage,
   TableNoData,
-  getComparator,
   TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
