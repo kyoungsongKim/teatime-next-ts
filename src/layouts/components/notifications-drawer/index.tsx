@@ -36,6 +36,11 @@ import { NotificationItem } from './notification-item';
 // ----------------------------------------------------------------------
 
 export function NotificationsDrawer({ ...other }) {
+  const INITIAL_VISIBLE_COUNT = 10;
+  const LOAD_STEP = 10;
+
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
+
   const { userInfo } = useUser();
 
   const [notifications, setNotifications] = useState<INotificationUserItem[]>();
@@ -58,6 +63,10 @@ export function NotificationsDrawer({ ...other }) {
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
   }, []);
+
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE_COUNT);
+  }, [notifications, currentTab]);
 
   useEffect(() => {
     if (!notifications) return;
@@ -152,7 +161,7 @@ export function NotificationsDrawer({ ...other }) {
   const renderList = (
     <Scrollbar>
       <Box component="ul">
-        {filteredNotifications.map((notification) => (
+        {filteredNotifications.slice(0, visibleCount).map((notification) => (
           <Box component="li" key={notification.id} sx={{ display: 'flex' }}>
             <NotificationItem
               notification={notification}
@@ -160,6 +169,19 @@ export function NotificationsDrawer({ ...other }) {
             />
           </Box>
         ))}
+
+        {visibleCount < filteredNotifications.length && (
+          <Box textAlign="center" sx={{ py: 2 }}>
+            <Typography
+              variant="subtitle2"
+              color="text.primary"
+              sx={{ cursor: 'pointer' }}
+              onClick={() => setVisibleCount((prev) => prev + LOAD_STEP)}
+            >
+              더 보기 ({visibleCount} / {filteredNotifications.length})
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Scrollbar>
   );
