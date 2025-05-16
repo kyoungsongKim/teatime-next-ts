@@ -44,7 +44,7 @@ export function DashboardView() {
     if (salesData.targetSales === '0' || !salesData.targetSales) {
       return 0;
     }
-    return parseInt(salesData.targetSales.replace(/[^0-9]/g, ''), 10); // 숫자만 추출 후 변환
+    return parseInt(salesData.targetSales, 10); // 숫자만 추출 후 변환
   }, [salesData]);
 
   // 연간 누적 매출 계산
@@ -75,7 +75,7 @@ export function DashboardView() {
     if (salesData.targetSales === '0' || !salesData.targetSales) {
       return 0;
     }
-    const target = parseInt(salesData.targetSales.replace(/[^0-9]/g, ''), 10);
+    const target = parseInt(salesData.targetSales, 10);
     return target * 12; // 월 목표를 12개월로 확장
   }, [salesData]);
 
@@ -144,6 +144,8 @@ export function DashboardView() {
 
       const monthlySalesData = await getMonthlySales(userName); // 현재 월 매출 가져오기
       setCurrentSales(parseInt(monthlySalesData, 10));
+      console.log(monthlySalesData);
+      console.log(statisticsData);
     };
 
     fetchData().then();

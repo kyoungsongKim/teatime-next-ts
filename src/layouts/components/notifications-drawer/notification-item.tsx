@@ -32,14 +32,31 @@ export function NotificationItem({
   const [inputText, setInputText] = useState('');
 
   const renderAvatar = (
-    <ListItemAvatar>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: 56,
+        minWidth: 56,
+      }}
+    >
       {notification.avatarImg ? (
-        <Avatar src={notification.avatarImg} sx={{ bgcolor: 'background.neutral' }} />
+        <Avatar
+          src={notification.avatarImg}
+          sx={{ bgcolor: 'background.neutral', width: 40, height: 40 }}
+        />
       ) : (
-        <Stack
-          alignItems="center"
-          justifyContent="center"
-          sx={{ width: 40, height: 40, borderRadius: '50%', bgcolor: 'background.neutral' }}
+        <Box
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            bgcolor: 'background.neutral',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
           <Box
             component="img"
@@ -47,13 +64,22 @@ export function NotificationItem({
               (notification.notification.notificationType === 'yesOrNo' && 'ic-order') ||
               (notification.notification.notificationType === 'chat' && 'ic-chat') ||
               (notification.notification.notificationType === 'mail' && 'ic-mail') ||
-              (notification.notification.notificationType === 'delivery' && 'ic-delivery')
+              (notification.notification.notificationType === 'delivery' && 'ic-delivery') ||
+              'ic-default'
             }.svg`}
             sx={{ width: 24, height: 24 }}
           />
-        </Stack>
+        </Box>
       )}
-    </ListItemAvatar>
+
+      <Typography
+        variant="caption"
+        noWrap
+        sx={{ mt: 0.5, color: 'text.secondary', textAlign: 'center' }}
+      >
+        {notification.notification.user?.realName || '-'}
+      </Typography>
+    </Box>
   );
 
   const renderText = (
@@ -70,7 +96,6 @@ export function NotificationItem({
               __html: notification.notification.content.replace(/\n/g, '<br />'),
             }}
           />
-
           {notification.reply && (
             <Stack
               direction="row"

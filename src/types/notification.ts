@@ -7,12 +7,12 @@ export type INotificationItem = {
   content: string;
   isGlobal: boolean;
   createdAt: string;
+  user: IUserItem;
 };
 
 export type INotificationUserItem = {
   id: string;
   notification: INotificationItem;
-  user: IUserItem;
   isRead: boolean;
   reply: string;
   avatarImg: string;

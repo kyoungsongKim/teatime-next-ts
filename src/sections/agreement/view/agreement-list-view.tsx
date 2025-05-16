@@ -70,7 +70,11 @@ const TABLE_HEAD = [
 export function AgreementListView() {
   const { userInfo, isAdmin } = useUser();
 
-  const table = useTable({ defaultRowsPerPage: 10, defaultOrderBy: 'realName' });
+  const table = useTable({
+    defaultRowsPerPage: 10,
+    defaultOrderBy: 'realName',
+    rowsPerPageOptions: [10, 50, 100],
+  });
 
   const router = useRouter();
 
@@ -86,9 +90,35 @@ export function AgreementListView() {
 
   const dateError = fIsAfter(filters.state.realName, filters.state.realName);
 
+  function getCustomComparator(
+    order: 'asc' | 'desc',
+    orderBy: string
+  ): (a: IAgreementItem, b: IAgreementItem) => number {
+    const accessors: Record<string, (row: IAgreementItem) => any> = {
+      amountPercent: (row) =>
+        row.totalAmount && row.guaranteeAmount ? (row.totalAmount * 100) / row.guaranteeAmount : 0,
+      agreementCount: (row) => row.totalAgreementCount,
+      amount: (row) => row.guaranteeAmount,
+    };
+
+    return (a, b) => {
+      const getValue = accessors[orderBy] || ((row: any) => row[orderBy]);
+      const aVal = getValue(a);
+      const bVal = getValue(b);
+
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return order === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+
+      return order === 'asc'
+        ? String(aVal).localeCompare(String(bVal))
+        : String(bVal).localeCompare(String(aVal));
+    };
+  }
+
   const dataFiltered = applyFilter({
     inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
+    comparator: getCustomComparator(table.order, table.orderBy),
     filters: filters.state,
     dateError,
   });
@@ -249,6 +279,7 @@ export function AgreementListView() {
               onPageChange={table.onChangePage}
               onChangeDense={table.onChangeDense}
               onRowsPerPageChange={table.onChangeRowsPerPage}
+              rowsPerPageOptions={table.rowsPerPageOptions}
             />
           </Card>
         </Grid>
