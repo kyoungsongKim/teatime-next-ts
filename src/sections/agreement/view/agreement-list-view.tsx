@@ -249,7 +249,7 @@ export function AgreementListView() {
                       .map((row) => (
                         <AgreementTableRow
                           isAdmin={isAdmin}
-                          key={row.id}
+                          key={row.id + row.userId}
                           row={row}
                           selected={table.selected.includes(row.id)}
                           onSelectRow={() => table.onSelectRow(row.id)}

@@ -56,9 +56,8 @@ type RenderCellAgreementCountProps = {
 };
 
 export function RenderCellAgreementCount({ row }: RenderCellAgreementCountProps) {
-  const progress = row.currentAgreementCount
-    ? (row.currentAgreementCount * 100) / row.totalAgreementCount
-    : 0;
+  const hasValidTarget = row.guaranteeAmount > 0;
+  const progress = hasValidTarget ? (row.currentAgreementCount * 100) / row.totalAgreementCount : 0;
 
   let color: 'error' | 'warning' | 'success' = 'success';
   if (progress === 0) color = 'error';
@@ -87,7 +86,8 @@ export function RenderCellAgreementCount({ row }: RenderCellAgreementCountProps)
 }
 
 export function RenderCellAmountPercent({ row }: RenderCellAgreementCountProps) {
-  const progress = row.totalAmount ? (row.totalAmount * 100) / row.guaranteeAmount : 0;
+  const hasValidTarget = row.guaranteeAmount > 0;
+  const progress = hasValidTarget ? (row.totalAmount * 100) / row.guaranteeAmount : 0;
 
   return (
     <Stack justifyContent="center" sx={{ typography: 'caption', color: 'text.secondary' }}>
@@ -129,7 +129,8 @@ export function RenderCellAmountPercent({ row }: RenderCellAgreementCountProps) 
 }
 
 export function RenderCellAmount({ row }: RenderCellAgreementCountProps) {
-  const progress = row.totalAmount ? (row.totalAmount * 100) / row.guaranteeAmount : 0;
+  const hasValidTarget = row.guaranteeAmount > 0;
+  const progress = hasValidTarget ? (row.totalAmount * 100) / row.guaranteeAmount : 0;
 
   let color: 'error' | 'warning' | 'success' = 'success';
   if (progress === 0) color = 'error';
