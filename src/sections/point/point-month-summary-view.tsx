@@ -32,8 +32,8 @@ import {
 import { useAuthContext } from 'src/auth/hooks';
 
 const TABLE_HEAD = [
-  { id: 'userId', label: 'USER ID' },
   { id: 'realName', label: '고객명' },
+  { id: 'userId', label: 'USER ID' },
   { id: 'totalPoint', label: '이번달 획득 총 포인트' },
   { id: 'totalExp', label: '이용 후 기부 횟수' },
   { id: 'level', label: '기부 안한 횟수' },
@@ -58,9 +58,10 @@ export function PointMonthSummaryView() {
   const monthList = useMemo(() => Array.from({ length: 12 }, (_, index) => String(index + 1)), []);
 
   const table = useTable({
-    defaultOrderBy: 'userId',
+    defaultOrderBy: 'realName',
     defaultOrder: 'asc',
     defaultRowsPerPage: 10,
+    rowsPerPageOptions: [10, 50, 100],
   });
   const [summaryData, setSummaryData] = React.useState<SummaryPointItem[]>([]);
   // 정렬된 데이터
@@ -170,6 +171,7 @@ export function PointMonthSummaryView() {
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           onRowsPerPageChange={table.onChangeRowsPerPage}
+          rowsPerPageOptions={table.rowsPerPageOptions}
         />
       </Card>
     </DashboardContent>

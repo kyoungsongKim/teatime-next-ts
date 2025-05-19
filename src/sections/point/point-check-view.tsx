@@ -18,8 +18,8 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { getUserInfo } from 'src/utils/user-info';
 
+import { getUserList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { getUserExceptList } from 'src/actions/user-ssr';
 import { getSummaryPointList } from 'src/actions/point-ssr';
 
 import { Scrollbar } from 'src/components/scrollbar';
@@ -38,8 +38,8 @@ import { PointExpDialog } from './dialog/point-exp-dialog';
 import { PointExpAllDialog } from './dialog/point-exp-all-dialog';
 
 const TABLE_HEAD = [
-  { id: 'userId', label: 'USER ID' },
   { id: 'realName', label: '고객명' },
+  { id: 'userId', label: 'USER ID' },
   { id: 'totalPoint', label: '포인트' },
   { id: 'level', label: 'LEVEL' },
   { id: 'totalExp', label: '경험치' },
@@ -58,9 +58,10 @@ export function PointCheckView() {
   const changeAllDialog = useBoolean();
 
   const table = useTable({
-    defaultOrderBy: 'userId',
+    defaultOrderBy: 'realName',
     defaultOrder: 'asc',
     defaultRowsPerPage: 10,
+    rowsPerPageOptions: [10, 50, 100],
   });
 
   const [summaryData, setSummaryData] = useState<SummaryPointItem[]>([]);
@@ -99,9 +100,10 @@ export function PointCheckView() {
 
   useEffect(() => {
     try {
-      getUserExceptList(id).then((r) => {
+      getUserList().then((r) => {
         if (r.status === 200) {
           setUserList(r.data);
+          console.log(r.data);
         } else {
           setUserList([] as IUserItem[]);
         }
@@ -110,7 +112,7 @@ export function PointCheckView() {
       setUserList([] as IUserItem[]);
       console.error(e);
     }
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     fetchSummaryList();
@@ -168,6 +170,7 @@ export function PointCheckView() {
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
+            rowsPerPageOptions={table.rowsPerPageOptions}
           />
         </Card>
       </DashboardContent>

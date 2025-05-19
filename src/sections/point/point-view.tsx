@@ -22,8 +22,8 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { getUserList } from 'src/actions/user-ssr';
 import { getPointList } from 'src/actions/point-ssr';
-import { getUserExceptList } from 'src/actions/user-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
@@ -106,8 +106,8 @@ export function PointView() {
 
   useEffect(() => {
     try {
-      if (isAdmin && userInfo?.id) {
-        getUserExceptList(userInfo?.id).then((r) => {
+      if (isAdmin) {
+        getUserList().then((r) => {
           if (r.status === 200) {
             setUserList(r.data);
           }
@@ -117,7 +117,7 @@ export function PointView() {
       setUserList([] as IUserItem[]);
       console.error(error);
     }
-  }, [isAdmin, userInfo?.id]);
+  }, [isAdmin]);
 
   return (
     <>
