@@ -2,6 +2,7 @@ import type { DialogProps } from '@mui/material/Dialog';
 
 import * as zod from 'zod';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -63,7 +64,7 @@ export function AgreementFormDialog({
   ...other
 }: Props) {
   const defaultValues = {
-    type: 'GUARANTEE',
+    type: isExistGuarantee ? 'MANAGER' : 'GUARANTEE',
     startDate: '',
     endDate: '',
     amount: 0,
@@ -90,6 +91,16 @@ export function AgreementFormDialog({
       setValue('file', acceptedFiles[0]);
     }
   };
+
+  useEffect(() => {
+    const validTypes = AGREEMENT_OPTIONS.filter(
+      (types) => !(isExistGuarantee && types.value === 'GUARANTEE')
+    ).map((t) => t.value);
+
+    if (!validTypes.includes(values.type)) {
+      setValue('type', validTypes[0]); // 유효한 첫 번째 값으로 강제 설정
+    }
+  }, [isExistGuarantee, values.type, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
