@@ -11,6 +11,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { CONFIG } from 'src/config-global';
 import { getFaqs } from 'src/actions/faq-ssr';
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -60,6 +61,15 @@ export function FaqsView() {
   return (
     <>
       <DashboardContent maxWidth="xl">
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <Button
+            variant="soft"
+            color="secondary"
+            onClick={() => window.open(`${CONFIG.serverUrl}/api/faqs/terms`, '_blank')}
+          >
+            View Terms
+          </Button>
+        </Box>
         <Grid xs={12} md={12}>
           {isAdmin && (
             <Stack spacing={2.5} sx={{ mb: { xs: 2, md: 3 } }}>
